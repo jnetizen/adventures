@@ -141,6 +141,30 @@ The app will be available at `http://localhost:5173` (or the port Vite assigns).
    - On the DM screen, click "Next Scene" to increment the scene number
    - The player screen should update in real-time showing the new scene number
 
+## GitLab Setup
+
+This project is intended to be stored in a **private GitLab** repository. The repo is already initialized with an initial commit.
+
+To push to GitLab:
+
+1. **Create a new private project** in GitLab (do not initialize with a README).
+
+2. **Add the remote** (replace with your GitLab project URL):
+   ```bash
+   git remote add origin https://gitlab.com/your-username/adventures.git
+   ```
+   Or with SSH:
+   ```bash
+   git remote add origin git@gitlab.com:your-username/adventures.git
+   ```
+
+3. **Push the initial commit:**
+   ```bash
+   git push -u origin main
+   ```
+
+Sensitive files (`.env` with Supabase credentials) are listed in `.gitignore` and are not committed. Use `.env.example` as a template when cloning on another machine.
+
 ## Project Structure
 
 ```
