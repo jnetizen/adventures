@@ -1,0 +1,9 @@
+{
+  "background": "assets/backgrounds/scene2_rope_bridge.png",
+  "base_scale": 0.30,
+  "characters": [
+    {"sprite_sheet": "assets/sprites/shield-knight.png", "pose_index": 0, "x": 0.30, "y": 0.75, "scale_override": 1.167},
+    {"sprite_sheet": "assets/sprites/swift-knight.png", "pose_index": 1, "x": 0.55, "y": 0.78},
+    {"sprite_sheet": "assets/sprites/kind-knight.png", "pose_index": 0, "x": 0.80, "y": 0.75, "scale_override": 0.933}
+  ]
+}

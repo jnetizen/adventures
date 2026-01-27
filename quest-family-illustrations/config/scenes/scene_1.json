@@ -1,0 +1,9 @@
+{
+  "background": "assets/backgrounds/scene1_stormy_peaks.png",
+  "base_scale": 0.30,
+  "characters": [
+    {"sprite_sheet": "assets/sprites/swift-knight.png", "pose_index": 2, "x": 0.25, "y": 0.80},
+    {"sprite_sheet": "assets/sprites/shield-knight.png", "pose_index": 0, "x": 0.50, "y": 0.82, "scale_override": 1.067},
+    {"sprite_sheet": "assets/sprites/kind-knight.png", "pose_index": 0, "x": 0.75, "y": 0.80}
+  ]
+}

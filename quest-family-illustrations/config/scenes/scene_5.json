@@ -1,0 +1,9 @@
+{
+  "background": "assets/backgrounds/scene5_rainbow_reunion.png",
+  "base_scale": 0.30,
+  "characters": [
+    {"sprite_sheet": "assets/sprites/shield-knight.png", "pose_index": 3, "x": 0.25, "y": 0.80},
+    {"sprite_sheet": "assets/sprites/swift-knight.png", "pose_index": 3, "x": 0.50, "y": 0.78, "scale_override": 1.067},
+    {"sprite_sheet": "assets/sprites/kind-knight.png", "pose_index": 3, "x": 0.75, "y": 0.80}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "background": "assets/backgrounds/scene4_finding_ember.png",
+  "base_scale": 0.32,
+  "characters": [
+    {"sprite_sheet": "assets/sprites/shield-knight.png", "pose_index": 4, "x": 0.30, "y": 0.85},
+    {"sprite_sheet": "assets/sprites/kind-knight.png", "pose_index": 0, "x": 0.50, "y": 0.82, "scale_override": 1.094},
+    {"sprite_sheet": "assets/sprites/swift-knight.png", "pose_index": 0, "x": 0.70, "y": 0.85, "scale_override": 0.938}
+  ]
+}

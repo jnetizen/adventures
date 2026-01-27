@@ -214,7 +214,57 @@ docs/                   # Documentation
 ├── CONSTRAINTS.md      # Technical and product constraints
 ├── PRODUCT_VISION.md   # Product goals and vision
 └── QUICK_REFERENCE.md  # Common tasks and file locations
+
+quest-family-illustrations/  # Python compositor for scene images
+├── src/compositor.py        # Main compositing logic
+├── config/                  # Story templates and scene configs
+│   ├── stories/            # Adventure templates (JSON)
+│   └── scenes/             # Per-scene compositor configs
+├── assets/                  # Source images
+│   ├── backgrounds/        # Scene background images
+│   └── sprites/            # Character sprite sheets
+├── output/                  # Generated composite images (gitignored)
+├── tests/                   # Pytest test suite
+└── scripts/                 # Batch processing scripts
 ```
+
+## Illustration Pipeline
+
+The `quest-family-illustrations/` directory contains a Python-based compositor for generating scene images. It composites character sprites onto background images with proper alpha masking, shadows, and ground alignment.
+
+### Quick Setup
+
+```bash
+cd quest-family-illustrations
+python -m venv .venv
+source .venv/bin/activate   # or: .venv\Scripts\activate on Windows
+pip install -r requirements.txt
+```
+
+### Usage
+
+Composite a scene using a config file:
+
+```bash
+python -m src.compositor \
+    --config config/scenes/scene_1.json \
+    --output output/scene_1_final.png
+```
+
+Or use the batch script to composite all scenes:
+
+```bash
+python scripts/composite_all_scenes.py
+```
+
+### Documentation
+
+See [quest-family-illustrations/README.md](quest-family-illustrations/README.md) for detailed documentation on:
+- Character placement configuration
+- Pose index reference
+- Compositor behavior (alpha masking, shadows, ground alignment)
+- Story templates and scene configs
+- Running tests
 
 ## Documentation
 

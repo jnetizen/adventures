@@ -1,0 +1,9 @@
+{
+  "background": "assets/backgrounds/scene3_crystal_cave.png",
+  "base_scale": 0.30,
+  "characters": [
+    {"sprite_sheet": "assets/sprites/kind-knight.png", "pose_index": 4, "x": 0.35, "y": 0.82, "scale_override": 1.067},
+    {"sprite_sheet": "assets/sprites/shield-knight.png", "pose_index": 0, "x": 0.55, "y": 0.78},
+    {"sprite_sheet": "assets/sprites/swift-knight.png", "pose_index": 2, "x": 0.75, "y": 0.80, "scale_override": 0.933}
+  ]
+}

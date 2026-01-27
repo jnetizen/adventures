@@ -1,0 +1,120 @@
+{
+  "story_id": "dragon-knight-rescue",
+  "title": "The Dragon Knight Rescue",
+  "description": "A baby dragon is lost in the Stormy Peaks! Can three brave knights find her before the thunderclouds roll in?",
+  "characters": {
+    "shield-knight": {
+      "name": "Shield Knight",
+      "description": "Knight in silver armor with golden shield, red cape",
+      "signature_item": "Golden shield (always visible)",
+      "sprite_prompt": "Character reference sheet showing a young knight in silver armor with a golden shield and red cape, 5 poses side by side on white background: standing heroically holding shield, running with shield raised, pointing forward, cheering with arms up, kneeling protectively with shield. Pixar-adjacent storybook style, soft painterly rendering, big expressive eyes, warm friendly expression, consistent character across all poses"
+    },
+    "swift-knight": {
+      "name": "Swift Knight",
+      "description": "Knight in lighter silver armor, blue cape, no helmet (hair visible)",
+      "signature_item": "Blue cape flowing behind",
+      "sprite_prompt": "Character reference sheet showing a young knight in light silver armor with a flowing blue cape, no helmet with hair visible, 5 poses side by side on white background: standing ready to run, running fast with cape flowing, pointing forward excitedly, cheering with arms up, crouching ready to sprint. Pixar-adjacent storybook style, soft painterly rendering, big expressive eyes, warm friendly expression, consistent character across all poses"
+    },
+    "kind-knight": {
+      "name": "Kind Knight",
+      "description": "Knight in silver armor, green cape, gentle expression",
+      "signature_item": "Green cape, open hands",
+      "sprite_prompt": "Character reference sheet showing a young knight in silver armor with a green cape and gentle expression, 5 poses side by side on white background: standing with open welcoming hands, walking forward kindly, pointing forward gently, cheering with arms up, kneeling down to help. Pixar-adjacent storybook style, soft painterly rendering, big expressive eyes, warm friendly expression, consistent character across all poses"
+    }
+  },
+  "poses": {
+    "0": "standing/ready",
+    "1": "running/action",
+    "2": "pointing",
+    "3": "cheering",
+    "4": "kneeling/special"
+  },
+  "scenes": [
+    {
+      "scene_id": "scene-1",
+      "name": "Stormy Peaks Trail",
+      "narration": "Dark clouds gather over the Stormy Peaks. You hear a tiny 'SQUEAK!' echo from the mountains.",
+      "background_prompt": "A dramatic mountain trail at the base of stormy peaks, dark purple clouds gathering overhead, jagged rocks, a winding path leading upward, distant lightning flash, hints of a cave entrance above, whimsical yet dramatic mood, Pixar-adjacent storybook style, soft painterly rendering, fantasy kingdom, no people, empty scene ready for characters",
+      "characters": [
+        {"character_id": "swift-knight", "pose_index": 2, "x": 0.25, "y": 0.80, "scale": 0.30},
+        {"character_id": "shield-knight", "pose_index": 0, "x": 0.50, "y": 0.82, "scale": 0.32},
+        {"character_id": "kind-knight", "pose_index": 0, "x": 0.75, "y": 0.80, "scale": 0.30}
+      ],
+      "notes": "Swift Knight pointing upward toward the sound, Shield Knight center/ready, Kind Knight looking concerned"
+    },
+    {
+      "scene_id": "scene-2",
+      "name": "Rope Bridge",
+      "narration": "A wobbly rope bridge crosses a deep canyon. The wind is getting stronger! SQUEAK! Ember sounds closer!",
+      "background_prompt": "A rickety wooden rope bridge stretching across a misty canyon, wind-blown clouds swirling below, rocky cliffs on either side, stormy sky above, the bridge swaying slightly, dramatic depth, Pixar-adjacent storybook style, soft painterly rendering, fantasy adventure setting, no people, empty scene ready for characters",
+      "characters": [
+        {"character_id": "shield-knight", "pose_index": 0, "x": 0.30, "y": 0.75, "scale": 0.35},
+        {"character_id": "swift-knight", "pose_index": 1, "x": 0.55, "y": 0.78, "scale": 0.30},
+        {"character_id": "kind-knight", "pose_index": 0, "x": 0.80, "y": 0.75, "scale": 0.28}
+      ],
+      "notes": "Shield Knight leading/protecting, Swift Knight mid-bridge running across, Kind Knight waiting turn"
+    },
+    {
+      "scene_id": "scene-3",
+      "name": "Crystal Cave",
+      "narration": "Inside a glowing crystal cave! Colorful gems light up the walls. Ember's tiny footprints lead deeper inside.",
+      "background_prompt": "Inside a magical crystal cave with glowing purple and blue crystals jutting from walls and ceiling, soft bioluminescent light, tiny dragon footprints visible on the ground, mysterious deeper passage ahead, sparkles and magical atmosphere, Pixar-adjacent storybook style, soft painterly rendering, fantasy wonder, no people, empty scene ready for characters",
+      "characters": [
+        {"character_id": "kind-knight", "pose_index": 4, "x": 0.35, "y": 0.82, "scale": 0.32},
+        {"character_id": "shield-knight", "pose_index": 0, "x": 0.55, "y": 0.78, "scale": 0.30},
+        {"character_id": "swift-knight", "pose_index": 2, "x": 0.75, "y": 0.80, "scale": 0.28}
+      ],
+      "notes": "Kind Knight kneeling to examine footprints, Shield Knight ready, Swift Knight pointing deeper into cave"
+    },
+    {
+      "scene_id": "scene-4",
+      "name": "Finding Ember",
+      "narration": "There she is! Ember the baby dragon is curled up on a high ledge, shivering and squeaking. Lightning flashes outside!",
+      "background_prompt": "A dramatic cave chamber with a high rocky ledge, a cute small orange baby dragon curled up and shivering on the ledge, lightning visible through a cave opening, rain starting outside, warm protective feeling despite the storm, the baby dragon looking down hopefully, Pixar-adjacent storybook style, soft painterly rendering, emotional rescue moment, no people except the baby dragon on ledge",
+      "characters": [
+        {"character_id": "shield-knight", "pose_index": 4, "x": 0.30, "y": 0.85, "scale": 0.32},
+        {"character_id": "kind-knight", "pose_index": 0, "x": 0.50, "y": 0.82, "scale": 0.35},
+        {"character_id": "swift-knight", "pose_index": 0, "x": 0.70, "y": 0.85, "scale": 0.30}
+      ],
+      "notes": "All knights looking up at Ember, Kind Knight reaching up welcomingly, Shield Knight ready to protect"
+    },
+    {
+      "scene_id": "scene-5",
+      "name": "Rainbow Reunion",
+      "narration": "The storm clears! A rainbow appears over the kingdom. Ember's mama dragon swoops down with happy tears!",
+      "background_prompt": "A beautiful kingdom vista at sunset after a storm, brilliant rainbow arcing across the sky, a large friendly mama dragon flying down with happy expression, castle towers in the background, golden sunlight breaking through clouds, joyful celebration atmosphere, flowers and green hills, Pixar-adjacent storybook style, soft painterly rendering, happy ending scene, no people except mama dragon in sky",
+      "characters": [
+        {"character_id": "shield-knight", "pose_index": 3, "x": 0.25, "y": 0.80, "scale": 0.30},
+        {"character_id": "swift-knight", "pose_index": 3, "x": 0.50, "y": 0.78, "scale": 0.32},
+        {"character_id": "kind-knight", "pose_index": 3, "x": 0.75, "y": 0.80, "scale": 0.30}
+      ],
+      "notes": "All three knights cheering, celebrating, looking up at mama dragon"
+    }
+  ],
+  "replicate_settings": {
+    "sprite_sheets": {
+      "model": "bytedance/flux-pulid",
+      "width": 1536,
+      "height": 768,
+      "num_steps": 20,
+      "start_step": 0,
+      "guidance_scale": 4,
+      "id_weight": 1,
+      "true_cfg": 1,
+      "max_sequence_length": 512,
+      "output_format": "png",
+      "output_quality": 100,
+      "negative_prompt": "bad quality, worst quality, text, signature, watermark, extra limbs"
+    },
+    "backgrounds": {
+      "model": "black-forest-labs/flux-schnell",
+      "aspect_ratio": "16:9",
+      "num_outputs": 1,
+      "num_inference_steps": 4,
+      "output_format": "png",
+      "output_quality": 100,
+      "go_fast": true,
+      "megapixels": "1"
+    }
+  }
+}
