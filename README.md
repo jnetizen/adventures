@@ -43,75 +43,16 @@ You can find these values in your Supabase project dashboard under Settings → 
 
 ### Supabase Setup
 
-1. **Create the `sessions` table:**
+See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for detailed Supabase setup instructions, including:
+- Creating the `sessions` table
+- Setting up Row Level Security (RLS)
+- Enabling Realtime
+- Running migrations
 
-Run this SQL in your Supabase SQL Editor:
-
-```sql
-CREATE TABLE sessions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  room_code TEXT UNIQUE NOT NULL,
-  current_scene INTEGER DEFAULT 0 NOT NULL,
-  phase TEXT DEFAULT 'waiting' NOT NULL CHECK (phase IN ('waiting', 'playing', 'paused')),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE INDEX idx_sessions_room_code ON sessions(room_code);
-```
-
-2. **Enable Row Level Security (RLS):**
-
-```sql
-ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
-```
-
-3. **Create RLS Policies:**
-
-Allow anyone to create sessions:
-```sql
-CREATE POLICY "Anyone can create sessions"
-ON sessions FOR INSERT
-TO public
-WITH CHECK (true);
-```
-
-Allow anyone to read sessions by room code:
-```sql
-CREATE POLICY "Anyone can read sessions by room code"
-ON sessions FOR SELECT
-TO public
-USING (true);
-```
-
-Allow anyone to update sessions:
-```sql
-CREATE POLICY "Anyone can update sessions"
-ON sessions FOR UPDATE
-TO public
-USING (true)
-WITH CHECK (true);
-```
-
-4. **Enable Realtime:**
-
-- Go to your Supabase dashboard
-- Navigate to **Database** → **Replication**
-- Find the `sessions` table and toggle **Realtime** to enabled
-
-5. **Add adventure-tracking columns (migration):**
-
-Run this SQL to add columns used by the adventure data model:
-
-```sql
-ALTER TABLE sessions
-  ADD COLUMN IF NOT EXISTS adventure_id TEXT,
-  ADD COLUMN IF NOT EXISTS character_assignments JSONB DEFAULT '{}',
-  ADD COLUMN IF NOT EXISTS current_character_turn_index INTEGER DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS scene_choices JSONB DEFAULT '[]';
-```
-
-Existing rows will get the defaults. New sessions will store adventure state in these columns.
+**Quick Setup**:
+1. Create the `sessions` table (see SUPABASE_SETUP.md)
+2. Enable Realtime on the `sessions` table
+3. Run migrations: `npm run db:migrate`
 
 ### Running the App
 
@@ -125,6 +66,8 @@ The app will be available at `http://localhost:5173` (or the port Vite assigns).
 
 ## Usage
 
+### Complete Flow (v2)
+
 1. **Start as DM:**
    - Open the app on your phone
    - Click "Start as DM" on the landing page
@@ -137,9 +80,190 @@ The app will be available at `http://localhost:5173` (or the port Vite assigns).
    - Enter the room code from the DM screen
    - Click "Join Session"
 
-3. **Test the Sync:**
-   - On the DM screen, click "Next Scene" to increment the scene number
-   - The player screen should update in real-time showing the new scene number
+3. **Select Adventure:**
+   - DM sees adventure selection screen with preview cards
+   - Select an adventure (currently: Candy Volcano or Dragon Knight Rescue)
+   - Adventure loads automatically
+
+4. **Setup Players:**
+   - DM enters kid names (1-3 kids)
+   - DM assigns each kid to a character
+   - Click "Start Adventure"
+
+5. **Prologue:**
+   - Prologue screen appears with world intro, character introductions, and mission brief
+   - Parent reads aloud to kids
+   - Click "Start Adventure" to begin Scene 1
+
+6. **Play Adventure:**
+   - Each scene has narration (read by parent)
+   - Scene image displays full-screen on player device
+   - Each character takes a turn (DM selects choice, enters dice roll)
+   - Success count tracks cumulative successful rolls (DM-only display)
+   - After all characters act, DM clicks "Reveal Results"
+   - Results display on both screens with animation indicators
+   - Scene outcome and rewards display
+   - Click "Next Scene" to continue
+
+7. **Ending:**
+   - After final scene, tiered ending displays based on success count
+   - Endings: Good (0-7 successes), Great (8-11), Legendary (12+)
+   - All endings are celebratory with different rewards
+   - Click "End Adventure" or "Start New Adventure"
+
+## Features (v2)
+
+### Adventure Selection
+- Visual grid of available adventures
+- Preview cards show: image, title, tagline, themes, estimated time
+- Easy selection and loading
+
+### Prologue System
+- Dedicated prologue screen before Scene 1
+- World introduction
+- Character introductions with images
+- Mission brief
+- Sets context for the adventure
+
+### Cumulative Scoring
+- Tracks successful rolls across all scenes
+- Success count increments when roll >= threshold
+- Persists across scenes
+- Resets when starting new adventure
+- Displayed subtly on DM screen (parent-only)
+
+### Tiered Endings
+- Three ending tiers based on cumulative success count
+- Good, Great, and Legendary endings
+- Each tier has unique narration and rewards
+- All endings are positive and celebratory
+- Displayed on both DM and player screens
+
+### Enhanced Rewards
+- Rewards have unique IDs for tracking
+- Display name, type (item/token/badge), and image
+- Scene rewards and ending rewards
+- Visual display with images or placeholders
+
+## Adventure Data Format (v2)
+
+Adventures are stored as JSON files in `src/data/adventures/` following the v2 schema:
+
+### Required Fields
+- `id`: Unique adventure identifier
+- `title`: Display title
+- `description`: Brief description
+- `preview`: Selection screen metadata (tagline, themes, estimatedMinutes, previewImageUrl)
+- `prologue`: Pre-scene content (worldIntro, characterIntros[], missionBrief)
+- `characters`: Array of playable characters
+- `scoring`: Thresholds mapping success count to ending IDs
+- `scenes`: Array of 5 scenes (sceneNumber 0-4)
+- `endings`: Array of tiered endings (good/great/legendary)
+
+### Scene Structure
+- `sceneNumber`: 0-based index (0-4)
+- `narrationText`: 2-3 sentences, read aloud
+- `sceneImageUrl`: Full-screen image path
+- `characterTurns`: One turn per character
+- `outcome`: Scene conclusion with `nextSceneId` (null for final scene)
+
+### Scoring System
+- Each choice has `successThreshold` (typically 10, or 5 for celebration scenes)
+- Roll >= threshold = success (increments `success_count`)
+- Roll < threshold = fail (still moves story forward, no increment)
+- Ending determined by first threshold where `success_count >= minSuccesses`
+
+See `src/types/adventure.ts` for complete type definitions.
+
+## Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── RoomCode.tsx
+│   ├── ConnectionStatus.tsx
+│   ├── PlaceholderImage.tsx
+│   └── AnimationIndicator.tsx
+├── pages/              # Page components
+│   ├── LandingPage.tsx
+│   ├── DMPage.tsx
+│   ├── PlayPage.tsx
+│   ├── ProloguePage.tsx
+│   ├── AdventureSelectPage.tsx
+│   └── EndingPage.tsx
+├── lib/                # Utility functions
+│   ├── supabase.ts     # Supabase client
+│   ├── gameState.ts    # Game state management
+│   └── adventures.ts   # Adventure loading and helpers
+├── types/              # TypeScript type definitions
+│   ├── adventure.ts    # Adventure data types (v2 schema)
+│   ├── game.ts         # Game session types
+│   └── supabase.ts     # Database schema types
+├── data/
+│   └── adventures/     # Adventure JSON files
+│       ├── placeholder.json (Candy Volcano)
+│       └── dragon-knight-rescue.json
+├── App.tsx             # Router setup
+└── main.tsx            # Entry point
+
+docs/                   # Documentation
+├── TESTING.md          # Testing guide and feedback templates
+├── IDEAS.md            # Future feature backlog
+├── DESIGN_DECISIONS.md # Design rationale
+├── USER_RESEARCH.md    # User feedback log
+├── CONSTRAINTS.md      # Technical and product constraints
+├── PRODUCT_VISION.md   # Product goals and vision
+└── QUICK_REFERENCE.md  # Common tasks and file locations
+```
+
+## Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+- **[TESTING.md](docs/TESTING.md)**: Testing process, feedback capture, bug reporting
+- **[IDEAS.md](docs/IDEAS.md)**: Future feature ideas and backlog
+- **[DESIGN_DECISIONS.md](docs/DESIGN_DECISIONS.md)**: Why we built things this way
+- **[USER_RESEARCH.md](docs/USER_RESEARCH.md)**: User feedback and findings
+- **[CONSTRAINTS.md](docs/CONSTRAINTS.md)**: Technical and product constraints
+- **[PRODUCT_VISION.md](docs/PRODUCT_VISION.md)**: Product goals and roadmap
+- **[QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md)**: Common tasks and troubleshooting
+
+## Development
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+### Database Migrations
+
+- `npm run db:migrate` - Apply migrations to Supabase
+- `npm run db:migrate:new <name>` - Create new migration
+- `npm run db:status` - Check migration status
+
+See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for migration setup.
+
+## What's Next?
+
+### Immediate Priorities
+- User testing with v2 features
+- Bug fixes from testing
+- Polish UX based on feedback
+
+### Near-Term
+- Create 1-2 new adventures
+- Improve error handling
+- Performance optimizations
+- Adventure editor (basic version)
+
+### Future Ideas
+See [docs/IDEAS.md](docs/IDEAS.md) for the full backlog, including:
+- Player-driven choices (kids select on player screen)
+- Sound effects and animations
+- Adventure editor for parents
+- More adventures and content
+- Offline mode
+- PWA improvements
 
 ## GitLab Setup
 
@@ -164,59 +288,6 @@ To push to GitLab:
    ```
 
 Sensitive files (`.env` with Supabase credentials) are listed in `.gitignore` and are not committed. Use `.env.example` as a template when cloning on another machine.
-
-## Project Structure
-
-```
-src/
-├── components/          # Reusable UI components
-│   ├── RoomCode.tsx
-│   └── ConnectionStatus.tsx
-├── pages/              # Page components
-│   ├── LandingPage.tsx
-│   ├── DMPage.tsx
-│   └── PlayPage.tsx
-├── lib/                # Utility functions
-│   ├── supabase.ts     # Supabase client
-│   └── gameState.ts    # Game state management
-├── types/              # TypeScript type definitions
-│   ├── game.ts
-│   └── supabase.ts
-├── App.tsx             # Router setup
-└── main.tsx            # Entry point
-```
-
-## What's Next?
-
-After verifying the two-screen sync works:
-
-1. **Game Content:**
-   - Add scene definitions with illustrations
-   - Create choice prompts for kids
-   - Build outcome animations
-
-2. **DM Features:**
-   - Add narration text display
-   - Implement dice roll input
-   - Create scene management UI
-
-3. **Player Features:**
-   - Display scene illustrations
-   - Show choice animations
-   - Add sound effects
-
-4. **Polish:**
-   - Improve error handling
-   - Add loading states
-   - Enhance mobile responsiveness
-   - Add session cleanup/expiration
-
-## Development
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
 
 ## License
 

@@ -1,7 +1,687 @@
 {
-  "id": "placeholder",
-  "title": "",
-  "description": "",
-  "characters": [],
-  "scenes": []
+  "id": "candy-volcano",
+  "title": "The Great Candy Volcano",
+  "description": "Stop the Candy Volcano from exploding and covering Sweet-Top Valley in sticky goo!",
+  "preview": {
+    "tagline": "Can you save Sweet-Top Valley before everything gets covered in candy goo?",
+    "themes": ["candy", "teamwork", "dragons", "silly"],
+    "estimatedMinutes": 15,
+    "previewImageUrl": "/images/adventures/candy-volcano-preview.png"
+  },
+  "prologue": {
+    "worldIntro": "Welcome to Sweet-Top Valley, a magical land where rivers flow with chocolate and mountains are made of rock candy. Everything here is delicious — and a little bit sticky!",
+    "characterIntros": [
+      {
+        "characterId": "spark-wizard",
+        "introText": "Spark Wizard loves sparkly things and exciting adventures! Spark can cast a Sparkle Shield to protect friends and shoot Marshmallow Blasts."
+      },
+      {
+        "characterId": "frost-wizard",
+        "introText": "Frost Wizard is cool and calm, even in tricky situations! Frost can freeze things with icy breath and build bridges out of snow."
+      },
+      {
+        "characterId": "bloom-wizard",
+        "introText": "Bloom Wizard loves nature and making new friends! Bloom can grow magical rainbow vines and talk to animals."
+      }
+    ],
+    "missionBrief": "Oh no! The Candy Volcano is about to explode! If it blows, the whole valley will be covered in sticky candy goo. The three wizards must work together to stop it!"
+  },
+  "characters": [
+    {
+      "id": "spark-wizard",
+      "name": "Spark Wizard",
+      "description": "A brave wizard who casts Sparkle Shield and Marshmallow Blast",
+      "imageUrl": "/images/characters/spark-wizard.png"
+    },
+    {
+      "id": "frost-wizard",
+      "name": "Frost Wizard",
+      "description": "A cool wizard who can freeze things and make snow bridges",
+      "imageUrl": "/images/characters/frost-wizard.png"
+    },
+    {
+      "id": "bloom-wizard",
+      "name": "Bloom Wizard",
+      "description": "A nature wizard who grows rainbow vines and talks to animals",
+      "imageUrl": "/images/characters/bloom-wizard.png"
+    }
+  ],
+  "scoring": {
+    "thresholds": [
+      { "minSuccesses": 12, "endingId": "ending-legendary" },
+      { "minSuccesses": 8, "endingId": "ending-great" },
+      { "minSuccesses": 0, "endingId": "ending-good" }
+    ]
+  },
+  "scenes": [
+    {
+      "id": "scene-1",
+      "sceneNumber": 0,
+      "narrationText": "Jellybeans rain from the sky! The Candy Volcano glows pink in the distance. BOOM! Lightning strikes the mountain!",
+      "sceneImageUrl": "/images/scenes/sugary-storm.png",
+      "leadCharacterId": "spark-wizard",
+      "characterTurns": [
+        {
+          "characterId": "spark-wizard",
+          "promptText": "The storm is wild!",
+          "choices": [
+            {
+              "id": "scene1-spark-study",
+              "label": "Use magic to see inside",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Magic reveals the Candy Core Crystal is cracking inside the volcano!",
+                "animationKey": "magic-sparkle"
+              },
+              "failOutcome": {
+                "text": "Bonk! A jellybean hits Spark's head! A gummy bear waddles over and points the way.",
+                "animationKey": "bonk-silly"
+              }
+            },
+            {
+              "id": "scene1-spark-shield",
+              "label": "Cast Sparkle Shield",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "A shimmering shield surrounds everyone! Jellybeans bounce off harmlessly.",
+                "animationKey": "shield-up"
+              },
+              "failOutcome": {
+                "text": "The shield turns into cotton candy! Delicious, but not very protective. Oh well!",
+                "animationKey": "cotton-candy-poof"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "frost-wizard",
+          "promptText": "Chocolate rivers are boiling!",
+          "choices": [
+            {
+              "id": "scene1-frost-cool",
+              "label": "Freeze the chocolate",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Icy magic cools the river into a perfect chocolate road!",
+                "animationKey": "freeze-breath"
+              },
+              "failOutcome": {
+                "text": "Oops! The spell makes chocolate ice cream everywhere! Messy but tasty.",
+                "animationKey": "sneeze-silly"
+              }
+            },
+            {
+              "id": "scene1-frost-bridge",
+              "label": "Build a snow bridge",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "A sparkling snow bridge forms over the bubbling chocolate. Safe!",
+                "animationKey": "bridge-form"
+              },
+              "failOutcome": {
+                "text": "The bridge melts into a slushy slide! Everyone slides across giggling.",
+                "animationKey": "slide-splash"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "bloom-wizard",
+          "promptText": "We need to see ahead!",
+          "choices": [
+            {
+              "id": "scene1-bloom-grow",
+              "label": "Grow a tall flower",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "A giant lollipop flower shoots up! From the top, the volcano entrance is visible!",
+                "animationKey": "climb-success"
+              },
+              "failOutcome": {
+                "text": "The flower is wobbly, but friendly gummy bears help hold it steady!",
+                "animationKey": "stuck-silly"
+              }
+            },
+            {
+              "id": "scene1-bloom-vines",
+              "label": "Grow a jellybean net",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Rainbow vines catch all the falling jellybeans like a net!",
+                "animationKey": "web-catch"
+              },
+              "failOutcome": {
+                "text": "The vines become a jellybean hammock! Everyone takes a quick bouncy rest.",
+                "animationKey": "hammock-bounce"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "The wizards push through the storm and reach the volcano!",
+        "nextSceneId": "scene-2"
+      }
+    },
+    {
+      "id": "scene-2",
+      "sceneNumber": 1,
+      "narrationText": "A wiggly bridge made of giant gummy worms stretches over hot fudge! It jiggles with every step.",
+      "sceneImageUrl": "/images/scenes/gummy-bridge.png",
+      "leadCharacterId": "frost-wizard",
+      "characterTurns": [
+        {
+          "characterId": "frost-wizard",
+          "promptText": "The bridge is too wobbly!",
+          "choices": [
+            {
+              "id": "scene2-frost-freeze",
+              "label": "Stiffen it with ice",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The gummy worms become firm but still bouncy. Perfect for crossing!",
+                "animationKey": "freeze-bridge"
+              },
+              "failOutcome": {
+                "text": "One worm snaps and falls — but it becomes a stepping stone in the fudge!",
+                "animationKey": "snap-splash"
+              }
+            },
+            {
+              "id": "scene2-frost-cool-fudge",
+              "label": "Cool the fudge below",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The fudge thickens into a safe, soft landing zone. No danger now!",
+                "animationKey": "fudge-cool"
+              },
+              "failOutcome": {
+                "text": "The fudge turns into fudge popsicles sticking up everywhere! Weird chocolate forest.",
+                "animationKey": "popsicle-forest"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "bloom-wizard",
+          "promptText": "Keep everyone safe!",
+          "choices": [
+            {
+              "id": "scene2-bloom-vines",
+              "label": "Grow safety ropes",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Strong sparkly vines for everyone to hold! Nobody can fall now.",
+                "animationKey": "safety-ropes"
+              },
+              "failOutcome": {
+                "text": "The vines are TOO sticky — everyone's hands get glued together! Teamwork!",
+                "animationKey": "stuck-together"
+              }
+            },
+            {
+              "id": "scene2-bloom-talk",
+              "label": "Ask the worms nicely",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The gummy worms giggle and agree to hold very still. How polite!",
+                "animationKey": "secret-tunnel"
+              },
+              "failOutcome": {
+                "text": "The worms get excited and wiggle MORE! But they wiggle everyone safely across.",
+                "animationKey": "tickle-bounce"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "spark-wizard",
+          "promptText": "Help everyone cross!",
+          "choices": [
+            {
+              "id": "scene2-spark-levitate",
+              "label": "Float the worms",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The gummy worms float up and arrange into perfect stepping stones!",
+                "animationKey": "float-planks"
+              },
+              "failOutcome": {
+                "text": "The worms tangle into a bouncy trampoline! Boing boing across!",
+                "animationKey": "trampoline-boing"
+              }
+            },
+            {
+              "id": "scene2-spark-blast",
+              "label": "Marshmallow cushions",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Giant marshmallows appear below! The crossing feels like a game now.",
+                "animationKey": "marshmallow-cushions"
+              },
+              "failOutcome": {
+                "text": "Marshmallows shoot UP instead of down! Everyone gets fluffy marshmallow hats.",
+                "animationKey": "marshmallow-hats"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "Across the bridge! A golden lollipop floats into your pocket.",
+        "nextSceneId": "scene-3",
+        "rewards": [
+          {
+            "type": "item",
+            "id": "golden-lollipop",
+            "name": "Golden Lollipop of Bravery",
+            "imageUrl": "/images/rewards/golden-lollipop.png"
+          }
+        ]
+      }
+    },
+    {
+      "id": "scene-3",
+      "sceneNumber": 2,
+      "narrationText": "Two tall Peppermint Knights guard the volcano gate! 'HALT! Solve our riddle to enter!'",
+      "sceneImageUrl": "/images/scenes/peppermint-guards.png",
+      "leadCharacterId": "bloom-wizard",
+      "characterTurns": [
+        {
+          "characterId": "bloom-wizard",
+          "promptText": "The knights look grumpy!",
+          "choices": [
+            {
+              "id": "scene3-bloom-flowers",
+              "label": "Give them flowers",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Candy flowers bloom at their feet. The knights bow and open the gates!",
+                "animationKey": "tickle-laugh"
+              },
+              "failOutcome": {
+                "text": "The flowers tickle their toes! They giggle so hard they drop their spears.",
+                "animationKey": "helmet-sneeze"
+              }
+            },
+            {
+              "id": "scene3-bloom-dance",
+              "label": "Do a silly dance",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The cutest wizard dance! The knights are charmed and bow as they open the gates.",
+                "animationKey": "spider-dance"
+              },
+              "failOutcome": {
+                "text": "Bloom trips mid-dance! The knights feel bad and open the gates anyway.",
+                "animationKey": "trip-cute"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "spark-wizard",
+          "promptText": "They ask a riddle!",
+          "choices": [
+            {
+              "id": "scene3-spark-answer",
+              "label": "Shout 'Chocolate!'",
+              "successThreshold": 8,
+              "successOutcome": {
+                "text": "'Correct!' The knights smile and the gates swing open with sparkles!",
+                "animationKey": "gates-open"
+              },
+              "failOutcome": {
+                "text": "Spark squeaks 'Chocolate!' in a funny voice. The knights giggle and let everyone in!",
+                "animationKey": "giggle-open"
+              }
+            },
+            {
+              "id": "scene3-spark-magic",
+              "label": "Do a magic trick",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Sparklers shoot everywhere! The knights clap and let everyone through.",
+                "animationKey": "sparkler-show"
+              },
+              "failOutcome": {
+                "text": "The trick turns their spears into pool noodles! They laugh and wave everyone in.",
+                "animationKey": "pool-noodle"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "frost-wizard",
+          "promptText": "The knights look hot!",
+          "choices": [
+            {
+              "id": "scene3-frost-cool-knights",
+              "label": "Cool them with a breeze",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "'Ahh, thank you!' The knights sigh with relief and open the gate.",
+                "animationKey": "cool-breeze"
+              },
+              "failOutcome": {
+                "text": "Brain freeze! They make funny faces but still open the gate.",
+                "animationKey": "brain-freeze"
+              }
+            },
+            {
+              "id": "scene3-frost-snowcone",
+              "label": "Make them snow cones",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Perfect snow cones! The knights do a happy dance and open the gates.",
+                "animationKey": "snowcone-dance"
+              },
+              "failOutcome": {
+                "text": "HUGE snow cones bonk their helmets! They laugh and share the giant treats.",
+                "animationKey": "giant-snowcone"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "The gates swing open. Inside, the volcano glows with rainbow light!",
+        "nextSceneId": "scene-4"
+      }
+    },
+    {
+      "id": "scene-4",
+      "sceneNumber": 3,
+      "narrationText": "A sad Marzipan Dragon sits by the cracked Candy Core Crystal. 'I didn't mean to break it!'",
+      "sceneImageUrl": "/images/scenes/candy-core.png",
+      "leadCharacterId": "spark-wizard",
+      "characterTurns": [
+        {
+          "characterId": "spark-wizard",
+          "promptText": "The crystal is cracked!",
+          "choices": [
+            {
+              "id": "scene4-spark-fix",
+              "label": "Seal it with magic",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Magic wraps the crystal like a candy ribbon! The crack seals perfectly.",
+                "animationKey": "crystal-seal"
+              },
+              "failOutcome": {
+                "text": "The spell makes candy sprinkles! The dragon catches them to patch the crack.",
+                "animationKey": "sprinkle-patch"
+              }
+            },
+            {
+              "id": "scene4-spark-comfort",
+              "label": "Hug the dragon first",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The dragon feels better and helps with the repair! Teamwork!",
+                "animationKey": "dragon-friend"
+              },
+              "failOutcome": {
+                "text": "Spark makes a silly face! The dragon's happy tears help seal the crack.",
+                "animationKey": "happy-tears"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "frost-wizard",
+          "promptText": "Hot caramel is bubbling!",
+          "choices": [
+            {
+              "id": "scene4-frost-breath",
+              "label": "Cool the caramel",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The bubbles turn into gentle caramel clouds. Safe!",
+                "animationKey": "cool-caramel"
+              },
+              "failOutcome": {
+                "text": "Oops — caramel apples! Everyone gets a tasty snack.",
+                "animationKey": "caramel-apples"
+              }
+            },
+            {
+              "id": "scene4-frost-hug",
+              "label": "Give a cool dragon hug",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The dragon smiles at the refreshing hug. 'You're so nice and cool!'",
+                "animationKey": "dragon-hug"
+              },
+              "failOutcome": {
+                "text": "The hug is SO cold the dragon shivers, then laughs and warms everyone up!",
+                "animationKey": "shiver-laugh"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "bloom-wizard",
+          "promptText": "Hold the crystal together!",
+          "choices": [
+            {
+              "id": "scene4-bloom-vines",
+              "label": "Wrap it in vines",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Rainbow vines wrap the crystal in a perfect sparkling net!",
+                "animationKey": "crystal-web"
+              },
+              "failOutcome": {
+                "text": "The vines are loose, but the dragon sneezes a sugar cloud that tightens them!",
+                "animationKey": "sneeze-fix"
+              }
+            },
+            {
+              "id": "scene4-bloom-talk",
+              "label": "Ask for a group hug",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Everyone hugs the crystal together and it glows warmly. It worked!",
+                "animationKey": "inspect-guide"
+              },
+              "failOutcome": {
+                "text": "The crystal is confused! The dragon translates: 'Hug harder!' And it works!",
+                "animationKey": "slide-button"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "The Candy Core Crystal is fixed! The dragon smiles and the volcano rumbles happily.",
+        "nextSceneId": "scene-5",
+        "rewards": [
+          {
+            "type": "item",
+            "id": "dragon-scale",
+            "name": "Dragon's Thank-You Scale",
+            "imageUrl": "/images/rewards/dragon-scale.png"
+          }
+        ]
+      }
+    },
+    {
+      "id": "scene-5",
+      "sceneNumber": 4,
+      "narrationText": "The volcano bursts — with confetti! Chocolate fountains rise and candy creatures cheer!",
+      "sceneImageUrl": "/images/scenes/candy-festival.png",
+      "leadCharacterId": "bloom-wizard",
+      "characterTurns": [
+        {
+          "characterId": "bloom-wizard",
+          "promptText": "Party time!",
+          "choices": [
+            {
+              "id": "scene5-bloom-swing",
+              "label": "Grow a flower swing",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "The biggest flower swing ever! Gummy bears line up for turns.",
+                "animationKey": "giant-swing"
+              },
+              "failOutcome": {
+                "text": "The swing is SO bouncy everyone flies! But marshmallow clouds catch them.",
+                "animationKey": "bouncy-fly"
+              }
+            },
+            {
+              "id": "scene5-bloom-dance",
+              "label": "Start a dance party",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "The wizard wiggle spreads to every candy creature! Everyone's dancing!",
+                "animationKey": "dance-party"
+              },
+              "failOutcome": {
+                "text": "Bloom invents a silly new dance! It becomes the most popular dance in the valley.",
+                "animationKey": "silly-dance"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "spark-wizard",
+          "promptText": "Celebrate!",
+          "choices": [
+            {
+              "id": "scene5-spark-bow",
+              "label": "Take a fancy bow",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "Sparkles shoot from the wand mid-bow! The crowd cheers!",
+                "animationKey": "fancy-bow"
+              },
+              "failOutcome": {
+                "text": "Spark's hat falls off! The dragon catches it with a giggle.",
+                "animationKey": "hat-catch"
+              }
+            },
+            {
+              "id": "scene5-spark-fireworks",
+              "label": "Make fireworks",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "Candy-colored fireworks fill the sky! Everyone oohs and aahs.",
+                "animationKey": "candy-fireworks"
+              },
+              "failOutcome": {
+                "text": "The fireworks turn into popcorn! Delicious popcorn rains on everyone.",
+                "animationKey": "popcorn-rain"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "frost-wizard",
+          "promptText": "One last magic!",
+          "choices": [
+            {
+              "id": "scene5-frost-sculpture",
+              "label": "Make an ice statue",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "A beautiful ice statue of all three wizards! Everyone admires it.",
+                "animationKey": "ice-sculpture"
+              },
+              "failOutcome": {
+                "text": "The statue looks blobby, but the dragon calls it 'abstract art!'",
+                "animationKey": "blobby-art"
+              }
+            },
+            {
+              "id": "scene5-frost-treats",
+              "label": "Snow cones for all",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "Snow cones for everyone! The candy creatures love them.",
+                "animationKey": "snowcone-party"
+              },
+              "failOutcome": {
+                "text": "SO many snow cones appear — friendly snow cone fight! Splat! Splat!",
+                "animationKey": "snowcone-fight"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "The dragon crowns you with gumdrop halos! 'You saved Sweet-Top Valley!'",
+        "nextSceneId": null
+      }
+    }
+  ],
+  "endings": [
+    {
+      "id": "ending-legendary",
+      "tier": "legendary",
+      "title": "Legendary Candy Heroes!",
+      "narrationText": "The Marzipan Dragon declares today 'Wizard Heroes Day!' Fireworks made of cotton candy light the sky. The whole valley throws the biggest party ever seen — and you're the guests of honor! Whenever sweetness turns to chaos again, the three legendary wizards will be ready!",
+      "rewards": [
+        {
+          "type": "badge",
+          "id": "legendary-heroes-badge",
+          "name": "Legendary Heroes Badge",
+          "imageUrl": "/images/rewards/legendary-badge.png"
+        },
+        {
+          "type": "item",
+          "id": "wand-of-sprinkles",
+          "name": "Wand of Endless Sprinkles",
+          "imageUrl": "/images/rewards/wand-sprinkles.png"
+        },
+        {
+          "type": "item",
+          "id": "frosty-medal",
+          "name": "Frosty Medal of Coolness",
+          "imageUrl": "/images/rewards/frosty-medal.png"
+        },
+        {
+          "type": "item",
+          "id": "bloom-crown",
+          "name": "Bloom's Flower Crown",
+          "imageUrl": "/images/rewards/bloom-crown.png"
+        }
+      ]
+    },
+    {
+      "id": "ending-great",
+      "tier": "great",
+      "title": "Great Job, Wizards!",
+      "narrationText": "The Marzipan Dragon gives you big candy hugs! The volcano is safe, and Sweet-Top Valley can relax again. The candy creatures wave goodbye as you head home, heroes of the day! They'll never forget what you did.",
+      "rewards": [
+        {
+          "type": "badge",
+          "id": "great-wizards-badge",
+          "name": "Great Wizards Badge",
+          "imageUrl": "/images/rewards/great-badge.png"
+        },
+        {
+          "type": "item",
+          "id": "candy-medal",
+          "name": "Candy Medal of Teamwork",
+          "imageUrl": "/images/rewards/candy-medal.png"
+        }
+      ]
+    },
+    {
+      "id": "ending-good",
+      "tier": "good",
+      "title": "You Saved the Day!",
+      "narrationText": "The Candy Volcano is calm again! It was a bumpy adventure with lots of silly moments, but you did it together. The Marzipan Dragon waves goodbye with a smile. Sweet-Top Valley is safe — and that's what matters!",
+      "rewards": [
+        {
+          "type": "badge",
+          "id": "volcano-savers-badge",
+          "name": "Volcano Savers Badge",
+          "imageUrl": "/images/rewards/savers-badge.png"
+        }
+      ]
+    }
+  ]
 }

@@ -1,0 +1,687 @@
+{
+  "id": "dragon-knight-rescue",
+  "title": "The Dragon Knight Rescue",
+  "description": "A baby dragon is lost in the Stormy Peaks! Can three brave knights find her before the thunderclouds roll in?",
+  "preview": {
+    "tagline": "Can you rescue the lost baby dragon before the big storm arrives?",
+    "themes": ["dragons", "knights", "rescue", "friendship", "storm"],
+    "estimatedMinutes": 15,
+    "previewImageUrl": "/images/adventures/dragon-knight-preview.png"
+  },
+  "prologue": {
+    "worldIntro": "Welcome to the Kingdom of Brightshield, where brave knights protect everyone — including the friendly dragons who live in the mountains! Dragons and knights are best friends here.",
+    "characterIntros": [
+      {
+        "characterId": "shield-knight",
+        "introText": "Shield Knight is super brave and loves to protect friends! Shield Knight carries a magical golden shield that can block anything."
+      },
+      {
+        "characterId": "swift-knight",
+        "introText": "Swift Knight is fast and clever! Swift Knight can run like the wind and always finds the quickest path."
+      },
+      {
+        "characterId": "kind-knight",
+        "introText": "Kind Knight has the biggest heart in the kingdom! Kind Knight can calm scared creatures and make friends with anyone."
+      }
+    ],
+    "missionBrief": "Oh no! Ember the baby dragon wandered off and got lost in the Stormy Peaks! A big thunderstorm is coming. The three knights must find Ember and bring her home safe!"
+  },
+  "characters": [
+    {
+      "id": "shield-knight",
+      "name": "Shield Knight",
+      "description": "A brave knight with a magical golden shield that blocks anything",
+      "imageUrl": "/images/characters/shield-knight.png"
+    },
+    {
+      "id": "swift-knight",
+      "name": "Swift Knight",
+      "description": "A fast knight who runs like the wind and finds the quickest paths",
+      "imageUrl": "/images/characters/swift-knight.png"
+    },
+    {
+      "id": "kind-knight",
+      "name": "Kind Knight",
+      "description": "A gentle knight who calms scared creatures and makes friends easily",
+      "imageUrl": "/images/characters/kind-knight.png"
+    }
+  ],
+  "scoring": {
+    "thresholds": [
+      { "minSuccesses": 12, "endingId": "ending-legendary" },
+      { "minSuccesses": 8, "endingId": "ending-great" },
+      { "minSuccesses": 0, "endingId": "ending-good" }
+    ]
+  },
+  "scenes": [
+    {
+      "id": "scene-1",
+      "sceneNumber": 0,
+      "narrationText": "Dark clouds gather over the Stormy Peaks. You hear a tiny 'SQUEAK!' echo from the mountains. That's Ember!",
+      "sceneImageUrl": "/images/scenes/stormy-peaks.png",
+      "leadCharacterId": "swift-knight",
+      "characterTurns": [
+        {
+          "characterId": "swift-knight",
+          "promptText": "Which path to take?",
+          "choices": [
+            {
+              "id": "scene1-swift-scout",
+              "label": "Run ahead to scout",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Zooming up the trail! A pawprint in the mud shows which way Ember went.",
+                "animationKey": "speed-run"
+              },
+              "failOutcome": {
+                "text": "Tripped on a rock! But look — Ember's pawprint is right there in the mud!",
+                "animationKey": "trip-find"
+              }
+            },
+            {
+              "id": "scene1-swift-listen",
+              "label": "Listen for squeaks",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Ears perked! Another tiny squeak comes from the left path. That way!",
+                "animationKey": "listen-success"
+              },
+              "failOutcome": {
+                "text": "The wind is loud! But a friendly owl hoots and points with its wing. Thanks, owl!",
+                "animationKey": "owl-help"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "shield-knight",
+          "promptText": "Rocks are tumbling down!",
+          "choices": [
+            {
+              "id": "scene1-shield-block",
+              "label": "Block with shield",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The golden shield glows! Rocks bounce off harmlessly. Path clear!",
+                "animationKey": "shield-block"
+              },
+              "failOutcome": {
+                "text": "The shield bonks a rock back — it breaks open and has sparkly crystals inside! Pretty!",
+                "animationKey": "crystal-bonk"
+              }
+            },
+            {
+              "id": "scene1-shield-push",
+              "label": "Push everyone to safety",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Everyone dives behind a big boulder just in time! Safe and sound.",
+                "animationKey": "dive-safe"
+              },
+              "failOutcome": {
+                "text": "Oops, everyone lands in a pile! But the rocks miss. Group hug!",
+                "animationKey": "pile-hug"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "kind-knight",
+          "promptText": "A scared bunny blocks the path!",
+          "choices": [
+            {
+              "id": "scene1-kind-calm",
+              "label": "Calm the bunny",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Gentle words work! The bunny hops aside and shows a shortcut through the bushes.",
+                "animationKey": "bunny-friend"
+              },
+              "failOutcome": {
+                "text": "The bunny is still nervous but hops along as a guide! New friend!",
+                "animationKey": "bunny-follow"
+              }
+            },
+            {
+              "id": "scene1-kind-carrot",
+              "label": "Offer a carrot snack",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The bunny munches happily and hops aside. 'Thank you!' it seems to say.",
+                "animationKey": "carrot-munch"
+              },
+              "failOutcome": {
+                "text": "The carrot rolls away and the bunny chases it — path clear! Silly bunny.",
+                "animationKey": "carrot-chase"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "The knights find the mountain trail! Thunder rumbles in the distance.",
+        "nextSceneId": "scene-2"
+      }
+    },
+    {
+      "id": "scene-2",
+      "sceneNumber": 1,
+      "narrationText": "A wobbly rope bridge crosses a deep canyon. The wind is getting stronger! SQUEAK! Ember sounds closer!",
+      "sceneImageUrl": "/images/scenes/rope-bridge.png",
+      "leadCharacterId": "shield-knight",
+      "characterTurns": [
+        {
+          "characterId": "shield-knight",
+          "promptText": "The bridge is swaying!",
+          "choices": [
+            {
+              "id": "scene2-shield-steady",
+              "label": "Hold the ropes steady",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Strong arms hold the ropes tight! The bridge stops swinging. Safe to cross!",
+                "animationKey": "rope-steady"
+              },
+              "failOutcome": {
+                "text": "The ropes wiggle free! But the bridge swings into a fun hammock shape. Wheee!",
+                "animationKey": "hammock-swing"
+              }
+            },
+            {
+              "id": "scene2-shield-first",
+              "label": "Go first to test it",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Brave steps across! The bridge holds. 'It's safe!' Shield Knight waves.",
+                "animationKey": "brave-cross"
+              },
+              "failOutcome": {
+                "text": "One board breaks! But Shield Knight grabs the rope and swings to the other side. Cool!",
+                "animationKey": "rope-swing"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "swift-knight",
+          "promptText": "Get everyone across fast!",
+          "choices": [
+            {
+              "id": "scene2-swift-dash",
+              "label": "Dash across quickly",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Zoom! Across before the wind even notices. 'Your turn!'",
+                "animationKey": "speed-cross"
+              },
+              "failOutcome": {
+                "text": "So fast the bridge bounces! Everyone bounces across like a trampoline. Boing!",
+                "animationKey": "bounce-cross"
+              }
+            },
+            {
+              "id": "scene2-swift-rope",
+              "label": "Tie a safety rope",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Quick fingers tie a rope between everyone. Linked and safe!",
+                "animationKey": "rope-link"
+              },
+              "failOutcome": {
+                "text": "The knot is silly-looking but holds tight! Fashion doesn't matter in rescues.",
+                "animationKey": "silly-knot"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "kind-knight",
+          "promptText": "Someone's scared to cross!",
+          "choices": [
+            {
+              "id": "scene2-kind-encourage",
+              "label": "Give encouragement",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "'You can do it!' Works perfectly. Everyone crosses with big smiles.",
+                "animationKey": "cheer-cross"
+              },
+              "failOutcome": {
+                "text": "Kind Knight holds hands with the scared one. Slower, but together!",
+                "animationKey": "hand-hold"
+              }
+            },
+            {
+              "id": "scene2-kind-song",
+              "label": "Sing a brave song",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The silly brave song makes everyone laugh and forget to be scared!",
+                "animationKey": "song-brave"
+              },
+              "failOutcome": {
+                "text": "The song is off-key but SO funny everyone giggles all the way across!",
+                "animationKey": "giggle-cross"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "Across the canyon! A shiny feather floats down as a reward.",
+        "nextSceneId": "scene-3",
+        "rewards": [
+          {
+            "type": "item",
+            "id": "phoenix-feather",
+            "name": "Phoenix Feather of Courage",
+            "imageUrl": "/images/rewards/phoenix-feather.png"
+          }
+        ]
+      }
+    },
+    {
+      "id": "scene-3",
+      "sceneNumber": 2,
+      "narrationText": "A grumpy Mountain Troll sits on the only path! 'NO PASS! Me napping!' But Ember's squeaks are just beyond!",
+      "sceneImageUrl": "/images/scenes/grumpy-troll.png",
+      "leadCharacterId": "kind-knight",
+      "characterTurns": [
+        {
+          "characterId": "kind-knight",
+          "promptText": "The troll looks sleepy!",
+          "choices": [
+            {
+              "id": "scene3-kind-lullaby",
+              "label": "Sing a lullaby",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The soft song works! The troll snores happily and rolls aside.",
+                "animationKey": "troll-sleep"
+              },
+              "failOutcome": {
+                "text": "The troll says the singing is bad but SO bad it's funny. It laughs and moves.",
+                "animationKey": "troll-laugh"
+              }
+            },
+            {
+              "id": "scene3-kind-pillow",
+              "label": "Offer a soft pillow",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The troll hugs the pillow and curls up happily. 'Okay, you pass.'",
+                "animationKey": "pillow-hug"
+              },
+              "failOutcome": {
+                "text": "The pillow is too small! But the troll uses it as an eye mask. Good enough!",
+                "animationKey": "eye-mask"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "swift-knight",
+          "promptText": "Maybe sneak around?",
+          "choices": [
+            {
+              "id": "scene3-swift-sneak",
+              "label": "Tiptoe past quietly",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Silent steps! Past the troll without a sound. Ninja knights!",
+                "animationKey": "ninja-sneak"
+              },
+              "failOutcome": {
+                "text": "SNAP! A twig breaks! But the troll just mumbles 'five more minutes' and stays asleep.",
+                "animationKey": "twig-snap"
+              }
+            },
+            {
+              "id": "scene3-swift-distract",
+              "label": "Throw a pebble",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The pebble bounces away! The troll turns to look and everyone slips past.",
+                "animationKey": "pebble-trick"
+              },
+              "failOutcome": {
+                "text": "The pebble bonks the troll's nose! 'Ow! Pesky flies!' It swats the air while everyone runs past.",
+                "animationKey": "nose-bonk"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "shield-knight",
+          "promptText": "What if the troll wakes up?",
+          "choices": [
+            {
+              "id": "scene3-shield-ready",
+              "label": "Shield ready just in case",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Shield up! But the troll just yawns and waves everyone through. False alarm!",
+                "animationKey": "shield-ready"
+              },
+              "failOutcome": {
+                "text": "The shiny shield reflects sunlight into the troll's eyes! It covers its face and everyone passes.",
+                "animationKey": "shine-blind"
+              }
+            },
+            {
+              "id": "scene3-shield-snack",
+              "label": "Leave a thank-you snack",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "An apple by the troll's hand! It smiles in its sleep. Kindness works!",
+                "animationKey": "apple-gift"
+              },
+              "failOutcome": {
+                "text": "The snack rolls and bonks the troll! But it eats it happily. 'Mmm, okay, go.'",
+                "animationKey": "snack-bonk"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "Past the troll! You can see a cave ahead — and tiny dragon footprints!",
+        "nextSceneId": "scene-4"
+      }
+    },
+    {
+      "id": "scene-4",
+      "sceneNumber": 3,
+      "narrationText": "Inside the cave, baby Ember shivers on a ledge! She's scared of the thunder. Lightning flashes outside!",
+      "sceneImageUrl": "/images/scenes/cave-ledge.png",
+      "leadCharacterId": "kind-knight",
+      "characterTurns": [
+        {
+          "characterId": "kind-knight",
+          "promptText": "Ember looks so scared!",
+          "choices": [
+            {
+              "id": "scene4-kind-gentle",
+              "label": "Speak gently to her",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Soft words calm Ember. Her shivering stops. 'It's okay, we're here.'",
+                "animationKey": "gentle-calm"
+              },
+              "failOutcome": {
+                "text": "Ember squeaks nervously but sees the kind face and waddles a little closer.",
+                "animationKey": "waddle-closer"
+              }
+            },
+            {
+              "id": "scene4-kind-hug",
+              "label": "Offer a warm hug",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The warmest hug! Ember nuzzles in and stops shaking. Safe now.",
+                "animationKey": "dragon-hug"
+              },
+              "failOutcome": {
+                "text": "Ember sneezes a tiny flame from nervousness! But then giggles and accepts the hug.",
+                "animationKey": "sneeze-flame"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "shield-knight",
+          "promptText": "Lightning is scary!",
+          "choices": [
+            {
+              "id": "scene4-shield-cover",
+              "label": "Shield the bright flashes",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The golden shield blocks the scary lightning light! Ember relaxes.",
+                "animationKey": "shield-light"
+              },
+              "failOutcome": {
+                "text": "The shield reflects lightning into rainbow sparkles! Ember thinks it's pretty!",
+                "animationKey": "rainbow-reflect"
+              }
+            },
+            {
+              "id": "scene4-shield-umbrella",
+              "label": "Make a cozy fort",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The shield becomes a roof! A cozy little fort. Ember feels protected.",
+                "animationKey": "shield-fort"
+              },
+              "failOutcome": {
+                "text": "The fort is lopsided but Ember thinks it's the best fort ever!",
+                "animationKey": "lopsided-fort"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "swift-knight",
+          "promptText": "We need to get down!",
+          "choices": [
+            {
+              "id": "scene4-swift-path",
+              "label": "Find a safe path",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Quick eyes spot stepping stones down the ledge. Perfect path!",
+                "animationKey": "spot-path"
+              },
+              "failOutcome": {
+                "text": "The path is slippery! But everyone slides down like a fun slide. Wheee!",
+                "animationKey": "slide-down"
+              }
+            },
+            {
+              "id": "scene4-swift-catch",
+              "label": "Ready to catch Ember",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Arms open wide! Ember hops down and lands perfectly. Caught!",
+                "animationKey": "perfect-catch"
+              },
+              "failOutcome": {
+                "text": "Ember jumps too far and everyone tumbles into a giggly pile!",
+                "animationKey": "tumble-pile"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "You found Ember! She nuzzles everyone happily. Time to get home!",
+        "nextSceneId": "scene-5",
+        "rewards": [
+          {
+            "type": "item",
+            "id": "ember-scale",
+            "name": "Ember's Friendship Scale",
+            "imageUrl": "/images/rewards/ember-scale.png"
+          }
+        ]
+      }
+    },
+    {
+      "id": "scene-5",
+      "sceneNumber": 4,
+      "narrationText": "The storm clears! A rainbow appears over the kingdom. Ember's mama dragon swoops down with happy tears!",
+      "sceneImageUrl": "/images/scenes/rainbow-reunion.png",
+      "leadCharacterId": "shield-knight",
+      "characterTurns": [
+        {
+          "characterId": "shield-knight",
+          "promptText": "Mama dragon is here!",
+          "choices": [
+            {
+              "id": "scene5-shield-bow",
+              "label": "Take a knight's bow",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "The most noble bow! Mama dragon bows back with respect.",
+                "animationKey": "noble-bow"
+              },
+              "failOutcome": {
+                "text": "The helmet falls off mid-bow! Ember catches it and puts it back. Giggles!",
+                "animationKey": "helmet-catch"
+              }
+            },
+            {
+              "id": "scene5-shield-wave",
+              "label": "Wave the shield proudly",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "The golden shield catches the rainbow light! Everyone oohs and aahs!",
+                "animationKey": "rainbow-shield"
+              },
+              "failOutcome": {
+                "text": "The shield is heavy and wobbles! Ember helps hold it up. Team effort!",
+                "animationKey": "wobble-help"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "swift-knight",
+          "promptText": "Celebrate!",
+          "choices": [
+            {
+              "id": "scene5-swift-race",
+              "label": "Victory lap around everyone",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "The fastest, happiest lap ever! Everyone cheers!",
+                "animationKey": "victory-lap"
+              },
+              "failOutcome": {
+                "text": "So excited, trips over own feet! But turns it into a somersault. Ta-da!",
+                "animationKey": "somersault"
+              }
+            },
+            {
+              "id": "scene5-swift-fly",
+              "label": "Ask for a dragon ride",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "Mama dragon gives everyone a ride through the rainbow! Best day ever!",
+                "animationKey": "dragon-ride"
+              },
+              "failOutcome": {
+                "text": "Mama dragon is tired but Ember gives tiny piggyback rides. So cute!",
+                "animationKey": "tiny-ride"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "kind-knight",
+          "promptText": "Say goodbye to Ember!",
+          "choices": [
+            {
+              "id": "scene5-kind-hug",
+              "label": "One more big hug",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "The best goodbye hug! Ember squeaks 'I'll visit you!'",
+                "animationKey": "goodbye-hug"
+              },
+              "failOutcome": {
+                "text": "The hug is so tight Ember squeaks! But happy squeaks. Friends forever!",
+                "animationKey": "squeeze-squeak"
+              }
+            },
+            {
+              "id": "scene5-kind-promise",
+              "label": "Promise to visit",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "Pinky promise with a tiny dragon claw. Best friends forever!",
+                "animationKey": "pinky-promise"
+              },
+              "failOutcome": {
+                "text": "Ember doesn't know what a pinky promise is but puts her whole paw in. Even better!",
+                "animationKey": "paw-promise"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "Mama dragon roars happily and the whole kingdom hears! 'The knights saved Ember!'",
+        "nextSceneId": null
+      }
+    }
+  ],
+  "endings": [
+    {
+      "id": "ending-legendary",
+      "tier": "legendary",
+      "title": "Legendary Dragon Knights!",
+      "narrationText": "The King and Queen hold a grand feast in your honor! Mama dragon breathes fireworks into the sky. Ember gets a tiny knight helmet of her own. From this day on, you are the official Dragon Knights of Brightshield — called upon whenever a dragon needs help!",
+      "rewards": [
+        {
+          "type": "badge",
+          "id": "dragon-knight-badge",
+          "name": "Legendary Dragon Knight Badge",
+          "imageUrl": "/images/rewards/dragon-knight-badge.png"
+        },
+        {
+          "type": "item",
+          "id": "golden-sword",
+          "name": "Golden Sword of Friendship",
+          "imageUrl": "/images/rewards/golden-sword.png"
+        },
+        {
+          "type": "item",
+          "id": "swift-boots",
+          "name": "Boots of Super Speed",
+          "imageUrl": "/images/rewards/swift-boots.png"
+        },
+        {
+          "type": "item",
+          "id": "kind-cape",
+          "name": "Cape of Kindness",
+          "imageUrl": "/images/rewards/kind-cape.png"
+        }
+      ]
+    },
+    {
+      "id": "ending-great",
+      "tier": "great",
+      "title": "Brave Knights!",
+      "narrationText": "Mama dragon gives you all warm dragon hugs! The kingdom celebrates with a party. Ember waves from her mama's back as they fly home. You'll always be her favorite knights!",
+      "rewards": [
+        {
+          "type": "badge",
+          "id": "brave-knight-badge",
+          "name": "Brave Knights Badge",
+          "imageUrl": "/images/rewards/brave-badge.png"
+        },
+        {
+          "type": "item",
+          "id": "dragon-friend-medal",
+          "name": "Dragon Friend Medal",
+          "imageUrl": "/images/rewards/dragon-medal.png"
+        }
+      ]
+    },
+    {
+      "id": "ending-good",
+      "tier": "good",
+      "title": "You Saved Ember!",
+      "narrationText": "Ember is home safe! It was a tricky adventure with lots of bumps and giggles, but you never gave up. Mama dragon smiles and promises Ember will come visit soon. Heroes!",
+      "rewards": [
+        {
+          "type": "badge",
+          "id": "rescue-badge",
+          "name": "Dragon Rescue Badge",
+          "imageUrl": "/images/rewards/rescue-badge.png"
+        }
+      ]
+    }
+  ]
+}

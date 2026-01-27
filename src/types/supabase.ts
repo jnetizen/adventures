@@ -19,37 +19,55 @@ export interface Database {
           id: string
           room_code: string
           current_scene: number
-          phase: "waiting" | "playing" | "paused"
+          phase: "setup" | "prologue" | "playing" | "complete" | "paused"
           created_at: string
           updated_at: string
           adventure_id: string | null
-          character_assignments: Json
+          players: Json
           current_character_turn_index: number
           scene_choices: Json
+          success_count: number
+          feedback_rating: number | null
+          feedback_positive: string | null
+          feedback_negative: string | null
+          feedback_notes: string | null
+          feedback_submitted_at: string | null
         }
         Insert: {
           id?: string
           room_code: string
           current_scene?: number
-          phase?: "waiting" | "playing" | "paused"
+          phase?: "setup" | "prologue" | "playing" | "complete" | "paused"
           created_at?: string
           updated_at?: string
           adventure_id?: string | null
-          character_assignments?: Json
+          players?: Json
           current_character_turn_index?: number
           scene_choices?: Json
+          success_count?: number
+          feedback_rating?: number | null
+          feedback_positive?: string | null
+          feedback_negative?: string | null
+          feedback_notes?: string | null
+          feedback_submitted_at?: string | null
         }
         Update: {
           id?: string
           room_code?: string
           current_scene?: number
-          phase?: "waiting" | "playing" | "paused"
+          phase?: "setup" | "prologue" | "playing" | "complete" | "paused"
           created_at?: string
           updated_at?: string
           adventure_id?: string | null
-          character_assignments?: Json
+          players?: Json
           current_character_turn_index?: number
           scene_choices?: Json
+          success_count?: number
+          feedback_rating?: number | null
+          feedback_positive?: string | null
+          feedback_negative?: string | null
+          feedback_notes?: string | null
+          feedback_submitted_at?: string | null
         }
       }
     }
