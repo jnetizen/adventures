@@ -4,6 +4,7 @@ import { findSessionByCode, syncPendingOperations } from '../lib/gameState';
 import { saveSessionToStorage, getSessionFromStorage, clearSessionFromStorage } from '../lib/errorRecovery';
 import { isOnline, onOnlineStatusChange, getPendingOperations } from '../lib/offlineStorage';
 import { loadAdventure, getCurrentScene, allCharactersActed, calculateEnding } from '../lib/adventures';
+import { debugLog } from '../lib/debugLog';
 import EndingPage from './EndingPage';
 import RewardCelebration from '../components/RewardCelebration';
 import DiceRoller from '../components/DiceRoller';
@@ -192,6 +193,7 @@ export default function PlayPage() {
     !!adventure;
 
   const allActed = currentScene && session && allCharactersActed(currentScene, session);
+  const isLastScene = !!currentScene && !currentScene.outcome?.nextSceneId;
   const sceneRewards = allActed && currentScene?.outcome?.rewards;
   const showSceneCelebration = !!(
     !adventureEnded &&
@@ -202,12 +204,40 @@ export default function PlayPage() {
   );
   const ending = adventure ? calculateEnding(adventure, session?.success_count ?? 0) : null;
   const endingRewards = ending?.rewards;
+  // Match DMPage logic: show ending celebration when on last scene and all acted
+  // Use isLastScene instead of adventureEnded to catch the moment before phase changes
   const showEndingCelebration = !!(
-    adventureEnded &&
+    allActed &&
+    isLastScene &&
     endingRewards &&
     endingRewards.length > 0 &&
-    !celebratedEnding
+    !celebratedEnding &&
+    !showSceneCelebration // Wait for scene celebration to finish
   );
+
+  // Debug logging for rewards and phase transitions
+  useEffect(() => {
+    debugLog('rewards', 'PlayPage reward state', {
+      allActed,
+      isLastScene,
+      sceneRewards: sceneRewards ? (sceneRewards as unknown[]).length : 0,
+      endingRewards: endingRewards ? endingRewards.length : 0,
+      showSceneCelebration,
+      showEndingCelebration,
+      celebratedSceneIds,
+      celebratedEnding,
+      currentSceneId: currentScene?.id,
+    });
+  }, [allActed, isLastScene, sceneRewards, endingRewards, showSceneCelebration, showEndingCelebration, celebratedSceneIds, celebratedEnding, currentScene?.id]);
+
+  useEffect(() => {
+    debugLog('phase', 'PlayPage session phase', {
+      phase: session?.phase,
+      adventureId: session?.adventure_id,
+      currentScene: session?.current_scene,
+      adventureEnded,
+    });
+  }, [session?.phase, session?.adventure_id, session?.current_scene, adventureEnded]);
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-Batch script to composite all Dragon Knight Rescue scenes.
+Batch script to composite all Dragon Knight Rescue scenes (ARCHIVED - v1).
+
+This script uses the archived compositor_v1 module. The pipeline has pivoted
+to using pre-baked scenes (characters generated directly in scene images).
 
 Runs the compositor for all 5 scenes defined in config/scenes/,
 saving outputs to output/scene_N_final.png.
@@ -40,7 +43,7 @@ def main():
             result = subprocess.run(
                 [
                     sys.executable,
-                    "-m", "src.compositor",
+                    "-m", "src.compositor_v1.compositor",
                     "--config", str(config_path),
                     "--output", str(output_path)
                 ],

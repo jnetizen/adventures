@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Reward } from '../types/adventure';
 import PlaceholderImage from './PlaceholderImage';
 
@@ -11,6 +11,30 @@ function confettiPositions(n: number): { left: string; top: string }[] {
     out.push({ left: `${p * 100}%`, top: `${q * 100}%` });
   }
   return out;
+}
+
+/** Component for a single reward image with error fallback */
+function RewardImage({ reward }: { reward: Reward }) {
+  const [error, setError] = useState(false);
+
+  if (!reward.imageUrl || error) {
+    return (
+      <PlaceholderImage
+        variant="character"
+        label={reward.name}
+        className="w-10 h-10 flex-shrink-0"
+      />
+    );
+  }
+
+  return (
+    <img
+      src={reward.imageUrl}
+      alt={reward.name}
+      className="w-10 h-10 object-contain rounded flex-shrink-0"
+      onError={() => setError(true)}
+    />
+  );
 }
 
 interface RewardCelebrationProps {
@@ -85,19 +109,7 @@ export default function RewardCelebration({ rewards, onClose, variant }: RewardC
                 key={r.id}
                 className="flex items-center gap-3 p-2 rounded-lg bg-amber-50 border border-amber-100"
               >
-                {r.imageUrl ? (
-                  <img
-                    src={r.imageUrl}
-                    alt={r.name}
-                    className="w-10 h-10 object-contain rounded flex-shrink-0"
-                  />
-                ) : (
-                  <PlaceholderImage
-                    variant="character"
-                    label={r.name}
-                    className="w-10 h-10 flex-shrink-0"
-                  />
-                )}
+                <RewardImage reward={r} />
                 <div className="min-w-0 flex-1">
                   <span className="font-semibold text-gray-900">{r.name}</span>
                   {r.type && (

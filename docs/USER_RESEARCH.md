@@ -199,6 +199,32 @@ This document captures user testing sessions, feedback, observations, and patter
 
 ---
 
+## Hypotheses to Test
+
+### H1: First Scene Without Kids (Pending Test - Jan 27, 2026)
+
+**Hypothesis:** The first scene should show the world/setting without the kids in it, introducing the story world first. After the prologue and initial narration, subsequent scenes would include the kid characters. This may create more "magic" in the "that's me!" moment when kids first appear.
+
+**Rationale:**
+- The prologue introduces the world verbally
+- Currently, kids are visible from Scene 1
+- Delaying their visual appearance might let the world description sink in first
+- The reveal of "that's me!" could be more impactful if it happens in Scene 2
+
+**Test Plan:**
+- Run a playtest session on Jan 27, 2026 evening
+- Observe kids' reaction to the current Scene 1 (with kids visible)
+- Note whether they comment on seeing themselves immediately
+- Ask if they felt the world was established before they "entered" it
+
+**Possible Outcomes:**
+- If validated: Update adventure schema to support "intro scene" type without characters, update prompts for Scene 1 to be world-only
+- If not validated: Keep current approach where kids appear from Scene 1
+
+**Status:** Pending user research (testing tonight)
+
+---
+
 ## Quotes Bank
 
 ### Parent Quotes

@@ -27,6 +27,7 @@ export interface Database {
           current_character_turn_index: number
           scene_choices: Json
           success_count: number
+          dice_type: number
           feedback_rating: number | null
           feedback_positive: string | null
           feedback_negative: string | null
@@ -45,6 +46,7 @@ export interface Database {
           current_character_turn_index?: number
           scene_choices?: Json
           success_count?: number
+          dice_type?: number
           feedback_rating?: number | null
           feedback_positive?: string | null
           feedback_negative?: string | null
@@ -63,6 +65,7 @@ export interface Database {
           current_character_turn_index?: number
           scene_choices?: Json
           success_count?: number
+          dice_type?: number
           feedback_rating?: number | null
           feedback_positive?: string | null
           feedback_negative?: string | null

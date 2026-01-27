@@ -1,5 +1,10 @@
 export type GamePhase = "setup" | "prologue" | "playing" | "complete" | "paused";
 
+/** Supported dice types (max value). */
+export type DiceType = 6 | 10 | 12 | 20;
+export const DICE_TYPES: DiceType[] = [6, 10, 12, 20];
+export const DEFAULT_DICE_TYPE: DiceType = 20;
+
 /** Choices made this scene, for batched reveal. */
 export interface SceneChoice {
   characterId: string;
@@ -30,6 +35,8 @@ export interface GameSession {
   scene_choices?: SceneChoice[];
   /** Cumulative successful rolls across all scenes (v2 scoring). */
   success_count?: number;
+  /** Dice type (max value): 6, 10, 12, or 20. Defaults to 20. */
+  dice_type?: DiceType;
   /** Post-session feedback */
   feedback_rating?: number | null;
   feedback_positive?: string | null;

@@ -1,0 +1,459 @@
+# Image Generation Learnings & Prompts
+
+## Overview
+
+This document captures our learnings from manual testing of the Quest Family illustration pipeline. It includes what worked, what didn't, and the final prompts that produce good results.
+
+---
+
+## Key Discoveries
+
+### 1. Complete Scene Generation > Sprite Compositing (For Now)
+
+**What we tried:** Generate sprites separately, generate backgrounds separately, composite them together.
+
+**What happened:** Compositor produced janky results — white halos around characters, floating characters, bad shadows, characters not grounded properly.
+
+**What works better:** Generate complete scenes with characters baked in using Flux Schnell. Use these as the final images OR as "storyboards" to extract poses/positions for later sprite compositing.
+
+---
+
+### 2. Gemini > PuLID for Sprite Sheets
+
+**What we tried:** Flux PuLID for sprite sheet generation with pose descriptions.
+
+**What happened:** PuLID ignores pose instructions. We asked for "arms raised high, arms out for balance, looking up" and got 5 nearly identical standing poses.
+
+**What works better:** Gemini with photo reference. It actually follows pose instructions and gives distinct poses.
+
+| Aspect | PuLID | Gemini |
+|--------|-------|--------|
+| Pose control | ❌ Poor — ignores instructions | ✅ Excellent — follows instructions |
+| 3D Pixar style | ✅ Good | ✅ Good (with prompting) |
+| Face likeness | ✅ Direct injection | ⚠️ Interpreted from photo |
+| Cost | ~$0.02/sheet | Free with Pro / ~$0.02-0.04 API |
+
+---
+
+### 3. "Separately" is the Magic Word for Character Spacing
+
+**What we tried:** 
+- "not overlapping, not touching" — characters still touched
+- "spread apart with clear space" — characters still touched
+- "standing far apart with big gaps" — characters still touched
+- "NOT holding hands" — characters held hands
+
+**What happened:** Flux interprets "celebrating together" as physical togetherness regardless of negative instructions.
+
+**What works:** Add "each separately" early in the prompt:
+- ❌ "Three young knights celebrating on a hilltop..."
+- ✅ "Three young knights **each separately** celebrating on a hilltop..."
+
+---
+
+### 4. Aspect Ratio Matters for Character Spacing
+
+**What we tried:** 1:1 aspect ratio for scenes with 3 characters.
+
+**What happened:** Characters bunched together — not enough horizontal space.
+
+**What works:** 16:9 aspect ratio gives characters room to spread out.
+
+---
+
+### 5. Numbered Pose Lists Don't Work in PuLID
+
+**What we tried:**
+```
+5 poses:
+1. Standing neutral
+2. Arms out wide
+3. Looking up
+4. Arms raised high
+5. Walking forward
+```
+
+**What happened:** PuLID generated too many characters (5+) or ignored the list entirely.
+
+**What works for PuLID:** Simple pose descriptions without numbers. But even then, pose variety is poor.
+
+**What works for Gemini:** Numbered lists work fine. Gemini follows them.
+
+---
+
+### 6. Pose Instructions Create Character Multiplication
+
+**What we tried:** Detailed pose instructions for each character:
+```
+Left: A 5-year-old boy knight... holding up a golden shield triumphantly, cheering pose.
+Center: A 7-year-old boy knight... both arms raised in victory celebration.
+Right: A 3-year-old girl knight... waving up at the mama dragon.
+```
+
+**What happened:** Flux generated 5+ characters instead of 3. The model got confused by the complexity.
+
+**What works:** Remove pose instructions, let Flux decide poses naturally:
+```
+Left: A 5-year-old boy knight with short messy brown hair... wearing silver armor with a RED cape.
+Center: A 7-year-old boy knight... wearing silver armor with a BLUE cape.
+Right: A 3-year-old girl knight... wearing silver armor with a GREEN cape.
+```
+
+---
+
+### 7. Cape Colors Need CAPS Emphasis
+
+**What we tried:** "wearing silver armor with a red cape"
+
+**What happened:** Wrong cape colors — got two red capes when we needed red, blue, green.
+
+**What works:** Capitalize the color: "wearing silver armor with a RED cape"
+
+---
+
+### 8. "Left/Center/Right side of image" for Positioning
+
+**What we tried:** "Left: ...", "Center: ...", "Right: ..."
+
+**What happened:** Inconsistent positioning.
+
+**What works:** Be explicit about image position:
+- "Left side of image: ..."
+- "Center of image: ..."
+- "Right side of image: ..."
+
+---
+
+### 9. Style Consistency: "Pixar-adjacent storybook style"
+
+**What we tried:** Various style descriptions including "children's book illustration", "painterly", "watercolor"
+
+**What happened:** Inconsistent styles between generations.
+
+**What works:** "Pixar-adjacent storybook style, soft painterly rendering" — this phrase consistently produces the 3D-ish animated look we want.
+
+---
+
+### 10. Dragon Positioning Requires Explicit Spatial Language
+
+**What we tried:** "baby dragon curled up on a high rocky ledge inside a cave"
+
+**What happened:** Dragon appeared on the ground next to characters.
+
+**What works:** Emphasize spatial relationship:
+- "standing at the BOTTOM of a cave, looking UP"
+- "baby dragon who is HIGH UP on a rocky ledge near the ceiling"
+- "The baby dragon is ABOVE the children on a high ledge, the children are looking UP at the dragon"
+
+---
+
+## Final Working Prompts
+
+### Complete Scene Prompt Template (Flux Schnell)
+
+**Settings:**
+- Model: black-forest-labs/flux-schnell
+- Aspect ratio: 16:9
+- Output format: png
+
+**Template:**
+```
+Three young knights each separately [ACTION] [LOCATION DESCRIPTION], [ENVIRONMENTAL DETAILS].
+
+Left side of image: A [age]-year-old [boy/girl] knight with [hair description], [eye description], [skin/cheek description], wearing silver armor with a [COLOR] cape.
+
+Center of image: A [age]-year-old [boy/girl] knight with [hair description], [eye description], [skin/cheek description], wearing silver armor with a [COLOR] cape.
+
+Right side of image: A [age]-year-old [boy/girl] knight with [hair description], [eye description], [skin/cheek description], wearing silver armor with a [COLOR] cape.
+
+The three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on [ground surface], [emotion/expression], Pixar-adjacent storybook style, soft painterly rendering, [lighting description], [mood] atmosphere, children's book illustration.
+```
+
+---
+
+### Scene 1: Stormy Peaks (FINAL)
+
+```
+Three young knights each separately standing at the base of a mountain trail, dark purple storm clouds gathering overhead, jagged rocks, a winding path leading upward, distant lightning flash, dramatic mood.
+
+Left side of image: A 5-year-old boy knight with short messy brown hair, big brown eyes, rosy cheeks, wearing silver armor with a RED cape.
+
+Center of image: A 7-year-old boy knight with short brown hair neatly parted, big brown eyes, rosy cheeks, wearing silver armor with a BLUE cape.
+
+Right side of image: A 3-year-old girl knight with shoulder-length wavy reddish-brown hair, big brown eyes, very rosy cheeks, wearing silver armor with a GREEN cape.
+
+The three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on rocky ground, looking brave and determined, Pixar-adjacent storybook style, soft painterly rendering, dramatic lighting, children's book illustration.
+```
+
+---
+
+### Scene 2: Rope Bridge (FINAL)
+
+```
+Three young knights each separately crossing a rickety wooden rope bridge over a misty canyon, stormy sky above, wind-blown clouds swirling below, dramatic depth.
+
+Left side of image: A 5-year-old boy knight with short messy brown hair, big brown eyes, rosy cheeks, wearing silver armor with a RED cape.
+
+Center of image: A 7-year-old boy knight with short brown hair neatly parted, big brown eyes, rosy cheeks, wearing silver armor with a BLUE cape.
+
+Right side of image: A 3-year-old girl knight with shoulder-length wavy reddish-brown hair, big brown eyes, very rosy cheeks, wearing silver armor with a GREEN cape.
+
+The three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on bridge planks, looking brave, Pixar-adjacent storybook style, soft painterly rendering, dramatic atmosphere, children's book illustration.
+```
+
+---
+
+### Scene 3: Crystal Cave (FINAL)
+
+```
+Three young knights each separately exploring inside a magical crystal cave, glowing purple and blue crystals jutting from walls and ceiling, soft bioluminescent light, tiny dragon footprints visible on the ground, sparkles and magical atmosphere.
+
+Left side of image: A 5-year-old boy knight with short messy brown hair, big brown eyes, rosy cheeks, wearing silver armor with a RED cape.
+
+Center of image: A 7-year-old boy knight with short brown hair neatly parted, big brown eyes, rosy cheeks, wearing silver armor with a BLUE cape.
+
+Right side of image: A 3-year-old girl knight with shoulder-length wavy reddish-brown hair, big brown eyes, very rosy cheeks, wearing silver armor with a GREEN cape.
+
+The three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on cave floor, looking curious and amazed, Pixar-adjacent storybook style, soft painterly rendering, magical glowing light, children's book illustration.
+```
+
+---
+
+### Scene 4: Finding Ember (FINAL)
+
+```
+Three young knights each separately standing at the bottom of a cave, looking UP at a cute small orange baby dragon who is HIGH UP on a rocky ledge near the ceiling, lightning visible through cave opening behind them, rain outside, emotional rescue moment.
+
+Left side of image: A 5-year-old boy knight with short messy brown hair, big brown eyes, rosy cheeks, wearing silver armor with a RED cape.
+
+Center of image: A 7-year-old boy knight with short brown hair neatly parted, big brown eyes, rosy cheeks, wearing silver armor with a BLUE cape.
+
+Right side of image: A 3-year-old girl knight with shoulder-length wavy reddish-brown hair, big brown eyes, very rosy cheeks, wearing silver armor with a GREEN cape.
+
+The baby dragon is ABOVE the children on a high ledge, the children are looking UP at the dragon. The three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on cave floor, Pixar-adjacent storybook style, soft painterly rendering, dramatic warm lighting, children's book illustration.
+```
+
+---
+
+### Scene 5: Rainbow Reunion (FINAL)
+
+```
+Three young knights each separately celebrating on a grassy hilltop after a storm, brilliant rainbow arcing across the sky behind them, a large friendly mama dragon flying down from the clouds with happy expression, castle towers in the distant background, golden sunset light breaking through clouds.
+
+Left side of image: A 5-year-old boy knight with short messy brown hair, big brown eyes, rosy cheeks, wearing silver armor with a RED cape.
+
+Center of image: A 7-year-old boy knight with short brown hair neatly parted, big brown eyes, rosy cheeks, wearing silver armor with a BLUE cape.
+
+Right side of image: A 3-year-old girl knight with shoulder-length wavy reddish-brown hair, big brown eyes, very rosy cheeks, wearing silver armor with a GREEN cape.
+
+The three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on grass, celebrating joyfully, Pixar-adjacent storybook style, soft painterly rendering, warm golden lighting, joyful celebration atmosphere, children's book illustration.
+```
+
+---
+
+## Sprite Sheet Prompt (Gemini)
+
+**Platform:** Google Gemini with photo upload
+**Note:** Gemini interprets the face from the photo — not direct injection like PuLID
+
+**Template:**
+```
+Create a character reference sheet of a [age]-year-old [boy/girl] knight, using the face from the uploaded photo. [N] poses on white background:
+
+1. [Pose 1 description]
+2. [Pose 2 description]
+3. [Pose 3 description]
+4. [Pose 4 description]
+5. [Pose 5 description]
+
+[He/She] has [hair description], [eye description], [skin description], wearing silver armor with a [COLOR] cape.
+
+Style: 3D rendered Pixar-adjacent style, soft volumetric lighting, subtle shadows, rounded appealing shapes, the look of a high-end animated movie character, NOT flat illustration.
+```
+
+---
+
+### Green Cape Girl Sprite Sheet (FINAL)
+
+```
+Create a character reference sheet of a 3-year-old girl knight, using the face from the uploaded photo. 6 poses on white background:
+
+1. Standing neutral, arms relaxed at sides, looking forward
+2. Arms stretched OUT WIDE to both sides like balancing on a tightrope
+3. Looking UP at the sky, head tilted back, chin raised
+4. Both arms RAISED HIGH above head, celebrating with joy
+5. Walking forward mid-step, one foot ahead of the other
+6. Hands clasped together, hopeful caring expression
+
+She has shoulder-length wavy reddish-brown hair, big brown eyes, very rosy cheeks, wearing silver armor with a GREEN cape.
+
+Style: 3D rendered Pixar-adjacent style, soft volumetric lighting, subtle shadows, rounded appealing shapes, the look of a high-end animated movie character, NOT flat illustration.
+```
+
+---
+
+### Red Cape Boy Sprite Sheet (Template)
+
+```
+Create a character reference sheet of a 5-year-old boy knight, using the face from the uploaded photo. 6 poses on white background:
+
+1. Standing neutral, arms relaxed at sides, looking forward with determined expression
+2. Arms stretched OUT WIDE to both sides like balancing on a tightrope
+3. Looking UP at the sky, head tilted back, chin raised
+4. Both arms RAISED HIGH above head, celebrating with joy
+5. Walking forward mid-step, one foot ahead of the other
+6. Holding up fists in brave determined pose
+
+He has short messy brown hair, big brown eyes, rosy cheeks, wearing silver armor with a RED cape.
+
+Style: 3D rendered Pixar-adjacent style, soft volumetric lighting, subtle shadows, rounded appealing shapes, the look of a high-end animated movie character, NOT flat illustration.
+```
+
+---
+
+### Blue Cape Boy Sprite Sheet (Template)
+
+```
+Create a character reference sheet of a 7-year-old boy knight, using the face from the uploaded photo. 6 poses on white background:
+
+1. Standing neutral, arms relaxed at sides, looking forward confidently
+2. Arms stretched OUT WIDE to both sides like balancing on a tightrope
+3. Looking UP at the sky, head tilted back, chin raised
+4. Both arms RAISED HIGH above head, celebrating with joy
+5. Walking forward mid-step, one foot ahead of the other
+6. Pointing forward with one arm, leader pose
+
+He has short brown hair neatly parted, big brown eyes, rosy cheeks, wearing silver armor with a BLUE cape.
+
+Style: 3D rendered Pixar-adjacent style, soft volumetric lighting, subtle shadows, rounded appealing shapes, the look of a high-end animated movie character, NOT flat illustration.
+```
+
+---
+
+## Background Generation (NOT YET PERFECTED)
+
+**Status:** We have not finalized the background-without-characters generation process.
+
+**Challenge:** Getting a background that matches the complete scene but without characters is tricky. Options we've considered:
+
+1. **Regenerate with "no people" prompt** — Produces different composition, may not match
+2. **Inpaint to remove characters** — Can leave artifacts
+3. **Describe the scene from the complete image** — Style/composition drift
+
+**Current approach:** For PMF testing, we're using complete scenes (characters baked in). Background-only generation is a future optimization for the sprite compositing pipeline.
+
+**Background prompt template (untested):**
+```
+[Same scene description as complete scene], no people, no characters, empty scene with clear ground area in the lower third for characters to be added later, Pixar-adjacent storybook style, soft painterly rendering, [lighting], children's book illustration.
+```
+
+---
+
+## Settings Reference
+
+### Flux Schnell (Complete Scenes & Backgrounds)
+
+| Setting | Value |
+|---------|-------|
+| Model | black-forest-labs/flux-schnell |
+| aspect_ratio | 16:9 |
+| num_outputs | 1 |
+| num_inference_steps | 4 |
+| output_format | png |
+| output_quality | 100 |
+| go_fast | true |
+| megapixels | 1 |
+
+**Cost:** ~$0.003 per image
+**Time:** ~1-2 seconds
+
+---
+
+### Flux PuLID (Sprite Sheets — DEPRECATED, use Gemini instead)
+
+| Setting | Value |
+|---------|-------|
+| Model | bytedance/flux-pulid |
+| width | 1536 |
+| height | 768 |
+| num_steps | 20 |
+| start_step | 0 |
+| guidance_scale | 4 |
+| id_weight | 1 |
+| true_cfg | 1 |
+| max_sequence_length | 512 |
+| output_format | png |
+| output_quality | 100 |
+| negative_prompt | bad quality, worst quality, text, signature, watermark, extra limbs |
+
+**Cost:** ~$0.02 per sheet
+**Time:** ~17 seconds
+
+**Why deprecated:** Poor pose control. Use Gemini instead.
+
+---
+
+### Gemini (Sprite Sheets — RECOMMENDED)
+
+| Setting | Value |
+|---------|-------|
+| Platform | Google Gemini (Pro subscription or API) |
+| Input | Photo upload + text prompt |
+| Output | PNG image |
+
+**Cost:** Free with Pro subscription, ~$0.02-0.04 via API
+**Time:** ~5-10 seconds
+
+**Why recommended:** Excellent pose control, follows numbered pose lists, produces distinct poses.
+
+---
+
+## Prompt Engineering Checklist
+
+When writing scene prompts:
+
+- [ ] Start with "Three young knights **each separately**..."
+- [ ] Use "Left side of image:", "Center of image:", "Right side of image:"
+- [ ] CAPITALIZE cape colors (RED, BLUE, GREEN)
+- [ ] Include "NOT overlapping, NOT touching"
+- [ ] Specify "feet visible on [surface]"
+- [ ] End with "Pixar-adjacent storybook style, soft painterly rendering"
+- [ ] Use 16:9 aspect ratio
+- [ ] Don't include specific pose instructions (let Flux decide)
+
+When writing sprite prompts (Gemini):
+
+- [ ] Upload the child's photo
+- [ ] Use numbered pose list with specific descriptions
+- [ ] Include "using the face from the uploaded photo"
+- [ ] Describe the costume fully (armor, cape color)
+- [ ] End with "3D rendered Pixar-adjacent style, NOT flat illustration"
+- [ ] Request "white background"
+
+---
+
+## Failed Approaches (For Reference)
+
+### Things that didn't work:
+
+1. **Detailed pose instructions in Flux scenes** — Creates too many characters
+2. **"NOT holding hands"** — Model ignores negative pose instructions
+3. **1:1 aspect ratio for 3 characters** — Too cramped
+4. **PuLID numbered pose lists** — Ignores them completely
+5. **PuLID pose descriptions** — Produces similar poses regardless
+6. **Lowercase cape colors** — Gets colors wrong
+7. **"celebrating together"** — Makes characters touch/hold hands
+
+### Things that worked:
+
+1. **"each separately"** — Key phrase for character spacing
+2. **16:9 aspect ratio** — Gives room for 3 characters
+3. **Gemini for sprite sheets** — Actually follows pose instructions
+4. **CAPS for colors** — Improves color accuracy
+5. **Explicit spatial language** — "HIGH UP", "ABOVE", "looking UP"
+6. **No pose instructions in Flux** — Let the model decide, get better composition
+
+---
+
+*Last updated: January 27, 2026*
+*Based on manual testing with Dragon Knight Rescue story*

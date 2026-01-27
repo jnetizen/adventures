@@ -5,7 +5,9 @@ import { createSession, startAdventure, startScene, submitCharacterChoice, advan
 import { saveSessionToStorage, getSessionFromStorage, clearSessionFromStorage, formatError } from '../lib/errorRecovery';
 import { isOnline, onOnlineStatusChange, getPendingOperations } from '../lib/offlineStorage';
 import { loadAdventure, getCurrentScene, getCurrentCharacterTurn, getActiveCharacterTurns, getPlayerForCharacter, calculateChoiceOutcome, allCharactersActed, getAdventureList, calculateEnding } from '../lib/adventures';
-import type { GameSession, Player } from '../types/game';
+import { debugLog } from '../lib/debugLog';
+import type { GameSession, Player, DiceType } from '../types/game';
+import { DICE_TYPES, DEFAULT_DICE_TYPE } from '../types/game';
 import type { Adventure, Choice, Character } from '../types/adventure';
 import RoomCode from '../components/RoomCode';
 import ConnectionStatus from '../components/ConnectionStatus';
@@ -30,6 +32,7 @@ export default function DMPage() {
   const [assignmentStep, setAssignmentStep] = useState<'kids' | 'characters'>('kids');
   const [kidNames, setKidNames] = useState<string[]>(['', '']);
   const [playerAssignments, setPlayerAssignments] = useState<Array<{ kidName: string; characterId: string }>>([]);
+  const [selectedDiceType, setSelectedDiceType] = useState<DiceType>(DEFAULT_DICE_TYPE);
   const [loadingAdventure, setLoadingAdventure] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [advancing, setAdvancing] = useState(false);
@@ -88,6 +91,16 @@ export default function DMPage() {
       }
     }
   }, []);
+
+  // Debug logging for phase transitions (called on every render in dev only)
+  debugLog('phase', 'DMPage render', {
+    hasSession: !!session,
+    phase: session?.phase,
+    adventureId: session?.adventure_id,
+    currentScene: session?.current_scene,
+    successCount: session?.success_count,
+    diceType: session?.dice_type,
+  });
 
   // Load adventure when session has adventure_id
   useEffect(() => {
@@ -302,13 +315,13 @@ export default function DMPage() {
     }
 
     setError(null);
-    const { error: startError } = await startAdventure(session.id, adventure.id, players);
+    const { error: startError } = await startAdventure(session.id, adventure.id, players, selectedDiceType);
     if (startError) {
       setError(formatError(startError));
       return;
     }
     setSession((prev) =>
-      prev ? { ...prev, players, adventure_id: adventure.id, phase: 'prologue' } : null
+      prev ? { ...prev, players, adventure_id: adventure.id, phase: 'prologue', dice_type: selectedDiceType } : null
     );
   };
 
@@ -332,8 +345,9 @@ export default function DMPage() {
     }
 
     const roll = parseInt(diceRoll, 10);
-    if (isNaN(roll) || roll < 1 || roll > 20) {
-      setError('Dice roll must be between 1 and 20');
+    const maxRoll = session.dice_type ?? DEFAULT_DICE_TYPE;
+    if (isNaN(roll) || roll < 1 || roll > maxRoll) {
+      setError(`Dice roll must be between 1 and ${maxRoll}`);
       return;
     }
 
@@ -555,6 +569,33 @@ export default function DMPage() {
                     + Add kid
                   </button>
                 )}
+
+                {/* Dice type selector */}
+                <div className="pt-4 border-t border-gray-200">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Dice Type
+                  </label>
+                  <div className="flex gap-2">
+                    {DICE_TYPES.map((dt) => (
+                      <button
+                        key={dt}
+                        type="button"
+                        onClick={() => setSelectedDiceType(dt)}
+                        className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-colors ${
+                          selectedDiceType === dt
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        d{dt}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Choose the dice your family will use for rolls.
+                  </p>
+                </div>
+
                 <button
                   onClick={handleKidsNext}
                   className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
@@ -743,6 +784,19 @@ export default function DMPage() {
     !showSceneCelebration
   );
 
+  // Debug logging for rewards (only when playing)
+  debugLog('rewards', 'DMPage reward state', {
+    allActed,
+    isLastScene,
+    sceneRewards: sceneRewards ? (sceneRewards as unknown[]).length : 0,
+    endingRewards: endingRewards ? endingRewards.length : 0,
+    showSceneCelebration,
+    showEndingCelebration,
+    celebratedSceneIds,
+    celebratedEnding,
+    currentSceneId: currentScene?.id,
+  });
+
   return (
     <>
       {showSceneCelebration && currentScene?.outcome?.rewards && (
@@ -924,13 +978,13 @@ export default function DMPage() {
                     <div className="flex flex-wrap items-end gap-4">
                       <div className="flex-1 min-w-[140px]">
                         <label htmlFor="diceRoll" className="block text-sm font-medium text-gray-700 mb-2">
-                          Dice Roll (1-20)
+                          Dice Roll (1-{session.dice_type ?? DEFAULT_DICE_TYPE})
                         </label>
                         <input
                           id="diceRoll"
                           type="number"
                           min="1"
-                          max="20"
+                          max={session.dice_type ?? DEFAULT_DICE_TYPE}
                           value={diceRoll}
                           onChange={(e) => setDiceRoll(e.target.value)}
                           placeholder="Enter roll"
@@ -938,12 +992,12 @@ export default function DMPage() {
                         />
                       </div>
                       <div className="flex flex-col items-center gap-1">
-                        <span className="text-xs text-gray-500">or roll</span>
+                        <span className="text-xs text-gray-500">or roll d{session.dice_type ?? DEFAULT_DICE_TYPE}</span>
                         <DiceRoller
                           onRoll={(v) => setDiceRoll(String(v))}
                           disabled={submitting}
                           min={1}
-                          max={20}
+                          max={session.dice_type ?? DEFAULT_DICE_TYPE}
                         />
                       </div>
                     </div>

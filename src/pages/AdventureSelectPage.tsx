@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { AdventureListItem } from '../lib/adventures';
 import PlaceholderImage from '../components/PlaceholderImage';
 
@@ -5,6 +6,24 @@ interface AdventureSelectPageProps {
   adventures: AdventureListItem[];
   onSelect: (adventureId: string) => void;
   loading?: boolean;
+}
+
+/** Preview image with error fallback to PlaceholderImage */
+function PreviewImage({ url, title }: { url?: string; title: string }) {
+  const [error, setError] = useState(false);
+
+  if (!url || error) {
+    return <PlaceholderImage variant="scene" label={title} />;
+  }
+
+  return (
+    <img
+      src={url}
+      alt={title}
+      className="w-full h-full object-cover"
+      onError={() => setError(true)}
+    />
+  );
 }
 
 export default function AdventureSelectPage({
@@ -22,15 +41,7 @@ export default function AdventureSelectPage({
             className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden hover:border-amber-400 transition-colors"
           >
             <div className="aspect-video bg-amber-100">
-              {adv.previewImageUrl ? (
-                <img
-                  src={adv.previewImageUrl}
-                  alt={adv.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <PlaceholderImage variant="scene" label={adv.title} />
-              )}
+              <PreviewImage url={adv.previewImageUrl} title={adv.title} />
             </div>
             <div className="p-4 space-y-2">
               <h3 className="font-bold text-gray-900">{adv.title}</h3>

@@ -121,14 +121,15 @@ export async function incrementScene(sessionId: string): Promise<{ error: Error 
 export async function startAdventure(
   sessionId: string,
   adventureId: string,
-  players: Player[]
+  players: Player[],
+  diceType?: number
 ): Promise<{ error: Error | null }> {
   if (!isOnline()) {
     await saveOperationToQueue({
       id: generateOperationId(),
       type: 'startAdventure',
       sessionId,
-      data: { adventureId, players },
+      data: { adventureId, players, diceType },
       timestamp: new Date().toISOString(),
     });
     return { error: null };
@@ -142,6 +143,7 @@ export async function startAdventure(
         players,
         phase: 'prologue',
         success_count: 0,
+        dice_type: diceType ?? 20,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);
@@ -380,7 +382,7 @@ export async function syncPendingOperations(): Promise<{ synced: number; errors:
 
       switch (op.type) {
         case 'startAdventure':
-          result = await startAdventure(op.sessionId, data.adventureId as string, data.players as Player[]);
+          result = await startAdventure(op.sessionId, data.adventureId as string, data.players as Player[], data.diceType as number | undefined);
           break;
         case 'startScene':
           result = await startScene(op.sessionId, data.sceneNumber as number);

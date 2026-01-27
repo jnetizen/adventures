@@ -215,56 +215,58 @@ docs/                   # Documentation
 ├── PRODUCT_VISION.md   # Product goals and vision
 └── QUICK_REFERENCE.md  # Common tasks and file locations
 
-quest-family-illustrations/  # Python compositor for scene images
-├── src/compositor.py        # Main compositing logic
+quest-family-illustrations/  # Illustration pipeline
+├── src/
+│   └── compositor_v1/       # Archived automated compositor
 ├── config/                  # Story templates and scene configs
 │   ├── stories/            # Adventure templates (JSON)
-│   └── scenes/             # Per-scene compositor configs
-├── assets/                  # Source images
-│   ├── backgrounds/        # Scene background images
-│   └── sprites/            # Character sprite sheets
-├── output/                  # Generated composite images (gitignored)
+│   └── scenes/             # Placement configs (v1 reference)
+├── assets/
+│   └── stories/            # Pre-baked scene images (v2)
+│       └── dragon-knight-rescue/
+├── output/                  # Generated images (gitignored)
 ├── tests/                   # Pytest test suite
 └── scripts/                 # Batch processing scripts
 ```
 
 ## Illustration Pipeline
 
-The `quest-family-illustrations/` directory contains a Python-based compositor for generating scene images. It composites character sprites onto background images with proper alpha masking, shadows, and ground alignment.
+The `quest-family-illustrations/` directory contains the illustration pipeline for generating scene images.
 
-### Quick Setup
+> **Status:** Pipeline in transition. Testing a new approach based on manual testing learnings.
+
+### Current Approach (v2)
+
+Based on manual testing, we've pivoted to:
+
+1. **Scene Design:** Generate complete scenes with Flux Schnell (characters baked in)
+2. **Asset Generation:** Generate sprites with Gemini API (better pose control than PuLID)
+3. **Composite:** Manual in Canva for now (produces clean results)
+
+Pre-baked scene images are stored in `assets/stories/{adventure-name}/scenes/`.
+
+### Archived Compositor (v1)
+
+The original automated compositor is archived in `src/compositor_v1/`. It includes:
+- Feathered alpha masking
+- Background-sampled drop shadows
+- Ground alignment
+
+To run (for reference):
 
 ```bash
 cd quest-family-illustrations
-python -m venv .venv
-source .venv/bin/activate   # or: .venv\Scripts\activate on Windows
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-```
-
-### Usage
-
-Composite a scene using a config file:
-
-```bash
-python -m src.compositor \
-    --config config/scenes/scene_1.json \
-    --output output/scene_1_final.png
-```
-
-Or use the batch script to composite all scenes:
-
-```bash
-python scripts/composite_all_scenes.py
+python -m src.compositor_v1.compositor --config config/scenes/scene_1.json --output output/test.png
 ```
 
 ### Documentation
 
-See [quest-family-illustrations/README.md](quest-family-illustrations/README.md) for detailed documentation on:
-- Character placement configuration
-- Pose index reference
-- Compositor behavior (alpha masking, shadows, ground alignment)
-- Story templates and scene configs
-- Running tests
+See [quest-family-illustrations/README.md](quest-family-illustrations/README.md) for:
+- New pipeline approach details
+- Asset storage structure
+- Archived compositor usage and learnings
 
 ## Documentation
 
@@ -277,6 +279,7 @@ Comprehensive documentation is available in the `docs/` directory:
 - **[CONSTRAINTS.md](docs/CONSTRAINTS.md)**: Technical and product constraints
 - **[PRODUCT_VISION.md](docs/PRODUCT_VISION.md)**: Product goals and roadmap
 - **[QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md)**: Common tasks and troubleshooting
+- **[image_generation_learnings.md](docs/image_generation_learnings.md)**: Prompt engineering guide for illustration generation
 
 ## Development
 

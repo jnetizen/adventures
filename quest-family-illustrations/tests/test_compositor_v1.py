@@ -1,10 +1,19 @@
-"""Tests for the Quest Family compositor."""
+"""
+Tests for the Quest Family compositor v1 (ARCHIVED).
+
+This compositor is paused while we test a new pipeline approach:
+- Phase 1: Generate complete scenes with Flux Schnell
+- Phase 2: Generate sprites with Gemini (not PuLID)
+- Phase 3: Manual compositing in Canva (for now)
+
+The code is preserved for reference when we rebuild the automated compositor.
+"""
 
 import json
 import pytest
 from PIL import Image
 
-from src.compositor import (
+from src.compositor_v1.compositor import (
     _crop_poses,
     _lowest_opaque_row,
     _remove_white_background,
