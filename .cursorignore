@@ -1,0 +1,80 @@
+# Cursor Indexing Exclusions
+# Created to prevent Cursor from hanging during codebase indexing
+
+# ==== MAJOR CULPRITS ====
+# node_modules: 190M, ~11k files (lucide-react alone has 3,828 icon files)
+node_modules/
+
+# Generated build output
+dist/
+dist-ssr/
+build/
+.next/
+out/
+
+# ==== ASSET FOLDERS ====
+# quest-family-illustrations: 9.5M of generated images (not needed for code intelligence)
+quest-family-illustrations/
+
+# Static assets
+public/images/
+public/assets/
+
+# ==== BINARY FILE TYPES ====
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.ico
+*.bmp
+*.tiff
+
+# Audio/Video
+*.mp4
+*.mp3
+*.wav
+*.ogg
+*.webm
+*.avi
+*.mov
+
+# Archives
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+
+# Fonts
+*.woff
+*.woff2
+*.ttf
+*.otf
+*.eot
+
+# ==== OTHER GENERATED/CACHE ====
+.cache/
+.vite/
+coverage/
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Source maps (2,565 files in node_modules alone)
+*.map
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env*
+!.env.example
+
+# Editor/OS files
+.DS_Store
+.idea/
+*.sw?
