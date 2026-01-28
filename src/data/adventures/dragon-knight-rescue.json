@@ -6,7 +6,12 @@
     "tagline": "Can you rescue the lost baby dragon before the big storm arrives?",
     "themes": ["dragons", "knights", "rescue", "friendship", "storm"],
     "estimatedMinutes": 15,
-    "previewImageUrl": "/images/adventures/dragon-knight-preview.png"
+    "previewImageUrl": "/images/adventures/dragon-knight-preview.png",
+    "ageRating": {
+      "minAge": 3,
+      "reason": "Gentle adventure with friendly dragons and mild weather drama",
+      "intensity": ["mild", "gentle"]
+    }
   },
   "prologue": {
     "worldIntro": "Welcome to the Kingdom of Brightshield, where brave knights protect everyone — including the friendly dragons who live in the mountains! Dragons and knights are best friends here.",

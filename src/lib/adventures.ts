@@ -4,10 +4,12 @@ import type { GameSession, Player } from '../types/game';
 // Adventure JSON files in src/data/adventures/
 import candyVolcano from '../data/adventures/placeholder.json';
 import dragonKnightRescue from '../data/adventures/dragon-knight-rescue.json';
+import fireGemQuest from '../data/adventures/fire-gem-quest.json';
 
 const adventures: Record<string, Adventure> = {
   'candy-volcano': candyVolcano as Adventure,
   'dragon-knight-rescue': dragonKnightRescue as Adventure,
+  'fire-gem-quest': fireGemQuest as Adventure,
 };
 
 /**
@@ -24,6 +26,12 @@ export interface AdventureListItem {
   themes: string[];
   estimatedMinutes: number;
   previewImageUrl: string;
+  ageRating?: {
+    minAge: number;
+    maxAge?: number;
+    reason?: string;
+    intensity?: string[];
+  };
 }
 
 /**
@@ -37,6 +45,7 @@ export function getAdventureList(): AdventureListItem[] {
     themes: adventure.preview.themes,
     estimatedMinutes: adventure.preview.estimatedMinutes,
     previewImageUrl: adventure.preview.previewImageUrl,
+    ageRating: adventure.preview.ageRating,
   }));
 }
 
@@ -97,10 +106,15 @@ export function getCurrentCharacterTurn(
 }
 
 /**
- * Calculate the outcome for a choice based on the dice roll
+ * Calculate the outcome for a choice based on the dice roll.
+ * Scales the success threshold based on dice type (thresholds are written for d20).
+ * Formula: scaledThreshold = ceil(threshold * (diceType / 20))
+ * This keeps roughly the same success probability across dice types.
  */
-export function calculateChoiceOutcome(choice: Choice, roll: number): ChoiceOutcome {
-  if (roll >= choice.successThreshold) {
+export function calculateChoiceOutcome(choice: Choice, roll: number, diceType: number = 20): ChoiceOutcome {
+  // Scale threshold proportionally to dice type (thresholds assume d20)
+  const scaledThreshold = Math.ceil(choice.successThreshold * (diceType / 20));
+  if (roll >= scaledThreshold) {
     return choice.successOutcome;
   }
   return choice.failOutcome;

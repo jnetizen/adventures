@@ -56,7 +56,30 @@ export default function AdventureSelectPage({
                   </span>
                 ))}
               </div>
-              <p className="text-xs text-gray-500">~{adv.estimatedMinutes} min</p>
+              <div className="flex items-center gap-3 text-xs text-gray-500">
+                <span>~{adv.estimatedMinutes} min</span>
+                {adv.ageRating && (
+                  <span className={`font-medium ${adv.ageRating.minAge >= 5 ? 'text-orange-600' : 'text-green-600'}`}>
+                    Ages {adv.ageRating.minAge}+
+                  </span>
+                )}
+              </div>
+              {adv.ageRating?.intensity && (
+                <div className="flex flex-wrap gap-1">
+                  {adv.ageRating.intensity.map((i) => (
+                    <span
+                      key={i}
+                      className={`text-xs px-2 py-0.5 rounded-full ${
+                        i === 'gentle' || i === 'mild'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-orange-100 text-orange-700'
+                      }`}
+                    >
+                      {i}
+                    </span>
+                  ))}
+                </div>
+              )}
               <button
                 onClick={() => onSelect(adv.id)}
                 disabled={loading}

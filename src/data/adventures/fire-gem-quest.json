@@ -1,0 +1,692 @@
+{
+  "id": "fire-gem-quest",
+  "title": "The Fire Gem Quest",
+  "description": "Deep inside the Lava Mountain lies a magical gem that grants one wish. Can three brave knights find it and bring back the King's lost crown?",
+  "preview": {
+    "tagline": "Can you find the legendary Fire Gem and restore the King's crown?",
+    "themes": ["volcano", "lava", "fire", "quest", "treasure", "magic"],
+    "estimatedMinutes": 15,
+    "previewImageUrl": "/images/adventures/fire-gem-preview.png",
+    "ageRating": {
+      "minAge": 5,
+      "reason": "Lava and fire imagery may be intense for younger children",
+      "intensity": ["intense", "action"]
+    }
+  },
+  "prologue": {
+    "worldIntro": "Welcome to the Kingdom of Brightshield! Long ago, the King's magical crown fell into Lava Mountain during a great earthquake. Without it, the King has been sad for years. Legend says a Fire Gem deep in the volcano can grant one wish!",
+    "characterIntros": [
+      {
+        "characterId": "brave-climber",
+        "introText": "Brave Climber loves adventure and isn't afraid of anything! With trusty climbing rope and gear, no mountain is too tall and no ledge is too tricky!"
+      },
+      {
+        "characterId": "clever-scientist",
+        "introText": "Clever Scientist knows everything about volcanoes and gems! With goggles, a notebook, and a curious mind, every mystery can be solved!"
+      },
+      {
+        "characterId": "kind-whisperer",
+        "introText": "Kind Whisperer has the biggest heart and can talk to any creature! Even fire spirits and lava lizards become instant friends!"
+      }
+    ],
+    "missionBrief": "The three knights must journey into Lava Mountain, find the legendary Fire Gem, and wish for the King's crown to return! It won't be easy — the volcano is full of bubbling lava, tricky caves, and a mysterious Fire Guardian who protects the gem."
+  },
+  "characters": [
+    {
+      "id": "brave-climber",
+      "name": "Brave Climber",
+      "description": "A fearless mountain climber with rope and climbing gear who tackles any terrain",
+      "imageUrl": "/images/characters/brave-climber.png"
+    },
+    {
+      "id": "clever-scientist",
+      "name": "Clever Scientist",
+      "description": "A junior scientist with goggles and a notebook who studies volcanoes and gems",
+      "imageUrl": "/images/characters/clever-scientist.png"
+    },
+    {
+      "id": "kind-whisperer",
+      "name": "Kind Whisperer",
+      "description": "A gentle creature whisperer who can talk to animals and fire spirits",
+      "imageUrl": "/images/characters/kind-whisperer.png"
+    }
+  ],
+  "scoring": {
+    "thresholds": [
+      { "minSuccesses": 12, "endingId": "ending-legendary" },
+      { "minSuccesses": 8, "endingId": "ending-great" },
+      { "minSuccesses": 0, "endingId": "ending-good" }
+    ]
+  },
+  "scenes": [
+    {
+      "id": "scene-1",
+      "sceneNumber": 0,
+      "narrationText": "The knights arrive at the base of Lava Mountain. Steam hisses from cracks in the ground. Glowing embers drift through the air like fireflies. The path ahead leads into the smoking volcano!",
+      "sceneImageUrl": "/images/scenes/scene1_ashen_path.png",
+      "leadCharacterId": "clever-scientist",
+      "characterTurns": [
+        {
+          "characterId": "clever-scientist",
+          "promptText": "Steam is shooting up everywhere!",
+          "choices": [
+            {
+              "id": "scene1-swift-time",
+              "label": "Time the steam bursts",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Quick counting! 'One-two-three-GO!' Everyone dashes between steam bursts perfectly.",
+                "animationKey": "steam-dash"
+              },
+              "failOutcome": {
+                "text": "Oops, got a little steamy! But the warm mist feels like a spa. 'Ahhhh, refreshing!'",
+                "animationKey": "steam-spa"
+              }
+            },
+            {
+              "id": "scene1-swift-path",
+              "label": "Find a safer path",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Sharp eyes spot a rocky ridge with no steam! 'This way, everyone!'",
+                "animationKey": "safe-ridge"
+              },
+              "failOutcome": {
+                "text": "The path has tiny steam puffs, but they make cute whistling sounds! Musical volcano!",
+                "animationKey": "whistle-steam"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "brave-climber",
+          "promptText": "Hot embers are falling!",
+          "choices": [
+            {
+              "id": "scene1-shield-block",
+              "label": "Shield umbrella mode",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The golden shield glows! Embers bounce off like popcorn. Pop pop pop!",
+                "animationKey": "ember-pop"
+              },
+              "failOutcome": {
+                "text": "Some embers land on the shield and spell out 'HI!' How friendly!",
+                "animationKey": "ember-hi"
+              }
+            },
+            {
+              "id": "scene1-shield-cover",
+              "label": "Create a shield tent",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Everyone huddles under the shield. Cozy AND safe! The embers patter like rain.",
+                "animationKey": "shield-tent"
+              },
+              "failOutcome": {
+                "text": "The tent is a bit cramped! But the giggly squishing makes everyone laugh.",
+                "animationKey": "cramped-giggles"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "kind-whisperer",
+          "promptText": "A little lava lizard looks lost!",
+          "choices": [
+            {
+              "id": "scene1-kind-help",
+              "label": "Help it find home",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The lizard chirps happily and scurries home! Its family waves tiny claws in thanks.",
+                "animationKey": "lizard-home"
+              },
+              "failOutcome": {
+                "text": "Wrong direction! But the lizard's family comes looking and finds everyone. Group hug!",
+                "animationKey": "lizard-family"
+              }
+            },
+            {
+              "id": "scene1-kind-friend",
+              "label": "Ask it to be our guide",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The lizard squeaks excitedly and runs ahead, showing secret shortcuts! New friend!",
+                "animationKey": "lizard-guide"
+              },
+              "failOutcome": {
+                "text": "The lizard is too shy but leaves a trail of glowing footprints to follow. Thanks, little buddy!",
+                "animationKey": "glowing-prints"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "The knights make it through the ashen fields! Ahead, a river of glowing lava blocks the path.",
+        "nextSceneId": "scene-2"
+      }
+    },
+    {
+      "id": "scene-2",
+      "sceneNumber": 1,
+      "narrationText": "A wide river of bubbling orange lava stretches across the path! Dark rocks float slowly on the surface like stepping stones. On the other side, the cave entrance glows invitingly.",
+      "sceneImageUrl": "/images/scenes/scene2_lava_river.png",
+      "leadCharacterId": "brave-climber",
+      "characterTurns": [
+        {
+          "characterId": "brave-climber",
+          "promptText": "The heat is intense!",
+          "choices": [
+            {
+              "id": "scene2-shield-reflect",
+              "label": "Reflect the heat away",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The golden shield bounces the heat back! A cool bubble of air surrounds everyone.",
+                "animationKey": "heat-reflect"
+              },
+              "failOutcome": {
+                "text": "The shield gets warm like a cookie tray! But it makes everyone's snacks perfectly toasty.",
+                "animationKey": "toasty-snacks"
+              }
+            },
+            {
+              "id": "scene2-shield-fan",
+              "label": "Fan everyone cool",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Whoosh whoosh! The shield makes a perfect fan. Everyone sighs in relief.",
+                "animationKey": "shield-fan"
+              },
+              "failOutcome": {
+                "text": "The fanning blows everyone's hair into silly styles! Looking fabulous AND cooler!",
+                "animationKey": "silly-hair"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "clever-scientist",
+          "promptText": "The rocks are moving!",
+          "choices": [
+            {
+              "id": "scene2-swift-jump",
+              "label": "Quick hops across",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Hop-hop-hop! Perfectly timed jumps across every rock. 'Come on, follow me!'",
+                "animationKey": "perfect-hops"
+              },
+              "failOutcome": {
+                "text": "One rock spins! But it turns into a fun merry-go-round ride to the other side. Wheee!",
+                "animationKey": "rock-spin"
+              }
+            },
+            {
+              "id": "scene2-swift-pattern",
+              "label": "Learn the rock pattern",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The rocks move in a pattern! 'Left, right, middle, jump!' Everyone crosses safely.",
+                "animationKey": "pattern-cross"
+              },
+              "failOutcome": {
+                "text": "The pattern changes! But a friendly lava turtle offers rides across. All aboard!",
+                "animationKey": "lava-turtle"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "kind-whisperer",
+          "promptText": "Someone's scared to jump!",
+          "choices": [
+            {
+              "id": "scene2-kind-encourage",
+              "label": "Cheer them on",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "'You can do it! We believe in you!' Big smiles and a perfect landing!",
+                "animationKey": "cheer-jump"
+              },
+              "failOutcome": {
+                "text": "The cheering is SO loud it echoes and makes everyone laugh! Still jumped though!",
+                "animationKey": "loud-cheer"
+              }
+            },
+            {
+              "id": "scene2-kind-together",
+              "label": "Jump together",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Holding hands, jumping as one! 'One-two-THREE!' Perfect teamwork landing!",
+                "animationKey": "team-jump"
+              },
+              "failOutcome": {
+                "text": "Everyone lands in a pile! But it's a happy pile on safe ground. Group tumble!",
+                "animationKey": "happy-pile"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "Across the lava river! A lava flower blooms and offers a magical petal.",
+        "nextSceneId": "scene-3",
+        "rewards": [
+          {
+            "type": "item",
+            "id": "lava-petal",
+            "name": "Lava Flower Petal",
+            "imageUrl": "/images/rewards/lava-petal.png"
+          }
+        ]
+      }
+    },
+    {
+      "id": "scene-3",
+      "sceneNumber": 2,
+      "narrationText": "Inside the volcano! The Ember Caves glow with orange and red crystals. Paths twist in every direction. Somewhere deep inside, the Fire Gem is waiting!",
+      "sceneImageUrl": "/images/scenes/scene3_ember_caves.png",
+      "leadCharacterId": "kind-whisperer",
+      "characterTurns": [
+        {
+          "characterId": "kind-whisperer",
+          "promptText": "It's dark ahead!",
+          "choices": [
+            {
+              "id": "scene3-kind-fireflies",
+              "label": "Ask the ember fireflies",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The tiny glowing bugs happily swirl around like a living lantern! So pretty!",
+                "animationKey": "firefly-lantern"
+              },
+              "failOutcome": {
+                "text": "The fireflies are shy! But they leave a glowing trail on the walls to follow.",
+                "animationKey": "glowing-trail"
+              }
+            },
+            {
+              "id": "scene3-kind-crystal",
+              "label": "Use a glowing crystal",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "A loose crystal becomes the perfect torch! It even changes colors. Oooh!",
+                "animationKey": "crystal-torch"
+              },
+              "failOutcome": {
+                "text": "The crystal is stuck! But rubbing it makes it glow brighter. DIY nightlight!",
+                "animationKey": "stuck-glow"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "clever-scientist",
+          "promptText": "So many paths!",
+          "choices": [
+            {
+              "id": "scene3-swift-scout",
+              "label": "Quick scout ahead",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Zoom down three paths! 'The middle one has warm air — that's the way!'",
+                "animationKey": "quick-scout"
+              },
+              "failOutcome": {
+                "text": "Got a little lost! But found cave paintings showing the way. Ancient GPS!",
+                "animationKey": "cave-map"
+              }
+            },
+            {
+              "id": "scene3-swift-listen",
+              "label": "Listen for clues",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "A soft humming comes from the left path! 'The gem is singing to us!'",
+                "animationKey": "gem-song"
+              },
+              "failOutcome": {
+                "text": "Hear a rumbling tummy! It's a friendly cave bat who points the right way for a snack.",
+                "animationKey": "hungry-bat"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "brave-climber",
+          "promptText": "Rocks are crumbling above!",
+          "choices": [
+            {
+              "id": "scene3-shield-dome",
+              "label": "Shield dome formation",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The shield glows and creates a protective bubble! Rocks bounce right off.",
+                "animationKey": "shield-dome"
+              },
+              "failOutcome": {
+                "text": "The dome is lopsided! But the falling rocks stack into a helpful staircase. Bonus!",
+                "animationKey": "rock-stairs"
+              }
+            },
+            {
+              "id": "scene3-shield-push",
+              "label": "Clear the way forward",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "One mighty push! The rocks tumble aside and reveal a shortcut!",
+                "animationKey": "rock-push"
+              },
+              "failOutcome": {
+                "text": "The push is too strong! But it opens a hole to a crystal-filled room. Jackpot!",
+                "animationKey": "crystal-room"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "Through the caves! A warm golden glow beckons from a grand chamber ahead.",
+        "nextSceneId": "scene-4"
+      }
+    },
+    {
+      "id": "scene-4",
+      "sceneNumber": 3,
+      "narrationText": "A magnificent Fire Guardian — a great phoenix made of living flame — perches on a high pedestal! Below her sits the legendary Fire Gem, glowing like a tiny sun. 'Who seeks my gem?' she asks kindly.",
+      "sceneImageUrl": "/images/scenes/scene4_fire_guardian.png",
+      "leadCharacterId": "kind-whisperer",
+      "characterTurns": [
+        {
+          "characterId": "kind-whisperer",
+          "promptText": "The Guardian looks serious!",
+          "choices": [
+            {
+              "id": "scene4-kind-explain",
+              "label": "Tell our story",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The Guardian's eyes soften. 'You seek the gem to help another? How noble!'",
+                "animationKey": "noble-story"
+              },
+              "failOutcome": {
+                "text": "Words get jumbled! But the Guardian sees the kindness in those eyes. 'I understand.'",
+                "animationKey": "kind-eyes"
+              }
+            },
+            {
+              "id": "scene4-kind-bow",
+              "label": "Bow with respect",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The deepest, most respectful bow. The Guardian bows back! 'Manners! I like you.'",
+                "animationKey": "mutual-bow"
+              },
+              "failOutcome": {
+                "text": "Almost falls over! The Guardian chuckles warmly. 'Brave AND humble!'",
+                "animationKey": "clumsy-bow"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "brave-climber",
+          "promptText": "Prove you're worthy!",
+          "choices": [
+            {
+              "id": "scene4-shield-brave",
+              "label": "Show the brave shield",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "The shield glows in response to the Guardian's flame! 'A true protector's heart!'",
+                "animationKey": "shield-glow"
+              },
+              "failOutcome": {
+                "text": "The shield reflects the Guardian's flame into pretty patterns! 'Ooh, a light show!'",
+                "animationKey": "flame-patterns"
+              }
+            },
+            {
+              "id": "scene4-shield-promise",
+              "label": "Promise to protect",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "'I promise to always protect those in need!' The Guardian nods approvingly.",
+                "animationKey": "knight-promise"
+              },
+              "failOutcome": {
+                "text": "Voice cracks nervously! But the Guardian sees the true courage underneath.",
+                "animationKey": "brave-squeak"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "clever-scientist",
+          "promptText": "Complete a challenge!",
+          "choices": [
+            {
+              "id": "scene4-swift-race",
+              "label": "Race the fire wisps",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "Zoom! Around the chamber three times! The wisps applaud with sparkles.",
+                "animationKey": "wisp-race"
+              },
+              "failOutcome": {
+                "text": "The wisps are TOO fast! But they teach some cool moves. Now everyone's faster!",
+                "animationKey": "wisp-training"
+              }
+            },
+            {
+              "id": "scene4-swift-riddle",
+              "label": "Answer a riddle",
+              "successThreshold": 10,
+              "successOutcome": {
+                "text": "'What runs but never walks?' 'A RIVER!' 'Correct!' The Guardian is impressed.",
+                "animationKey": "riddle-win"
+              },
+              "failOutcome": {
+                "text": "'A... nose?' Wrong! But the Guardian laughs so hard she lets everyone pass anyway.",
+                "animationKey": "funny-answer"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "The Fire Guardian smiles! 'You have proven your hearts are true. The Fire Gem is yours!'",
+        "nextSceneId": "scene-5",
+        "rewards": [
+          {
+            "type": "item",
+            "id": "guardian-feather",
+            "name": "Phoenix Guardian's Feather",
+            "imageUrl": "/images/rewards/guardian-feather.png"
+          }
+        ]
+      }
+    },
+    {
+      "id": "scene-5",
+      "sceneNumber": 4,
+      "narrationText": "The Fire Gem floats gently into your hands, warm and glowing! Outside the volcano, the King waits hopefully. Time to make the wish!",
+      "sceneImageUrl": "/images/scenes/scene5_wish_granted.png",
+      "leadCharacterId": "kind-whisperer",
+      "characterTurns": [
+        {
+          "characterId": "kind-whisperer",
+          "promptText": "Make the wish!",
+          "choices": [
+            {
+              "id": "scene5-kind-wish",
+              "label": "Wish with all your heart",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "'We wish for the King's crown to return!' The gem bursts with light! POOF! The crown appears!",
+                "animationKey": "crown-return"
+              },
+              "failOutcome": {
+                "text": "The wish comes out as a squeak! But the gem understands hearts, not words. Crown appears!",
+                "animationKey": "squeaky-wish"
+              }
+            },
+            {
+              "id": "scene5-kind-together",
+              "label": "Everyone wish together",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "All three knights hold the gem. 'KING'S CROWN, COME BACK!' Triple power! Crown sparkles into existence!",
+                "animationKey": "triple-wish"
+              },
+              "failOutcome": {
+                "text": "Everyone says different words! But the gem combines them all. Crown appears with bonus sparkles!",
+                "animationKey": "mixed-wish"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "brave-climber",
+          "promptText": "Present the crown!",
+          "choices": [
+            {
+              "id": "scene5-shield-bow",
+              "label": "Bow and present it",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "The most noble presentation! The King's eyes fill with happy tears. 'My crown!'",
+                "animationKey": "noble-present"
+              },
+              "failOutcome": {
+                "text": "Trips while bowing! The crown lands perfectly on the King's head anyway. Ta-da!",
+                "animationKey": "trip-crown"
+              }
+            },
+            {
+              "id": "scene5-shield-carry",
+              "label": "Carry it on the shield",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "The crown sits on the golden shield like a royal pillow! The King applauds.",
+                "animationKey": "shield-pillow"
+              },
+              "failOutcome": {
+                "text": "The crown slides around! But everyone plays 'balance the crown' and the King joins in!",
+                "animationKey": "crown-game"
+              }
+            }
+          ]
+        },
+        {
+          "characterId": "clever-scientist",
+          "promptText": "Time to celebrate!",
+          "choices": [
+            {
+              "id": "scene5-swift-dance",
+              "label": "Victory dance",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "The happiest, fastest victory dance! Everyone joins in — even the King!",
+                "animationKey": "victory-dance"
+              },
+              "failOutcome": {
+                "text": "Dances SO fast, becomes a blur! But it makes everyone dizzy-giggly!",
+                "animationKey": "dizzy-dance"
+              }
+            },
+            {
+              "id": "scene5-swift-announce",
+              "label": "Run and tell everyone",
+              "successThreshold": 5,
+              "successOutcome": {
+                "text": "Zooms through the kingdom! 'THE CROWN IS BACK!' Church bells ring! Cheers everywhere!",
+                "animationKey": "spread-news"
+              },
+              "failOutcome": {
+                "text": "SO excited, the announcement is just happy squealing! But everyone gets it. PARTY TIME!",
+                "animationKey": "squeal-news"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "The King places his magical crown back on his head and smiles the biggest smile! 'My kingdom has its crown, and I have the bravest knights!'",
+        "nextSceneId": null
+      }
+    }
+  ],
+  "endings": [
+    {
+      "id": "ending-legendary",
+      "tier": "legendary",
+      "title": "Legendary Fire Knights!",
+      "narrationText": "The King declares a week-long festival in your honor! The Fire Guardian herself flies down from the volcano to join the celebration, filling the sky with beautiful flame fireworks. The King gives each knight a special medal made from Fire Gem crystal. From this day on, you are the official Fire Knights of Brightshield — heroes of flame and friendship!",
+      "rewards": [
+        {
+          "type": "badge",
+          "id": "fire-knight-badge",
+          "name": "Legendary Fire Knight Badge",
+          "imageUrl": "/images/rewards/fire-knight-badge.png"
+        },
+        {
+          "type": "item",
+          "id": "flame-sword",
+          "name": "Sword of Eternal Flame",
+          "imageUrl": "/images/rewards/flame-sword.png"
+        },
+        {
+          "type": "item",
+          "id": "ember-boots",
+          "name": "Boots of Lava Walking",
+          "imageUrl": "/images/rewards/ember-boots.png"
+        },
+        {
+          "type": "item",
+          "id": "phoenix-cape",
+          "name": "Cape of the Phoenix",
+          "imageUrl": "/images/rewards/phoenix-cape.png"
+        }
+      ]
+    },
+    {
+      "id": "ending-great",
+      "tier": "great",
+      "title": "Brave Fire Seekers!",
+      "narrationText": "The King throws a grand feast! Everyone in the kingdom comes to celebrate the return of the crown. The Fire Guardian sends down warm sparkles from the volcano as a thank-you. You'll always be remembered as the brave knights who ventured into Lava Mountain!",
+      "rewards": [
+        {
+          "type": "badge",
+          "id": "fire-seeker-badge",
+          "name": "Brave Fire Seekers Badge",
+          "imageUrl": "/images/rewards/fire-seeker-badge.png"
+        },
+        {
+          "type": "item",
+          "id": "volcano-medal",
+          "name": "Medal of the Volcano",
+          "imageUrl": "/images/rewards/volcano-medal.png"
+        }
+      ]
+    },
+    {
+      "id": "ending-good",
+      "tier": "good",
+      "title": "Crown Returners!",
+      "narrationText": "The King is SO happy to have his crown back! It was a tricky adventure with lots of stumbles and giggles, but you never gave up. The King promises you'll always have a place at the royal table. Heroes!",
+      "rewards": [
+        {
+          "type": "badge",
+          "id": "crown-badge",
+          "name": "Crown Returner Badge",
+          "imageUrl": "/images/rewards/crown-badge.png"
+        }
+      ]
+    }
+  ]
+}

@@ -47,11 +47,24 @@ export interface Character {
   imageUrl: string;
 }
 
+export interface AgeRating {
+  /** Minimum recommended age */
+  minAge: number;
+  /** Optional max age (for "too babyish" upper bound) */
+  maxAge?: number;
+  /** Brief reason for the rating */
+  reason?: string;
+  /** Intensity descriptors to help parents decide */
+  intensity?: ('scary' | 'intense' | 'mild' | 'gentle' | 'action' | 'suspense')[];
+}
+
 export interface Preview {
   tagline: string;
   themes: string[];
   estimatedMinutes: number;
   previewImageUrl: string;
+  /** Age appropriateness rating */
+  ageRating?: AgeRating;
 }
 
 export interface CharacterIntro {

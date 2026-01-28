@@ -8,6 +8,37 @@ Bugs from playtest feedback and other sources. Track status and cross off as fix
 
 ## Active Bugs
 
+### BUG-5: Kids get bored waiting for 3rd player's turn
+- **Description:** Progressive reveal (vs batched) helped, but by the time the 3rd kid takes their turn, the other kids are disengaged. Need to think about how to keep everyone engaged while others play, or make action results engaging for everyone watching.
+- **Severity:** Medium
+- **Status:** Open (needs design thinking)
+- **Affects:** Core turn-based gameplay loop
+- **Source:** Playtest with 3yo, 5yo, 7yo (Jan 27, 2026)
+- **Ideas to explore:**
+  - Cooperative moments where all kids contribute?
+  - Mini-engagement for watchers (predict outcome, cheer, etc.)?
+  - Shorter turns / simultaneous actions?
+  - Visual spectacle that's fun to watch even when not your turn?
+  - Role for "audience" kids during each turn?
+- **Notes:** Needs design session to think through
+
+- [ ] **Fixed**
+
+---
+
+### BUG-4: Reward popup feels like a system alert, not a celebration
+- **Description:** The reward display on the player screen looks too much like a system interruption dialog. Kids immediately clicked it to dismiss rather than celebrating. Should feel like "amazing reward I should care about" not "system alert getting in the way."
+- **Severity:** Medium
+- **Status:** Open
+- **Affects:** Player screen reward display (likely in PlayPage.tsx or a reward component)
+- **Source:** Playtest with 3yo, 5yo, 7yo (Jan 27, 2026)
+- **Fix:** Redesign reward UI to feel celebratory — consider: confetti animation, sound effect hook, larger imagery, auto-dismiss with fanfare, less "modal/dialog" styling
+- **Notes:** Save for Gemini/Cursor to redesign
+
+- [ ] **Fixed**
+
+---
+
 ### BUG-1: Player screen overlays obscure scene image
 - **Description:** Results overlay and turn indicators cover/compete with the full-screen scene illustration. Boxes and text distract kids; parent reported rushing past results to get back to the image.
 - **Severity:** High

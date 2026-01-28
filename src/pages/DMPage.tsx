@@ -845,7 +845,7 @@ export default function DMPage() {
                 const choice = characterTurn?.choices.find(c => c.id === sceneChoice.choiceId);
                 if (!character || !choice || !sceneChoice.roll) return null;
 
-                const outcome = calculateChoiceOutcome(choice, sceneChoice.roll);
+                const outcome = calculateChoiceOutcome(choice, sceneChoice.roll, session.dice_type || 20);
                 const kidName = getPlayerForCharacter(players, sceneChoice.characterId) || character.name;
 
                 return (

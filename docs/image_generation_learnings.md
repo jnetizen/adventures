@@ -147,27 +147,79 @@ Right: A 3-year-old girl knight... wearing silver armor with a GREEN cape.
 
 ---
 
+### 11. Gemini Pro Works Great for Complete Scene Generation (Not Just Sprites!)
+
+**What we tried:** Using Gemini Pro (subscription) for complete scene generation instead of Flux Schnell.
+
+**What happened:** Excellent results! Gemini Pro:
+- Follows the same prompt patterns that work for Flux
+- Maintains character consistency across all 5 scenes
+- Respects "each separately" and character spacing instructions
+- Gets outfit colors correct with CAPS emphasis
+- Produces consistent Pixar-adjacent storybook style
+- Adds nice creative touches (e.g., creature whisperer holding a small creature)
+
+**Comparison:**
+
+| Aspect | Flux Schnell | Gemini Pro |
+|--------|--------------|------------|
+| Scene quality | ✅ Excellent | ✅ Excellent |
+| Character spacing | ✅ With "each separately" | ✅ With "each separately" |
+| Color accuracy | ✅ With CAPS | ✅ With CAPS |
+| Style consistency | ✅ Good | ✅ Good |
+| Cost | ~$0.003/image | Free with Pro subscription |
+| Speed | ~1-2 seconds | ~5-10 seconds |
+| Accessibility | Requires API setup | Web UI, easy to use |
+
+**Recommendation:** For manual scene generation, Gemini Pro is a great option — especially if you already have a Pro subscription. Same prompt patterns work for both.
+
+---
+
+### 12. Characters Don't Have to Be Knights — Variety Works!
+
+**What we tried:** Instead of three knights with colored capes, we used distinct character types:
+- Mountain Climber (RED climbing vest, rope, carabiners)
+- Junior Scientist (BLUE lab coat, goggles)
+- Creature Whisperer (GREEN nature dress, flower crown)
+
+**What happened:** Gemini handled the diverse character types perfectly:
+- Each character remained visually distinct across all scenes
+- Role-specific props (rope, goggles, flower crown) appeared consistently
+- Different outfit styles didn't confuse the model
+
+**What works:** Mix character types for variety between stories. Just be specific about outfit details and use CAPS for the distinguishing color.
+
+---
+
 ## Final Working Prompts
 
-### Complete Scene Prompt Template (Flux Schnell)
+### Complete Scene Prompt Template (Flux Schnell or Gemini Pro)
 
-**Settings:**
+**Settings (Flux Schnell):**
 - Model: black-forest-labs/flux-schnell
 - Aspect ratio: 16:9
 - Output format: png
 
+**Settings (Gemini Pro):**
+- Platform: Google Gemini Pro (web or API)
+- Prefix prompt with: "Generate a 16:9 landscape image."
+
 **Template:**
 ```
-Three young knights each separately [ACTION] [LOCATION DESCRIPTION], [ENVIRONMENTAL DETAILS].
+[For Gemini: "Generate a 16:9 landscape image."] Three [character types] each separately [ACTION] [LOCATION DESCRIPTION], [ENVIRONMENTAL DETAILS].
 
-Left side of image: A [age]-year-old [boy/girl] knight with [hair description], [eye description], [skin/cheek description], wearing silver armor with a [COLOR] cape.
+Left side of image: A [age]-year-old [boy/girl] [role] with [hair description], [eye description], [skin/cheek description], wearing [OUTFIT with COLOR].
 
-Center of image: A [age]-year-old [boy/girl] knight with [hair description], [eye description], [skin/cheek description], wearing silver armor with a [COLOR] cape.
+Center of image: A [age]-year-old [boy/girl] [role] with [hair description], [eye description], [skin/cheek description], wearing [OUTFIT with COLOR].
 
-Right side of image: A [age]-year-old [boy/girl] knight with [hair description], [eye description], [skin/cheek description], wearing silver armor with a [COLOR] cape.
+Right side of image: A [age]-year-old [boy/girl] [role] with [hair description], [eye description], [skin/cheek description], wearing [OUTFIT with COLOR].
 
 The three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on [ground surface], [emotion/expression], Pixar-adjacent storybook style, soft painterly rendering, [lighting description], [mood] atmosphere, children's book illustration.
 ```
+
+**Example character types:**
+- Knights with colored capes (Dragon Knight Rescue)
+- Climber / Scientist / Creature Whisperer (Fire Gem Quest)
 
 ---
 
@@ -248,6 +300,24 @@ Right side of image: A 3-year-old girl knight with shoulder-length wavy reddish-
 
 The three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on grass, celebrating joyfully, Pixar-adjacent storybook style, soft painterly rendering, warm golden lighting, joyful celebration atmosphere, children's book illustration.
 ```
+
+---
+
+### Fire Gem Quest Prompts (Gemini Pro)
+
+See full prompts at: `quest-family-illustrations/assets/stories/fire-gem-quest/prompts/scene_prompts.md`
+
+**Characters used:**
+- Left: 5yo boy Mountain Climber — RED climbing vest, rope, carabiners
+- Center: 7yo boy Junior Scientist — BLUE lab coat, goggles on forehead
+- Right: 3yo girl Creature Whisperer — GREEN nature dress, flower crown
+
+**Scenes:**
+1. The Ashen Path — volcanic landscape, steam vents, embers
+2. The Lava River — bubbling lava with floating rock platforms
+3. The Ember Caves — glowing orange crystals, multiple tunnels
+4. The Fire Guardian — phoenix on pedestal, Fire Gem visible
+5. Wish Granted — celebration with King, crown restored
 
 ---
 
@@ -393,7 +463,7 @@ Style: 3D rendered Pixar-adjacent style, soft volumetric lighting, subtle shadow
 
 ---
 
-### Gemini (Sprite Sheets — RECOMMENDED)
+### Gemini Pro (Sprite Sheets — RECOMMENDED)
 
 | Setting | Value |
 |---------|-------|
@@ -408,18 +478,36 @@ Style: 3D rendered Pixar-adjacent style, soft volumetric lighting, subtle shadow
 
 ---
 
+### Gemini Pro (Complete Scenes — ALSO WORKS GREAT)
+
+| Setting | Value |
+|---------|-------|
+| Platform | Google Gemini (Pro subscription or API) |
+| Input | Text prompt (prefix with "Generate a 16:9 landscape image.") |
+| Output | PNG image |
+
+**Cost:** Free with Pro subscription
+**Time:** ~5-10 seconds
+
+**Why it works:** Same prompt patterns as Flux Schnell. Add "Generate a 16:9 landscape image." at the start of the prompt. Gemini follows character spacing, color, and style instructions well.
+
+**Tested with:** Fire Gem Quest story (5 scenes) — all passed quality review.
+
+---
+
 ## Prompt Engineering Checklist
 
-When writing scene prompts:
+When writing scene prompts (Flux Schnell or Gemini Pro):
 
-- [ ] Start with "Three young knights **each separately**..."
+- [ ] For Gemini: Start with "Generate a 16:9 landscape image."
+- [ ] Start with "Three [character type] each separately..."
 - [ ] Use "Left side of image:", "Center of image:", "Right side of image:"
-- [ ] CAPITALIZE cape colors (RED, BLUE, GREEN)
+- [ ] CAPITALIZE distinguishing colors (RED, BLUE, GREEN)
 - [ ] Include "NOT overlapping, NOT touching"
 - [ ] Specify "feet visible on [surface]"
 - [ ] End with "Pixar-adjacent storybook style, soft painterly rendering"
 - [ ] Use 16:9 aspect ratio
-- [ ] Don't include specific pose instructions (let Flux decide)
+- [ ] Don't include specific pose instructions (let model decide)
 
 When writing sprite prompts (Gemini):
 
@@ -449,11 +537,14 @@ When writing sprite prompts (Gemini):
 1. **"each separately"** — Key phrase for character spacing
 2. **16:9 aspect ratio** — Gives room for 3 characters
 3. **Gemini for sprite sheets** — Actually follows pose instructions
-4. **CAPS for colors** — Improves color accuracy
-5. **Explicit spatial language** — "HIGH UP", "ABOVE", "looking UP"
-6. **No pose instructions in Flux** — Let the model decide, get better composition
+4. **Gemini for complete scenes** — Works as well as Flux Schnell, free with Pro subscription
+5. **CAPS for colors** — Improves color accuracy
+6. **Explicit spatial language** — "HIGH UP", "ABOVE", "looking UP"
+7. **No pose instructions** — Let the model decide, get better composition
+8. **Varied character types** — Different roles (climber, scientist, whisperer) instead of all knights
+9. **Role-specific props** — Rope, goggles, flower crowns stay consistent across scenes
 
 ---
 
 *Last updated: January 27, 2026*
-*Based on manual testing with Dragon Knight Rescue story*
+*Based on manual testing with Dragon Knight Rescue and Fire Gem Quest stories*

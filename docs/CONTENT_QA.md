@@ -64,6 +64,38 @@ This document tracks content issues discovered during testing that require updat
 
 ---
 
+## Age Rating Guidelines
+
+Based on playtesting feedback, certain themes/imagery can be too intense for younger children:
+
+| Age | Appropriate Content | Avoid |
+|-----|---------------------|-------|
+| 3+ | Gentle themes, friendly creatures, mild weather, bright colors | Lava, fire, dark caves, scary creatures |
+| 5+ | Action/adventure, some intensity, dramatic weather, volcanoes | Gore, villains, real danger |
+| 7+ | More complex plots, suspense, mild peril | Nothing inappropriate for children |
+
+### Tested Adventures
+
+| Adventure | Min Age | Reason |
+|-----------|---------|--------|
+| Dragon Knight Rescue | 3+ | Gentle adventure with friendly dragons, mild storm |
+| Fire Gem Quest | 5+ | Lava/fire imagery scared 3yo during playtest |
+
+### How to Set Age Ratings
+
+Add to the adventure's `preview` object:
+```json
+"ageRating": {
+  "minAge": 5,
+  "reason": "Lava and fire imagery may be intense for younger children",
+  "intensity": ["intense", "action"]
+}
+```
+
+Intensity tags: `gentle`, `mild`, `action`, `suspense`, `intense`, `scary`
+
+---
+
 ## Content Generation Checklist
 
 When generating content for a new adventure:
@@ -72,6 +104,7 @@ When generating content for a new adventure:
 2. [ ] **Action prompts match visuals** — If an action mentions interacting with something, it should be visible in the scene
 3. [ ] **Reward images generated** — Generate all reward images referenced in the adventure JSON
 4. [ ] **Preview image created** — Generate or select a preview image for adventure selection
+5. [ ] **Age rating set** — Add ageRating with minAge, reason, and intensity tags based on content
 
 ---
 
