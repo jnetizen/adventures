@@ -76,6 +76,8 @@ export interface Prologue {
   worldIntro: string;
   characterIntros: CharacterIntro[];
   missionBrief: string;
+  /** Optional image showing the world/setting before characters appear */
+  prologueImageUrl?: string;
 }
 
 export interface ScoringThreshold {

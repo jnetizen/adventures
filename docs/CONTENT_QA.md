@@ -72,6 +72,16 @@ This document tracks content issues discovered during testing that require updat
 - **Permanent fix:** Generate reward images as part of human-in-the-loop pipeline
 - **Style guidance:** Match the Pixar-adjacent storybook style of scene images; small icons/badges work well
 
+### Issue 6: Prologue Images Missing
+- **Status:** Open (tracked, fallback added)
+- **Problem:** Prologue images show the world/setting before characters appear — creates the "world reveal" moment
+- **Prologues needed:**
+  - `/images/prologues/candy-volcano-prologue.png` — Sweet-Top Valley landscape (candy mountains, chocolate rivers)
+  - `/images/prologues/dragon-knight-prologue.png` — Kingdom of Brightshield overview (castle, mountains, friendly dragons flying)
+  - `/images/prologues/fire-gem-prologue.png` — Lava Mountain exterior (volcano, kingdom in distance)
+- **Prompt guidance:** World/setting scene WITHOUT any kid characters visible. Establish the magical world before the heroes appear.
+- **Style guidance:** Same Pixar-adjacent storybook style, 16:9 aspect ratio, vibrant colors
+
 ---
 
 ## Age Rating Guidelines
@@ -110,8 +120,9 @@ Intensity tags: `gentle`, `mild`, `action`, `suspense`, `intense`, `scary`
 
 When generating content for a new adventure:
 
-1. [ ] **Scene prompts match narration** — If narration mentions an NPC, the scene prompt must include them
-2. [ ] **Action prompts match visuals** — If an action mentions interacting with something, it should be visible in the scene
+1. [ ] **Prologue image generated** — World/setting scene WITHOUT characters (the "world reveal")
+2. [ ] **Scene prompts match narration** — If narration mentions an NPC, the scene prompt must include them
+3. [ ] **Action prompts match visuals** — If an action mentions interacting with something, it should be visible in the scene
 3. [ ] **Reward images generated** — Generate all reward images referenced in the adventure JSON
 4. [ ] **Preview image created** — Generate or select a preview image for adventure selection
 5. [ ] **Age rating set** — Add ageRating with minAge, reason, and intensity tags based on content

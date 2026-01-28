@@ -14,6 +14,7 @@
     }
   },
   "prologue": {
+    "prologueImageUrl": "/images/prologues/fire-gem-prologue.png",
     "worldIntro": "Welcome to the Kingdom of Brightshield! Long ago, the King's magical crown fell into Lava Mountain during a great earthquake. Without it, the King has been sad for years. Legend says a Fire Gem deep in the volcano can grant one wish!",
     "characterIntros": [
       {

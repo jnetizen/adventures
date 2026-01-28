@@ -9,6 +9,7 @@
     "previewImageUrl": "/images/adventures/candy-volcano-preview.png"
   },
   "prologue": {
+    "prologueImageUrl": "/images/prologues/candy-volcano-prologue.png",
     "worldIntro": "Welcome to Sweet-Top Valley, a magical land where rivers flow with chocolate and mountains are made of rock candy. Everything here is delicious — and a little bit sticky!",
     "characterIntros": [
       {
