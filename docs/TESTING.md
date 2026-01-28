@@ -255,3 +255,74 @@ When reporting bugs, include:
 ### Follow-up Actions
 - [ ] 
 ```
+
+---
+
+## Manual Validation Checklist
+
+A runnable checklist for systematically testing the app end-to-end.
+
+### Pre-Test Setup
+
+- [ ] `npm run dev` running; both DM and Player use same origin
+- [ ] Two devices or two browser windows (one DM, one Player)
+- [ ] Supabase env vars set; migrations applied (`npm run db:migrate`)
+- [ ] Optional: DevTools → Network → "Offline" available for offline tests
+
+### Setup and Joining
+
+- [ ] **Landing** – "Start as DM" → `/dm`, "Join as Player" → `/play`
+- [ ] **Create session** – DM: create session → room code appears
+- [ ] **Join** – Player: enter room code → join success; ConnectionStatus "Connected" on both
+- [ ] **Invalid code** – Wrong code → clear error (no crash)
+- [ ] **Empty code** – Join with empty code → handled gracefully
+
+### Adventure Selection and Prologue
+
+- [ ] **Adventure list** – DM sees adventures with preview, tagline, themes, time
+- [ ] **Select adventure** – Pick one → loads; no errors
+- [ ] **Character assignment** – Enter 1–3 kid names; assign each to a character
+- [ ] **Prologue** – world intro, character intros, mission brief; "Start Adventure" → Scene 1
+
+### Scene Play (DM)
+
+- [ ] **Narration** – Scene text and choices for current character turn
+- [ ] **Dice** – Manual input works; DiceRoller rolls correctly, fills input
+- [ ] **Choices** – Select choice, enter/roll dice, submit; next character turn
+- [ ] **Progressive outcomes** – No "Reveal Results" step; outcome appears per choice
+- [ ] **Success count** – Shown on DM; increments when roll ≥ threshold; persists across scenes
+
+### Scene Play (Player)
+
+- [ ] **Full-screen scene** – PlayPage shows only scene image during play
+- [ ] **Scene changes** – New scene → new image when DM advances
+
+### Rewards and Progression
+
+- [ ] **Scene rewards** – RewardCelebration appears on both DM and Player
+- [ ] **Next scene** – "Next Scene" → DM and Player advance
+- [ ] **Ending rewards** – On final scene, ending celebration if ending has rewards
+
+### Ending and Feedback
+
+- [ ] **Tiered ending** – Matches success count: good (0–7), great (8–11), legendary (12+)
+- [ ] **End Adventure** – Feedback form; submit → session reset for new adventure
+
+### Error Recovery
+
+- [ ] **Session persistence** – Refresh → "Recover Session" offered
+- [ ] **Recover** – Rejoin same session; state consistent
+- [ ] **Errors** – Messages are user-friendly (no raw stack traces)
+
+### Offline Mode
+
+- [ ] **Offline** – Go offline; ConnectionStatus shows "Offline"
+- [ ] **Play offline** – Actions queue; no crash
+- [ ] **Back online** – Status → "Syncing" then "Connected"; pending ops synced
+
+### Edge Cases
+
+- [ ] **Single player** – One kid, one character; full flow works
+- [ ] **Three players** – Three kids, three characters; turns and rewards correct
+- [ ] **Browser refresh** – Refresh mid-scene; recover and continue
+- [ ] **Low vs high success** – Verify good vs legendary ending

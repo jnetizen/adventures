@@ -183,7 +183,9 @@ src/
 │   ├── RoomCode.tsx
 │   ├── ConnectionStatus.tsx
 │   ├── PlaceholderImage.tsx
-│   └── AnimationIndicator.tsx
+│   ├── RewardCelebration.tsx
+│   ├── DiceRoller.tsx
+│   └── ...
 ├── pages/              # Page components
 │   ├── LandingPage.tsx
 │   ├── DMPage.tsx
@@ -201,85 +203,57 @@ src/
 │   └── supabase.ts     # Database schema types
 ├── data/
 │   └── adventures/     # Adventure JSON files
-│       ├── placeholder.json (Candy Volcano)
-│       └── dragon-knight-rescue.json
+│       ├── candy-volcano.json
+│       ├── dragon-knight-rescue.json
+│       └── fire-gem-quest.json
 ├── App.tsx             # Router setup
 └── main.tsx            # Entry point
 
-docs/                   # Documentation
-├── TESTING.md          # Testing guide and feedback templates
-├── IDEAS.md            # Future feature backlog
-├── DESIGN_DECISIONS.md # Design rationale
-├── USER_RESEARCH.md    # User feedback log
-├── CONSTRAINTS.md      # Technical and product constraints
-├── PRODUCT_VISION.md   # Product goals and vision
-└── QUICK_REFERENCE.md  # Common tasks and file locations
+public/images/           # Static image assets
+├── adventures/          # Preview images for adventure selection
+├── scenes/              # Scene images (full-screen on player)
+├── prologues/           # Prologue images (world reveal)
+└── rewards/             # Reward icons (badges, items)
 
-quest-family-illustrations/  # Illustration pipeline
-├── src/
-│   └── compositor_v1/       # Archived automated compositor
-├── config/                  # Story templates and scene configs
-│   ├── stories/            # Adventure templates (JSON)
-│   └── scenes/             # Placement configs (v1 reference)
-├── assets/
-│   └── stories/            # Pre-baked scene images (v2)
-│       └── dragon-knight-rescue/
-├── output/                  # Generated images (gitignored)
-├── tests/                   # Pytest test suite
-└── scripts/                 # Batch processing scripts
+docs/                    # Documentation
+├── TESTING.md           # Testing guide and validation checklist
+├── IDEAS.md             # Future feature backlog
+├── CONTENT_QA.md        # Content issues and missing assets
+├── image_generation_learnings.md  # Prompt engineering guide
+└── ...
+
+quest-family-illustrations/  # Illustration pipeline assets
+├── assets/stories/      # Pre-baked scene images per adventure
+├── config/stories/      # Story templates and prompts
+└── _archive/            # Archived compositor v1 code
 ```
 
 ## Illustration Pipeline
 
-The `quest-family-illustrations/` directory contains the illustration pipeline for generating scene images.
+The `quest-family-illustrations/` directory contains assets and prompts for generating scene images.
 
-> **Status:** Pipeline in transition. Testing a new approach based on manual testing learnings.
+### Current Approach
 
-### Current Approach (v2)
+Based on manual testing, we generate complete scenes (characters baked in) using:
+- **Flux Schnell** or **Gemini Pro** for scene generation
+- Pre-baked images stored in `assets/stories/{adventure-name}/scenes/`
 
-Based on manual testing, we've pivoted to:
+For prompt engineering best practices, see [docs/image_generation_learnings.md](docs/image_generation_learnings.md).
 
-1. **Scene Design:** Generate complete scenes with Flux Schnell (characters baked in)
-2. **Asset Generation:** Generate sprites with Gemini API (better pose control than PuLID)
-3. **Composite:** Manual in Canva for now (produces clean results)
+### Archived Code
 
-Pre-baked scene images are stored in `assets/stories/{adventure-name}/scenes/`.
-
-### Archived Compositor (v1)
-
-The original automated compositor is archived in `src/compositor_v1/`. It includes:
-- Feathered alpha masking
-- Background-sampled drop shadows
-- Ground alignment
-
-To run (for reference):
-
-```bash
-cd quest-family-illustrations
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-python -m src.compositor_v1.compositor --config config/scenes/scene_1.json --output output/test.png
-```
-
-### Documentation
-
-See [quest-family-illustrations/README.md](quest-family-illustrations/README.md) for:
-- New pipeline approach details
-- Asset storage structure
-- Archived compositor usage and learnings
+The original automated compositor (v1) is archived in `_archive/`. It was replaced with pre-baked scenes which produce cleaner results.
 
 ## Documentation
 
 Comprehensive documentation is available in the `docs/` directory:
 
-- **[TESTING.md](docs/TESTING.md)**: Testing process, feedback capture, bug reporting
-- **[IDEAS.md](docs/IDEAS.md)**: Future feature ideas and backlog
-- **[DESIGN_DECISIONS.md](docs/DESIGN_DECISIONS.md)**: Why we built things this way
-- **[USER_RESEARCH.md](docs/USER_RESEARCH.md)**: User feedback and findings
-- **[CONSTRAINTS.md](docs/CONSTRAINTS.md)**: Technical and product constraints
-- **[PRODUCT_VISION.md](docs/PRODUCT_VISION.md)**: Product goals and roadmap
+- **[TESTING.md](docs/TESTING.md)**: Testing guide, validation checklist, bug reporting
+- **[CONTENT_QA.md](docs/CONTENT_QA.md)**: Missing assets, content issues, generation checklist
+- **[image_generation_learnings.md](docs/image_generation_learnings.md)**: Prompt engineering for illustrations
+- **[IDEAS.md](docs/IDEAS.md)**: Future feature backlog
+- **[USER_RESEARCH.md](docs/USER_RESEARCH.md)**: User testing sessions and feedback
 - **[QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md)**: Common tasks and troubleshooting
-- **[image_generation_learnings.md](docs/image_generation_learnings.md)**: Prompt engineering guide for illustration generation
 
 ## Development
 

@@ -64,7 +64,7 @@
       "id": "scene-1",
       "sceneNumber": 0,
       "narrationText": "The knights arrive at the base of Lava Mountain. Steam hisses from cracks in the ground. Glowing embers drift through the air like fireflies. The path ahead leads into the smoking volcano!",
-      "sceneImageUrl": "/images/scenes/scene1_ashen_path.png",
+      "sceneImageUrl": "/images/scenes/ashen-path.png",
       "leadCharacterId": "clever-scientist",
       "characterTurns": [
         {
@@ -173,7 +173,7 @@
       "id": "scene-2",
       "sceneNumber": 1,
       "narrationText": "A wide river of bubbling orange lava stretches across the path! Dark rocks float slowly on the surface like stepping stones. On the other side, the cave entrance glows invitingly.",
-      "sceneImageUrl": "/images/scenes/scene2_lava_river.png",
+      "sceneImageUrl": "/images/scenes/lava-river.png",
       "leadCharacterId": "brave-climber",
       "characterTurns": [
         {
@@ -290,7 +290,7 @@
       "id": "scene-3",
       "sceneNumber": 2,
       "narrationText": "Inside the volcano! The Ember Caves glow with orange and red crystals. Paths twist in every direction. Somewhere deep inside, the Fire Gem is waiting!",
-      "sceneImageUrl": "/images/scenes/scene3_ember_caves.png",
+      "sceneImageUrl": "/images/scenes/ember-caves.png",
       "leadCharacterId": "kind-whisperer",
       "characterTurns": [
         {
@@ -399,7 +399,7 @@
       "id": "scene-4",
       "sceneNumber": 3,
       "narrationText": "A magnificent Fire Guardian — a great phoenix made of living flame — perches on a high pedestal! Below her sits the legendary Fire Gem, glowing like a tiny sun. 'Who seeks my gem?' she asks kindly.",
-      "sceneImageUrl": "/images/scenes/scene4_fire_guardian.png",
+      "sceneImageUrl": "/images/scenes/fire-guardian.png",
       "leadCharacterId": "kind-whisperer",
       "characterTurns": [
         {
@@ -516,7 +516,7 @@
       "id": "scene-5",
       "sceneNumber": 4,
       "narrationText": "The Fire Gem floats gently into your hands, warm and glowing! Outside the volcano, the King waits hopefully. Time to make the wish!",
-      "sceneImageUrl": "/images/scenes/scene5_wish_granted.png",
+      "sceneImageUrl": "/images/scenes/wish-granted.png",
       "leadCharacterId": "kind-whisperer",
       "characterTurns": [
         {
