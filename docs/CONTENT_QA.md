@@ -58,6 +58,16 @@ This document tracks content issues discovered during testing that require updat
   - `/images/rewards/great-badge.png`
   - `/images/rewards/candy-medal.png`
   - `/images/rewards/savers-badge.png`
+- **Rewards needed for Fire Gem Quest:**
+  - `/images/rewards/lava-petal.png` (Scene 3 reward)
+  - `/images/rewards/guardian-feather.png` (Scene 4 reward)
+  - `/images/rewards/fire-knight-badge.png` (Legendary ending)
+  - `/images/rewards/flame-sword.png` (Legendary ending)
+  - `/images/rewards/ember-boots.png` (Legendary ending)
+  - `/images/rewards/phoenix-cape.png` (Legendary ending)
+  - `/images/rewards/fire-seeker-badge.png` (Great ending)
+  - `/images/rewards/volcano-medal.png` (Great ending)
+  - `/images/rewards/crown-badge.png` (Good ending)
 - **Temporary fix:** PlaceholderImage fallback added to RewardCelebration component (colored boxes with text)
 - **Permanent fix:** Generate reward images as part of human-in-the-loop pipeline
 - **Style guidance:** Match the Pixar-adjacent storybook style of scene images; small icons/badges work well

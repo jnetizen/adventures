@@ -2,7 +2,7 @@ import type { Adventure, Scene, CharacterTurn, Choice, ChoiceOutcome, Ending } f
 import type { GameSession, Player } from '../types/game';
 
 // Adventure JSON files in src/data/adventures/
-import candyVolcano from '../data/adventures/placeholder.json';
+import candyVolcano from '../data/adventures/candy-volcano.json';
 import dragonKnightRescue from '../data/adventures/dragon-knight-rescue.json';
 import fireGemQuest from '../data/adventures/fire-gem-quest.json';
 
