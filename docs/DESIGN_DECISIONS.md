@@ -380,6 +380,49 @@ Each decision includes:
 
 ---
 
+## Code Quality Refactoring (January 2026)
+
+### Centralized Constants and Zod Validation
+**Date**: 2026-01-28 | **Status**: Current
+
+**Context**: The codebase had accumulated technical debt:
+- 150+ lines of duplicate code between DMPage.tsx and PlayPage.tsx
+- 21 unsafe type casts (e.g., `as GameSession`) that could cause runtime crashes
+- Magic strings scattered across 10+ files (e.g., `'playing'`, `'startAdventure'`)
+- 3 different error handling patterns making debugging inconsistent
+- Subscription hooks had stale closure bugs due to missing dependencies
+
+**Decision**: Comprehensive refactoring with four new patterns:
+1. **Constants** (`src/constants/game.ts`): GAME_PHASES, OPERATION_TYPES, CONNECTION_STATUS
+2. **Zod schemas** (`src/schemas/`): Runtime validation for GameSession, PendingOperation, Adventure
+3. **Custom hooks** (`src/hooks/`): useSessionPersistence, useOfflineSync, useAdventureLoader, useSessionSubscription, useSessionRecovery
+4. **Result type** (`src/lib/result.ts`): Standard Result<T> for error handling
+
+**Rationale**:
+- Constants turn typos into compile errors, enable IDE autocomplete
+- Zod validation catches data corruption from Supabase/localStorage early
+- Custom hooks eliminate duplicate code (single source of truth)
+- Exhaustive switch on operation types ensures all cases handled
+
+**Alternatives Considered**:
+- Leave as-is (rejected: maintenance burden too high)
+- Partial refactor (rejected: inconsistent patterns worse than none)
+- io-ts instead of Zod (rejected: Zod has better DX and smaller bundle)
+
+**Trade-offs**:
+- ✅ Typos become compile errors
+- ✅ 150+ lines of duplicate code eliminated
+- ✅ Runtime crashes from bad data prevented
+- ✅ Stale closure bugs fixed
+- ✅ Easier to add new operation types (exhaustive switch)
+- ❌ More files to navigate
+- ❌ Zod adds ~12KB to bundle
+- ❌ Learning curve for new developers
+
+**Documentation**: See `docs/ARCHITECTURE.md` for detailed patterns and DO NOT guidelines.
+
+---
+
 ## Future Decisions to Make
 
 ### Player-Driven Choices

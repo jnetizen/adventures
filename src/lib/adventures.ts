@@ -1,15 +1,17 @@
-import type { Adventure, Scene, CharacterTurn, Choice, ChoiceOutcome, Ending } from '../types/adventure';
+import type { Adventure, Scene, CharacterTurn, Choice, ChoiceOutcome, Ending, TurnOutcome, SingleEnding } from '../types/adventure';
 import type { GameSession, Player } from '../types/game';
 
 // Adventure JSON files in src/data/adventures/
 import candyVolcano from '../data/adventures/candy-volcano.json';
 import dragonKnightRescue from '../data/adventures/dragon-knight-rescue.json';
 import fireGemQuest from '../data/adventures/fire-gem-quest.json';
+import raceToRainbowReef from '../data/adventures/race-to-rainbow-reef.json';
 
 const adventures: Record<string, Adventure> = {
   'candy-volcano': candyVolcano as Adventure,
   'dragon-knight-rescue': dragonKnightRescue as Adventure,
   'fire-gem-quest': fireGemQuest as Adventure,
+  'race-to-rainbow-reef': raceToRainbowReef as Adventure,
 };
 
 /**
@@ -111,13 +113,15 @@ export function getCurrentCharacterTurn(
  * Formula: scaledThreshold = ceil(threshold * (diceType / 20))
  * This keeps roughly the same success probability across dice types.
  */
-export function calculateChoiceOutcome(choice: Choice, roll: number, diceType: number = 20): ChoiceOutcome {
+export function calculateChoiceOutcome(choice: Choice, roll: number, diceType: number = 20): ChoiceOutcome | null {
+  // Default threshold if not specified
+  const threshold = choice.successThreshold ?? 10;
   // Scale threshold proportionally to dice type (thresholds assume d20)
-  const scaledThreshold = Math.ceil(choice.successThreshold * (diceType / 20));
+  const scaledThreshold = Math.ceil(threshold * (diceType / 20));
   if (roll >= scaledThreshold) {
-    return choice.successOutcome;
+    return choice.successOutcome ?? null;
   }
-  return choice.failOutcome;
+  return choice.failOutcome ?? null;
 }
 
 /**
@@ -143,4 +147,104 @@ export function calculateEnding(adventure: Adventure, successCount: number): End
     }
   }
   return null;
+}
+
+// ============================================
+// New helpers for cutscene/turn-level outcomes
+// ============================================
+
+/**
+ * Check if a character turn has turn-level outcomes (new format with cutscenes).
+ * Returns true if successOutcome/failOutcome are defined at the turn level.
+ */
+export function hasPerTurnOutcomes(turn: CharacterTurn): boolean {
+  return !!(turn.successOutcome || turn.failOutcome);
+}
+
+/**
+ * Get the success threshold for a character turn.
+ * Checks turn-level first, then falls back to choice-level.
+ * If choice is provided and has its own threshold, that takes precedence for backward compatibility.
+ */
+export function getSuccessThreshold(turn: CharacterTurn, choice?: Choice): number {
+  // Choice-level threshold takes precedence for backward compatibility
+  if (choice?.successThreshold !== undefined) {
+    return choice.successThreshold;
+  }
+  // Fall back to turn-level threshold
+  return turn.successThreshold ?? 10; // Default to 10 if not specified
+}
+
+/**
+ * Get the turn-level outcome based on roll result.
+ * Only works for adventures with turn-level outcomes (hasPerTurnOutcomes = true).
+ * Returns null if the turn doesn't have turn-level outcomes.
+ */
+export function getTurnOutcome(
+  turn: CharacterTurn,
+  roll: number,
+  diceType: number = 20,
+  choice?: Choice
+): TurnOutcome | null {
+  if (!hasPerTurnOutcomes(turn)) {
+    return null;
+  }
+
+  const threshold = getSuccessThreshold(turn, choice);
+  // Scale threshold proportionally to dice type (thresholds assume d20)
+  const scaledThreshold = Math.ceil(threshold * (diceType / 20));
+  
+  if (roll >= scaledThreshold) {
+    return turn.successOutcome ?? null;
+  }
+  return turn.failOutcome ?? null;
+}
+
+/**
+ * Check if a roll is a success based on threshold and dice type.
+ */
+export function isRollSuccess(roll: number, threshold: number, diceType: number = 20): boolean {
+  const scaledThreshold = Math.ceil(threshold * (diceType / 20));
+  return roll >= scaledThreshold;
+}
+
+/**
+ * Get the adventure ending - supports both single ending and tiered endings.
+ * For single ending adventures, returns the single ending.
+ * For tiered ending adventures, calculates based on success count.
+ */
+export function getAdventureEnding(
+  adventure: Adventure,
+  successCount: number = 0
+): Ending | SingleEnding | null {
+  // Single ending format (new)
+  if (adventure.ending) {
+    return adventure.ending;
+  }
+  
+  // Tiered endings format (existing)
+  if (adventure.endings && adventure.scoring) {
+    return calculateEnding(adventure, successCount);
+  }
+  
+  // Fallback: return first ending if available
+  if (adventure.endings && adventure.endings.length > 0) {
+    return adventure.endings[0];
+  }
+  
+  return null;
+}
+
+/**
+ * Check if an adventure uses single ending format (with loot screen).
+ */
+export function hasSingleEnding(adventure: Adventure): boolean {
+  return !!adventure.ending;
+}
+
+/**
+ * Check if an adventure uses tiered endings format.
+ */
+export function hasTieredEndings(adventure: Adventure): boolean {
+  return !!(adventure.endings && adventure.endings.length > 0 && adventure.scoring);
 }

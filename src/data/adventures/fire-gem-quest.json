@@ -54,8 +54,8 @@
   ],
   "scoring": {
     "thresholds": [
-      { "minSuccesses": 12, "endingId": "ending-legendary" },
-      { "minSuccesses": 8, "endingId": "ending-great" },
+      { "minSuccesses": 10, "endingId": "ending-legendary" },
+      { "minSuccesses": 6, "endingId": "ending-great" },
       { "minSuccesses": 0, "endingId": "ending-good" }
     ]
   },
@@ -64,7 +64,7 @@
       "id": "scene-1",
       "sceneNumber": 0,
       "narrationText": "The knights arrive at the base of Lava Mountain. Steam hisses from cracks in the ground. Glowing embers drift through the air like fireflies. The path ahead leads into the smoking volcano!",
-      "sceneImageUrl": "/images/scenes/ashen-path.png",
+      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-0-ashen-path.png",
       "leadCharacterId": "clever-scientist",
       "characterTurns": [
         {
@@ -173,7 +173,7 @@
       "id": "scene-2",
       "sceneNumber": 1,
       "narrationText": "A wide river of bubbling orange lava stretches across the path! Dark rocks float slowly on the surface like stepping stones. On the other side, the cave entrance glows invitingly.",
-      "sceneImageUrl": "/images/scenes/lava-river.png",
+      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-1-lava-river.png",
       "leadCharacterId": "brave-climber",
       "characterTurns": [
         {
@@ -290,7 +290,7 @@
       "id": "scene-3",
       "sceneNumber": 2,
       "narrationText": "Inside the volcano! The Ember Caves glow with orange and red crystals. Paths twist in every direction. Somewhere deep inside, the Fire Gem is waiting!",
-      "sceneImageUrl": "/images/scenes/ember-caves.png",
+      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-2-ember-caves.png",
       "leadCharacterId": "kind-whisperer",
       "characterTurns": [
         {
@@ -399,7 +399,7 @@
       "id": "scene-4",
       "sceneNumber": 3,
       "narrationText": "A magnificent Fire Guardian — a great phoenix made of living flame — perches on a high pedestal! Below her sits the legendary Fire Gem, glowing like a tiny sun. 'Who seeks my gem?' she asks kindly.",
-      "sceneImageUrl": "/images/scenes/fire-guardian.png",
+      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-3-fire-guardian.png",
       "leadCharacterId": "kind-whisperer",
       "characterTurns": [
         {
@@ -515,109 +515,12 @@
     {
       "id": "scene-5",
       "sceneNumber": 4,
-      "narrationText": "The Fire Gem floats gently into your hands, warm and glowing! Outside the volcano, the King waits hopefully. Time to make the wish!",
-      "sceneImageUrl": "/images/scenes/wish-granted.png",
-      "leadCharacterId": "kind-whisperer",
-      "characterTurns": [
-        {
-          "characterId": "kind-whisperer",
-          "promptText": "Make the wish!",
-          "choices": [
-            {
-              "id": "scene5-kind-wish",
-              "label": "Wish with all your heart",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "'We wish for the King's crown to return!' The gem bursts with light! POOF! The crown appears!",
-                "animationKey": "crown-return"
-              },
-              "failOutcome": {
-                "text": "The wish comes out as a squeak! But the gem understands hearts, not words. Crown appears!",
-                "animationKey": "squeaky-wish"
-              }
-            },
-            {
-              "id": "scene5-kind-together",
-              "label": "Everyone wish together",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "All three knights hold the gem. 'KING'S CROWN, COME BACK!' Triple power! Crown sparkles into existence!",
-                "animationKey": "triple-wish"
-              },
-              "failOutcome": {
-                "text": "Everyone says different words! But the gem combines them all. Crown appears with bonus sparkles!",
-                "animationKey": "mixed-wish"
-              }
-            }
-          ]
-        },
-        {
-          "characterId": "brave-climber",
-          "promptText": "Present the crown!",
-          "choices": [
-            {
-              "id": "scene5-shield-bow",
-              "label": "Bow and present it",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "The most noble presentation! The King's eyes fill with happy tears. 'My crown!'",
-                "animationKey": "noble-present"
-              },
-              "failOutcome": {
-                "text": "Trips while bowing! The crown lands perfectly on the King's head anyway. Ta-da!",
-                "animationKey": "trip-crown"
-              }
-            },
-            {
-              "id": "scene5-shield-carry",
-              "label": "Carry it on the shield",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "The crown sits on the golden shield like a royal pillow! The King applauds.",
-                "animationKey": "shield-pillow"
-              },
-              "failOutcome": {
-                "text": "The crown slides around! But everyone plays 'balance the crown' and the King joins in!",
-                "animationKey": "crown-game"
-              }
-            }
-          ]
-        },
-        {
-          "characterId": "clever-scientist",
-          "promptText": "Time to celebrate!",
-          "choices": [
-            {
-              "id": "scene5-swift-dance",
-              "label": "Victory dance",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "The happiest, fastest victory dance! Everyone joins in — even the King!",
-                "animationKey": "victory-dance"
-              },
-              "failOutcome": {
-                "text": "Dances SO fast, becomes a blur! But it makes everyone dizzy-giggly!",
-                "animationKey": "dizzy-dance"
-              }
-            },
-            {
-              "id": "scene5-swift-announce",
-              "label": "Run and tell everyone",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "Zooms through the kingdom! 'THE CROWN IS BACK!' Church bells ring! Cheers everywhere!",
-                "animationKey": "spread-news"
-              },
-              "failOutcome": {
-                "text": "SO excited, the announcement is just happy squealing! But everyone gets it. PARTY TIME!",
-                "animationKey": "squeal-news"
-              }
-            }
-          ]
-        }
-      ],
+      "narrationText": "The Fire Gem floats gently into your hands, warm and glowing! Together, all three knights hold the gem and close their eyes. 'We wish for the King's crown to return!' The gem bursts with golden light — POOF! The magical crown sparkles into existence, floating before you! You carry it out of the volcano to where the King waits hopefully. When he sees his crown, tears of joy stream down his face. 'My crown! You found it!'",
+      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-4-wish-granted.png",
+      "leadCharacterId": null,
+      "characterTurns": [],
       "outcome": {
-        "resultText": "The King places his magical crown back on his head and smiles the biggest smile! 'My kingdom has its crown, and I have the bravest knights!'",
+        "resultText": "The King places his magical crown back on his head and smiles the biggest smile the kingdom has ever seen! 'My kingdom has its crown, and I have the bravest knights!' Church bells ring across the land as everyone celebrates the heroes who ventured into Lava Mountain!",
         "nextSceneId": null
       }
     }

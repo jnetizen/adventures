@@ -1,101 +1,83 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { findSessionByCode, syncPendingOperations } from '../lib/gameState';
-import { saveSessionToStorage, getSessionFromStorage, clearSessionFromStorage } from '../lib/errorRecovery';
-import { isOnline, onOnlineStatusChange, getPendingOperations } from '../lib/offlineStorage';
-import { loadAdventure, getCurrentScene, allCharactersActed, calculateEnding } from '../lib/adventures';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { findSessionByCode } from '../lib/gameState';
+import { formatError } from '../lib/errorRecovery';
+import { getCurrentScene, allCharactersActed, calculateEnding, getAdventureList } from '../lib/adventures';
 import { debugLog } from '../lib/debugLog';
+import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
+import {
+  useSessionPersistence,
+  useOfflineSync,
+  useAdventureLoader,
+  useSessionSubscription,
+  useSessionRecovery,
+} from '../hooks';
 import EndingPage from './EndingPage';
 import RewardCelebration from '../components/RewardCelebration';
+import CutsceneOverlay from '../components/CutsceneOverlay';
+import DiceRollAnimation from '../components/DiceRollAnimation';
 import DiceRoller from '../components/DiceRoller';
 import PlaceholderImage from '../components/PlaceholderImage';
+import AdventurePreviewGrid from '../components/AdventurePreviewGrid';
 import { deriveSceneLabel } from '../lib/deriveSceneLabel';
 import type { GameSession } from '../types/game';
-import type { Adventure } from '../types/adventure';
 import ConnectionStatus from '../components/ConnectionStatus';
-
-type ConnectionStatusType = "connected" | "connecting" | "disconnected" | "error" | "offline" | "syncing";
 
 export default function PlayPage() {
   const [roomCode, setRoomCode] = useState('');
   const [session, setSession] = useState<GameSession | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusType>("disconnected");
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusType>(CONNECTION_STATUS.DISCONNECTED);
   const [error, setError] = useState<string | null>(null);
-  const [adventure, setAdventure] = useState<Adventure | null>(null);
-  const [loadingAdventure, setLoadingAdventure] = useState(false);
   const [joining, setJoining] = useState(false);
   const [celebratedSceneIds, setCelebratedSceneIds] = useState<string[]>([]);
   const [celebratedEnding, setCelebratedEnding] = useState(false);
-  const [recovering, setRecovering] = useState(false);
-  const [isOffline, setIsOffline] = useState(!isOnline());
-  const [syncing, setSyncing] = useState(false);
-  const [pendingOpsCount, setPendingOpsCount] = useState(0);
   const [sceneImageError, setSceneImageError] = useState(false);
 
-  // Persist session to localStorage
-  useEffect(() => {
-    if (session) {
-      saveSessionToStorage(session);
-    } else {
-      clearSessionFromStorage();
-    }
-  }, [session]);
+  // Dice roll animation state
+  const [pendingDiceRoll, setPendingDiceRoll] = useState<{
+    kidName: string;
+    roll: number;
+    characterId: string;
+  } | null>(null);
+  const [processedRollCount, setProcessedRollCount] = useState(0);
 
-  // Track online/offline status and sync when back online
-  useEffect(() => {
-    const unsubscribe = onOnlineStatusChange(async (online) => {
-      setIsOffline(!online);
-      if (online && session) {
-        setSyncing(true);
-        const ops = await getPendingOperations();
-        setPendingOpsCount(ops.length);
-        if (ops.length > 0) {
-          await syncPendingOperations();
-          const remaining = await getPendingOperations();
-          setPendingOpsCount(remaining.length);
-        }
-        setSyncing(false);
-      }
-    });
-    return unsubscribe;
-  }, [session]);
+  // Custom hooks for extracted logic
+  useSessionPersistence(session);
+  const { isOffline, syncing, pendingOpsCount } = useOfflineSync(session);
+  const { adventure, loading: loadingAdventure } = useAdventureLoader(session?.adventure_id);
 
-  // Update pending ops count periodically
-  useEffect(() => {
-    const updateCount = async () => {
-      const ops = await getPendingOperations();
-      setPendingOpsCount(ops.length);
-    };
-    updateCount();
-    const interval = setInterval(updateCount, 2000);
-    return () => clearInterval(interval);
+  // Memoized callbacks for session subscription
+  const handleSessionUpdate = useCallback((newSession: GameSession) => {
+    setSession(newSession);
   }, []);
 
-  // Load adventure when session has adventure_id
-  useEffect(() => {
-    if (!session?.adventure_id) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync adventure when session clears
-      setAdventure(null);
-      return;
-    }
+  const handleStatusChange = useCallback((status: ConnectionStatusType) => {
+    setConnectionStatus(status);
+  }, []);
 
-    setLoadingAdventure(true);
-    loadAdventure(session.adventure_id).then((loadedAdventure) => {
-      setLoadingAdventure(false);
-      if (loadedAdventure) {
-        setAdventure(loadedAdventure);
-      }
-    });
-  }, [session?.adventure_id]);
+  useSessionSubscription({
+    session,
+    isOffline,
+    syncing,
+    onSessionUpdate: handleSessionUpdate,
+    onStatusChange: handleStatusChange,
+  });
+
+  const { recovering, storedSession, recoverSession } = useSessionRecovery({
+    currentSession: session,
+    onStatusChange: handleStatusChange,
+  });
 
   // Compute derived state (currentScene) from session and adventure
-  const currentScene = session && adventure 
+  const currentScene = session && adventure
     ? getCurrentScene(adventure, session.current_scene)
     : null;
 
+  // Get available adventures for preview while waiting
+  const availableAdventures = useMemo(() => getAdventureList(), []);
+
   // Reset celebration state when session resets (e.g. new adventure)
   useEffect(() => {
-    if (session?.phase === 'setup' || !session?.adventure_id) {
+    if (session?.phase === GAME_PHASES.SETUP || !session?.adventure_id) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- sync celebration state when session resets
       setCelebratedSceneIds([]);
       setCelebratedEnding(false);
@@ -108,39 +90,29 @@ export default function PlayPage() {
     setSceneImageError(false);
   }, [currentScene?.id]);
 
-  // Subscribe to session updates
+  // Detect new dice rolls and trigger animation
   useEffect(() => {
-    if (!session) return;
+    const choices = session?.scene_choices ?? [];
+    if (choices.length > processedRollCount) {
+      const latestChoice = choices[choices.length - 1];
+      if (latestChoice.roll !== undefined) {
+        const player = session?.players?.find(p => p.characterId === latestChoice.characterId);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- trigger dice animation on new roll
+        setPendingDiceRoll({
+          kidName: player?.kidName ?? 'Hero',
+          roll: latestChoice.roll,
+          characterId: latestChoice.characterId,
+        });
+      }
+    }
+  }, [session?.scene_choices, processedRollCount, session?.players]);
 
-    const channel = supabase
-      .channel(`session:${session.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'sessions',
-          filter: `id=eq.${session.id}`,
-        },
-        (payload) => {
-          setSession(payload.new as GameSession);
-          setConnectionStatus("connected");
-        }
-      )
-        .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          setConnectionStatus(isOffline ? "offline" : syncing ? "syncing" : "connected");
-        } else if (status === 'CHANNEL_ERROR') {
-          setConnectionStatus("error");
-        } else {
-          setConnectionStatus(isOffline ? "offline" : "connecting");
-        }
-      });
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [session]);
+  // Reset dice roll tracking when scene changes
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset roll tracking on scene change
+    setProcessedRollCount(0);
+    setPendingDiceRoll(null);
+  }, [session?.current_scene]);
 
   const handleJoin = async () => {
     if (!roomCode.trim()) {
@@ -150,14 +122,14 @@ export default function PlayPage() {
 
     setError(null);
     setJoining(true);
-    setConnectionStatus("connecting");
+    setConnectionStatus(CONNECTION_STATUS.CONNECTING);
 
     const { data, error: sessionError } = await findSessionByCode(roomCode.trim().toUpperCase());
 
     setJoining(false);
     if (sessionError || !data) {
-      setError('Room code not found. Please check and try again.');
-      setConnectionStatus("error");
+      setError(formatError(sessionError) || 'Room code not found. Please check and try again.');
+      setConnectionStatus(CONNECTION_STATUS.ERROR);
       return;
     }
 
@@ -165,38 +137,34 @@ export default function PlayPage() {
   };
 
   const handleRecoverSession = async () => {
-    const stored = getSessionFromStorage<GameSession>();
-    if (!stored || !stored.room_code) {
-      setError('No saved session found');
-      return;
-    }
     setError(null);
-    setRecovering(true);
-    setConnectionStatus("connecting");
-    const { data, error: recoverError } = await findSessionByCode(stored.room_code);
-    setRecovering(false);
-    if (recoverError || !data) {
-      setError('Could not recover session. Please join with a room code.');
-      clearSessionFromStorage();
-      setConnectionStatus("error");
+    const { session: recoveredSession, error: recoverError } = await recoverSession();
+    if (recoverError) {
+      setError(recoverError === 'No saved session found'
+        ? recoverError
+        : 'Could not recover session. Please join with a room code.');
       return;
     }
-    setSession(data);
-    setConnectionStatus("connected");
+    if (recoveredSession) {
+      setSession(recoveredSession);
+    }
   };
 
-  const storedSession = !session ? getSessionFromStorage<GameSession>() : null;
+  // Compute these first so adventureEnded can use them
+  const allActed = currentScene && session && allCharactersActed(currentScene, session);
+  const isLastScene = !!currentScene && !currentScene.outcome?.nextSceneId;
 
+  // Show ending when on last scene and all characters have acted (matches DM behavior)
+  // OR when phase is explicitly set to complete
   const adventureEnded =
-    session?.phase === 'complete' &&
+    (session?.phase === GAME_PHASES.COMPLETE || (isLastScene && allActed)) &&
     !!currentScene &&
     !!adventure;
 
-  const allActed = currentScene && session && allCharactersActed(currentScene, session);
-  const isLastScene = !!currentScene && !currentScene.outcome?.nextSceneId;
   const sceneRewards = allActed && currentScene?.outcome?.rewards;
   const showSceneCelebration = !!(
     !adventureEnded &&
+    !pendingDiceRoll && // Wait for dice roll animation to finish
     sceneRewards &&
     sceneRewards.length > 0 &&
     currentScene &&
@@ -209,6 +177,7 @@ export default function PlayPage() {
   const showEndingCelebration = !!(
     allActed &&
     isLastScene &&
+    !pendingDiceRoll && // Wait for dice roll animation to finish
     endingRewards &&
     endingRewards.length > 0 &&
     !celebratedEnding &&
@@ -322,10 +291,7 @@ export default function PlayPage() {
               </div>
             </div>
           ) : !adventure ? (
-            <div className="text-center py-8 px-6 rounded-xl bg-amber-50/60 border border-amber-100">
-              <p className="text-gray-700 font-medium">Waiting for DM to start adventure...</p>
-              <p className="text-sm text-gray-500 mt-1">Pick an adventure on the DM screen</p>
-            </div>
+            <AdventurePreviewGrid adventures={availableAdventures} />
           ) : !currentScene ? (
             <div className="text-center py-8 px-6 rounded-xl bg-amber-50/60 border border-amber-100">
               <p className="text-gray-700 font-medium">Waiting for scene to start...</p>
@@ -370,6 +336,32 @@ export default function PlayPage() {
               />
             )}
           </div>
+          
+          {/* Dice Roll Animation - shows before cutscene */}
+          {pendingDiceRoll && (
+            <DiceRollAnimation
+              kidName={pendingDiceRoll.kidName}
+              roll={pendingDiceRoll.roll}
+              diceMax={session.dice_type ?? 20}
+              onComplete={() => {
+                setProcessedRollCount(prev => prev + 1);
+                setPendingDiceRoll(null);
+              }}
+            />
+          )}
+          
+          {/* Cutscene Overlay - shown when DM triggers a cutscene (after dice animation) */}
+          {!pendingDiceRoll && session.active_cutscene && (
+            <CutsceneOverlay
+              imageUrl={session.active_cutscene.imageUrl}
+              outcomeText={session.active_cutscene.outcomeText}
+              characterName={
+                adventure.characters.find(c => c.id === session.active_cutscene?.characterId)?.name ?? 'Hero'
+              }
+              reward={session.active_cutscene.reward}
+            />
+          )}
+          
           {/* Dice roller for future player-driven choices; disabled until then */}
           <div className="fixed bottom-4 right-4 z-40 opacity-60">
             <DiceRoller onRoll={() => {}} disabled min={1} max={20} />

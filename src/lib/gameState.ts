@@ -1,7 +1,8 @@
 import { supabase } from './supabase';
 import { retryWithBackoff } from './errorRecovery';
 import { isOnline, saveOperationToQueue, getPendingOperations, removeOperationFromQueue } from './offlineStorage';
-import type { GameSession, Player, SceneChoice } from '../types/game';
+import { GAME_PHASES, OPERATION_TYPES } from '../constants/game';
+import type { GameSession, Player, SceneChoice, ActiveCutscene, CollectedReward } from '../types/game';
 
 /**
  * Generates a random 4-letter uppercase room code
@@ -38,7 +39,7 @@ export async function createSession(): Promise<{ data: GameSession | null; error
         .insert({
           room_code: roomCode,
           current_scene: 0,
-          phase: 'setup',
+          phase: GAME_PHASES.SETUP,
         })
         .select()
         .single();
@@ -127,7 +128,7 @@ export async function startAdventure(
   if (!isOnline()) {
     await saveOperationToQueue({
       id: generateOperationId(),
-      type: 'startAdventure',
+      type: OPERATION_TYPES.START_ADVENTURE,
       sessionId,
       data: { adventureId, players, diceType },
       timestamp: new Date().toISOString(),
@@ -141,9 +142,11 @@ export async function startAdventure(
       .update({
         adventure_id: adventureId,
         players,
-        phase: 'prologue',
+        phase: GAME_PHASES.PROLOGUE,
         success_count: 0,
         dice_type: diceType ?? 20,
+        active_cutscene: null,
+        collected_rewards: [],
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);
@@ -163,7 +166,7 @@ export async function startScene(sessionId: string, sceneNumber: number): Promis
   if (!isOnline()) {
     await saveOperationToQueue({
       id: generateOperationId(),
-      type: 'startScene',
+      type: OPERATION_TYPES.START_SCENE,
       sessionId,
       data: { sceneNumber },
       timestamp: new Date().toISOString(),
@@ -178,7 +181,7 @@ export async function startScene(sessionId: string, sceneNumber: number): Promis
         current_scene: sceneNumber,
         current_character_turn_index: 0,
         scene_choices: [],
-        phase: 'playing',
+        phase: GAME_PHASES.PLAYING,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);
@@ -205,7 +208,7 @@ export async function submitCharacterChoice(
   if (!isOnline()) {
     await saveOperationToQueue({
       id: generateOperationId(),
-      type: 'submitChoice',
+      type: OPERATION_TYPES.SUBMIT_CHOICE,
       sessionId,
       data: { characterId, choiceId, roll, successThreshold },
       timestamp: new Date().toISOString(),
@@ -272,7 +275,7 @@ export async function advanceToNextScene(sessionId: string, nextSceneNumber: num
   if (!isOnline()) {
     await saveOperationToQueue({
       id: generateOperationId(),
-      type: 'advanceScene',
+      type: OPERATION_TYPES.ADVANCE_SCENE,
       sessionId,
       data: { nextSceneNumber },
       timestamp: new Date().toISOString(),
@@ -286,7 +289,7 @@ export async function advanceToNextScene(sessionId: string, nextSceneNumber: num
       const { error } = await supabase
         .from('sessions')
         .update({
-          phase: 'complete',
+          phase: GAME_PHASES.COMPLETE,
           updated_at: new Date().toISOString(),
         })
         .eq('id', sessionId);
@@ -338,7 +341,7 @@ export async function resetSessionForNewAdventure(sessionId: string): Promise<{ 
   if (!isOnline()) {
     await saveOperationToQueue({
       id: generateOperationId(),
-      type: 'resetSession',
+      type: OPERATION_TYPES.RESET_SESSION,
       sessionId,
       data: {},
       timestamp: new Date().toISOString(),
@@ -350,13 +353,51 @@ export async function resetSessionForNewAdventure(sessionId: string): Promise<{ 
     const { error } = await supabase
       .from('sessions')
       .update({
-        phase: 'setup',
+        phase: GAME_PHASES.SETUP,
         adventure_id: null,
         players: [],
         current_scene: 0,
         current_character_turn_index: 0,
         scene_choices: [],
         success_count: 0,
+        active_cutscene: null,
+        collected_rewards: [],
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+// ============================================
+// Cutscene Overlay Functions
+// ============================================
+
+/**
+ * Shows a cutscene overlay on the kids' screen.
+ * Called by DM after submitting a choice with a cutscene image.
+ */
+export async function showCutscene(
+  sessionId: string,
+  cutscene: ActiveCutscene
+): Promise<{ error: Error | null }> {
+  if (!isOnline()) {
+    await saveOperationToQueue({
+      id: generateOperationId(),
+      type: OPERATION_TYPES.SHOW_CUTSCENE,
+      sessionId,
+      data: { cutscene },
+      timestamp: new Date().toISOString(),
+    });
+    return { error: null };
+  }
+
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        active_cutscene: cutscene,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);
@@ -366,7 +407,90 @@ export async function resetSessionForNewAdventure(sessionId: string): Promise<{ 
 }
 
 /**
- * Sync pending operations from offline queue when connection restored
+ * Dismisses the cutscene overlay on the kids' screen.
+ * Called by DM when ready to proceed.
+ */
+export async function dismissCutscene(sessionId: string): Promise<{ error: Error | null }> {
+  if (!isOnline()) {
+    await saveOperationToQueue({
+      id: generateOperationId(),
+      type: OPERATION_TYPES.DISMISS_CUTSCENE,
+      sessionId,
+      data: {},
+      timestamp: new Date().toISOString(),
+    });
+    return { error: null };
+  }
+
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        active_cutscene: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Adds a reward to the session's collected rewards.
+ * Called after a turn outcome awards a reward.
+ */
+export async function collectReward(
+  sessionId: string,
+  reward: CollectedReward
+): Promise<{ error: Error | null }> {
+  if (!isOnline()) {
+    await saveOperationToQueue({
+      id: generateOperationId(),
+      type: OPERATION_TYPES.COLLECT_REWARD,
+      sessionId,
+      data: { reward },
+      timestamp: new Date().toISOString(),
+    });
+    return { error: null };
+  }
+
+  return retryWithBackoff(async () => {
+    // Get current collected rewards
+    const { data: session, error: fetchError } = await supabase
+      .from('sessions')
+      .select('collected_rewards')
+      .eq('id', sessionId)
+      .single();
+
+    if (fetchError || !session) {
+      return { error: fetchError || new Error('Session not found') };
+    }
+
+    const existingRewards = (session.collected_rewards as CollectedReward[] | null) ?? [];
+    const updatedRewards = [...existingRewards, reward];
+
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        collected_rewards: updatedRewards,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Helper for exhaustive switch - ensures all operation types are handled.
+ */
+function assertNever(x: never): never {
+  throw new Error(`Unhandled operation type: ${x}`);
+}
+
+/**
+ * Sync pending operations from offline queue when connection restored.
+ * Uses exhaustive switch with never check to ensure all operation types are handled.
  */
 export async function syncPendingOperations(): Promise<{ synced: number; errors: number }> {
   if (!isOnline()) return { synced: 0, errors: 0 };
@@ -378,37 +502,53 @@ export async function syncPendingOperations(): Promise<{ synced: number; errors:
   for (const op of operations) {
     try {
       let result: { error: Error | null } | { data: GameSession | null; error: Error | null } = { error: null };
-      const data = op.data as Record<string, unknown>;
 
+      // Exhaustive switch with typed operation data
       switch (op.type) {
-        case 'startAdventure':
-          result = await startAdventure(op.sessionId, data.adventureId as string, data.players as Player[], data.diceType as number | undefined);
+        case OPERATION_TYPES.CREATE_SESSION:
+          // createSession operations don't need sync (session created on DM device)
           break;
-        case 'startScene':
-          result = await startScene(op.sessionId, data.sceneNumber as number);
-          break;
-        case 'submitChoice':
-          result = await submitCharacterChoice(
+        case OPERATION_TYPES.START_ADVENTURE:
+          result = await startAdventure(
             op.sessionId,
-            data.characterId as string,
-            data.choiceId as string,
-            data.roll as number,
-            data.successThreshold as number
+            op.data.adventureId,
+            op.data.players,
+            op.data.diceType
           );
           break;
-        case 'advanceScene':
-          result = await advanceToNextScene(op.sessionId, data.nextSceneNumber as number | null);
+        case OPERATION_TYPES.START_SCENE:
+          result = await startScene(op.sessionId, op.data.sceneNumber);
           break;
-        case 'submitFeedback':
-          result = await submitSessionFeedback(op.sessionId, data as unknown as SessionFeedback);
+        case OPERATION_TYPES.SUBMIT_CHOICE:
+          result = await submitCharacterChoice(
+            op.sessionId,
+            op.data.characterId,
+            op.data.choiceId,
+            op.data.roll,
+            op.data.successThreshold
+          );
           break;
-        case 'resetSession':
+        case OPERATION_TYPES.ADVANCE_SCENE:
+          result = await advanceToNextScene(op.sessionId, op.data.nextSceneNumber);
+          break;
+        case OPERATION_TYPES.SUBMIT_FEEDBACK:
+          result = await submitSessionFeedback(op.sessionId, op.data);
+          break;
+        case OPERATION_TYPES.RESET_SESSION:
           result = await resetSessionForNewAdventure(op.sessionId);
           break;
+        case OPERATION_TYPES.SHOW_CUTSCENE:
+          result = await showCutscene(op.sessionId, op.data.cutscene);
+          break;
+        case OPERATION_TYPES.DISMISS_CUTSCENE:
+          result = await dismissCutscene(op.sessionId);
+          break;
+        case OPERATION_TYPES.COLLECT_REWARD:
+          result = await collectReward(op.sessionId, op.data.reward);
+          break;
         default:
-          console.warn('Unknown operation type:', op.type);
-          errors++;
-          continue;
+          // Exhaustive check - if this errors, we're missing a case
+          assertNever(op);
       }
 
       if ('error' in result && result.error) {

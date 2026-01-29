@@ -1,14 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, findSessionByCode, syncPendingOperations } from '../lib/gameState';
-import { saveSessionToStorage, getSessionFromStorage, clearSessionFromStorage, formatError } from '../lib/errorRecovery';
-import { isOnline, onOnlineStatusChange, getPendingOperations } from '../lib/offlineStorage';
-import { loadAdventure, getCurrentScene, getCurrentCharacterTurn, getActiveCharacterTurns, getPlayerForCharacter, calculateChoiceOutcome, allCharactersActed, getAdventureList, calculateEnding } from '../lib/adventures';
+import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward } from '../lib/gameState';
+import { formatError } from '../lib/errorRecovery';
+import { getCurrentScene, getCurrentCharacterTurn, getActiveCharacterTurns, getPlayerForCharacter, calculateChoiceOutcome, allCharactersActed, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold } from '../lib/adventures';
 import { debugLog } from '../lib/debugLog';
+import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
 import type { GameSession, Player, DiceType } from '../types/game';
 import { DICE_TYPES, DEFAULT_DICE_TYPE } from '../types/game';
-import type { Adventure, Choice, Character } from '../types/adventure';
+import type { Choice, Character } from '../types/adventure';
+import {
+  useSessionPersistence,
+  useOfflineSync,
+  useAdventureLoader,
+  useSessionSubscription,
+  useSessionRecovery,
+} from '../hooks';
 import RoomCode from '../components/RoomCode';
 import ConnectionStatus from '../components/ConnectionStatus';
 import PlaceholderImage from '../components/PlaceholderImage';
@@ -20,77 +26,47 @@ import FeedbackForm from '../components/FeedbackForm';
 import RewardCelebration from '../components/RewardCelebration';
 import DiceRoller from '../components/DiceRoller';
 
-type ConnectionStatusType = "connected" | "connecting" | "disconnected" | "error" | "offline" | "syncing";
-
 export default function DMPage() {
   const [session, setSession] = useState<GameSession | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusType>("disconnected");
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusType>(CONNECTION_STATUS.DISCONNECTED);
   const [error, setError] = useState<string | null>(null);
-  const [adventure, setAdventure] = useState<Adventure | null>(null);
   const [selectedChoice, setSelectedChoice] = useState<Choice | null>(null);
   const [diceRoll, setDiceRoll] = useState<string>('');
   const [assignmentStep, setAssignmentStep] = useState<'kids' | 'characters'>('kids');
   const [kidNames, setKidNames] = useState<string[]>(['', '']);
   const [playerAssignments, setPlayerAssignments] = useState<Array<{ kidName: string; characterId: string }>>([]);
   const [selectedDiceType, setSelectedDiceType] = useState<DiceType>(DEFAULT_DICE_TYPE);
-  const [loadingAdventure, setLoadingAdventure] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [advancing, setAdvancing] = useState(false);
   const [celebratedSceneIds, setCelebratedSceneIds] = useState<string[]>([]);
   const [celebratedEnding, setCelebratedEnding] = useState(false);
-  const [recovering, setRecovering] = useState(false);
-  const [isOffline, setIsOffline] = useState(!isOnline());
-  const [syncing, setSyncing] = useState(false);
-  const [pendingOpsCount, setPendingOpsCount] = useState(0);
 
-  // Persist session to localStorage
-  useEffect(() => {
-    if (session) {
-      saveSessionToStorage(session);
-    } else {
-      clearSessionFromStorage();
-    }
-  }, [session]);
+  // Custom hooks for extracted logic
+  useSessionPersistence(session);
+  const { isOffline, syncing, pendingOpsCount } = useOfflineSync(session);
+  const { adventure, loading: loadingAdventure } = useAdventureLoader(session?.adventure_id);
 
-  // Track online/offline status and sync when back online
-  useEffect(() => {
-    const unsubscribe = onOnlineStatusChange(async (online) => {
-      setIsOffline(!online);
-      if (online && session) {
-        setSyncing(true);
-        const ops = await getPendingOperations();
-        setPendingOpsCount(ops.length);
-        if (ops.length > 0) {
-          await syncPendingOperations();
-          const remaining = await getPendingOperations();
-          setPendingOpsCount(remaining.length);
-        }
-        setSyncing(false);
-      }
-    });
-    return unsubscribe;
-  }, [session]);
-
-  // Update pending ops count periodically
-  useEffect(() => {
-    const updateCount = async () => {
-      const ops = await getPendingOperations();
-      setPendingOpsCount(ops.length);
-    };
-    updateCount();
-    const interval = setInterval(updateCount, 2000);
-    return () => clearInterval(interval);
+  // Memoized callbacks for session subscription
+  const handleSessionUpdate = useCallback((newSession: GameSession) => {
+    setSession(newSession);
   }, []);
 
-  // Check for recoverable session on mount
-  useEffect(() => {
-    if (!session) {
-      const stored = getSessionFromStorage<GameSession>();
-      if (stored && stored.id) {
-        // Session exists in storage - user can recover
-      }
-    }
+  const handleStatusChange = useCallback((status: ConnectionStatusType) => {
+    setConnectionStatus(status);
   }, []);
+
+  useSessionSubscription({
+    session,
+    isOffline,
+    syncing,
+    onSessionUpdate: handleSessionUpdate,
+    onStatusChange: handleStatusChange,
+  });
+
+  const { recovering, storedSession, recoverSession } = useSessionRecovery({
+    currentSession: session,
+    onStatusChange: handleStatusChange,
+  });
 
   // Debug logging for phase transitions (called on every render in dev only)
   debugLog('phase', 'DMPage render', {
@@ -102,23 +78,6 @@ export default function DMPage() {
     diceType: session?.dice_type,
   });
 
-  // Load adventure when session has adventure_id
-  useEffect(() => {
-    if (!session?.adventure_id) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync adventure when session clears
-      setAdventure(null);
-      return;
-    }
-
-    setLoadingAdventure(true);
-    loadAdventure(session.adventure_id).then((loadedAdventure) => {
-      setLoadingAdventure(false);
-      if (loadedAdventure) {
-        setAdventure(loadedAdventure);
-      }
-    });
-  }, [session?.adventure_id]);
-
   // Compute derived state (currentScene and currentCharacterTurn) from session and adventure
   const currentScene = session && adventure 
     ? getCurrentScene(adventure, session.current_scene)
@@ -127,73 +86,33 @@ export default function DMPage() {
   const currentCharacterTurn = (() => {
     if (!session || !adventure || !currentScene) return null;
     const players = session.players || [];
-    if (session.phase === 'playing' && players.length > 0) {
+    if (session.phase === GAME_PHASES.PLAYING && players.length > 0) {
       const turnIndex = session.current_character_turn_index || 0;
       return getCurrentCharacterTurn(currentScene, turnIndex, players);
     }
     return null;
   })();
 
-  // Subscribe to session updates
-  useEffect(() => {
-    if (!session) return;
-
-    const channel = supabase
-      .channel(`session:${session.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'sessions',
-          filter: `id=eq.${session.id}`,
-        },
-        (payload) => {
-          setSession(payload.new as GameSession);
-          setConnectionStatus("connected");
-        }
-      )
-        .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          setConnectionStatus(isOffline ? "offline" : syncing ? "syncing" : "connected");
-        } else if (status === 'CHANNEL_ERROR') {
-          setConnectionStatus("error");
-        } else {
-          setConnectionStatus(isOffline ? "offline" : "connecting");
-        }
-      });
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [session]);
-
   const handleCreateSession = async () => {
     setError(null);
-    setConnectionStatus("connecting");
-    
+    setConnectionStatus(CONNECTION_STATUS.CONNECTING);
+
     const { data, error: sessionError } = await createSession();
-    
+
     if (sessionError || !data) {
       setError(formatError(sessionError) || 'Failed to create session');
-      setConnectionStatus("error");
+      setConnectionStatus(CONNECTION_STATUS.ERROR);
       return;
     }
 
     setSession(data);
   };
 
-  const loadAdventureById = async (adventureId: string) => {
+  const loadAdventureById = (adventureId: string) => {
     if (!session) return;
     setError(null);
-    setLoadingAdventure(true);
-    const loadedAdventure = await loadAdventure(adventureId);
-    setLoadingAdventure(false);
-    if (!loadedAdventure) {
-      setError('Failed to load adventure');
-      return;
-    }
-    setAdventure(loadedAdventure);
+    // Set adventure_id on session - the useAdventureLoader hook will load the adventure
+    setSession((prev) => prev ? { ...prev, adventure_id: adventureId } : null);
     setAssignmentStep('kids');
     setKidNames(['', '']);
     setPlayerAssignments([]);
@@ -321,7 +240,7 @@ export default function DMPage() {
       return;
     }
     setSession((prev) =>
-      prev ? { ...prev, players, adventure_id: adventure.id, phase: 'prologue', dice_type: selectedDiceType } : null
+      prev ? { ...prev, players, adventure_id: adventure.id, phase: GAME_PHASES.PROLOGUE, dice_type: selectedDiceType } : null
     );
   };
 
@@ -335,7 +254,7 @@ export default function DMPage() {
       setError(formatError(sceneError));
       return;
     }
-    setSession((prev) => prev ? { ...prev, phase: 'playing' } : null);
+    setSession((prev) => prev ? { ...prev, phase: GAME_PHASES.PLAYING } : null);
   };
 
   const handleSubmitChoice = async () => {
@@ -351,6 +270,9 @@ export default function DMPage() {
       return;
     }
 
+    // Get the success threshold (from turn or choice level)
+    const threshold = getSuccessThreshold(currentCharacterTurn, selectedChoice);
+
     setError(null);
     setSubmitting(true);
     const { error: submitError } = await submitCharacterChoice(
@@ -358,18 +280,67 @@ export default function DMPage() {
       currentCharacterTurn.characterId,
       selectedChoice.id,
       roll,
-      selectedChoice.successThreshold
+      threshold
     );
-    setSubmitting(false);
 
     if (submitError) {
+      setSubmitting(false);
       setError(formatError(submitError));
       return;
     }
 
+    // Check if this turn has cutscene outcomes (new format)
+    if (hasPerTurnOutcomes(currentCharacterTurn)) {
+      const turnOutcome = getTurnOutcome(currentCharacterTurn, roll, maxRoll, selectedChoice);
+      
+      if (turnOutcome?.cutsceneImageUrl) {
+        // Show cutscene on kids' screen
+        const { error: cutsceneError } = await showCutscene(session.id, {
+          characterId: currentCharacterTurn.characterId,
+          imageUrl: turnOutcome.cutsceneImageUrl,
+          outcomeText: turnOutcome.text,
+          reward: turnOutcome.reward ? {
+            id: turnOutcome.reward.id,
+            name: turnOutcome.reward.name,
+            imageUrl: turnOutcome.reward.imageUrl,
+            type: turnOutcome.reward.type,
+          } : undefined,
+        });
+        
+        if (cutsceneError) {
+          console.error('Failed to show cutscene:', cutsceneError);
+        }
+        
+        // Collect reward if present
+        if (turnOutcome.reward) {
+          const { error: rewardError } = await collectReward(session.id, {
+            id: turnOutcome.reward.id,
+            name: turnOutcome.reward.name,
+            imageUrl: turnOutcome.reward.imageUrl,
+            type: turnOutcome.reward.type,
+          });
+          
+          if (rewardError) {
+            console.error('Failed to collect reward:', rewardError);
+          }
+        }
+      }
+    }
+
+    setSubmitting(false);
+
     // Reset selection for next turn
     setSelectedChoice(null);
     setDiceRoll('');
+  };
+
+  const handleDismissCutscene = async () => {
+    if (!session) return;
+    setError(null);
+    const { error: dismissError } = await dismissCutscene(session.id);
+    if (dismissError) {
+      setError(formatError(dismissError));
+    }
   };
 
   const handleNextScene = async () => {
@@ -391,7 +362,7 @@ export default function DMPage() {
       return;
     }
     if (nextSceneNumber === null) {
-      setSession((prev) => prev ? { ...prev, phase: 'complete' as const } : null);
+      setSession((prev) => prev ? { ...prev, phase: GAME_PHASES.COMPLETE } : null);
     }
   };
 
@@ -408,8 +379,7 @@ export default function DMPage() {
       setError(formatError(resetError));
       throw resetError;
     }
-    setSession((prev) => prev ? { ...prev, phase: 'setup', adventure_id: null, players: [] } : null);
-    setAdventure(null);
+    setSession((prev) => prev ? { ...prev, phase: GAME_PHASES.SETUP, adventure_id: null, players: [] } : null);
     setAssignmentStep('kids');
     setKidNames(['', '']);
     setPlayerAssignments([]);
@@ -418,27 +388,18 @@ export default function DMPage() {
   };
 
   const handleRecoverSession = async () => {
-    const stored = getSessionFromStorage<GameSession>();
-    if (!stored || !stored.id) {
-      setError('No saved session found');
-      return;
-    }
     setError(null);
-    setRecovering(true);
-    setConnectionStatus("connecting");
-    const { data, error: recoverError } = await findSessionByCode(stored.room_code);
-    setRecovering(false);
-    if (recoverError || !data) {
-      setError('Could not recover session. Please create a new one.');
-      clearSessionFromStorage();
-      setConnectionStatus("error");
+    const { session: recoveredSession, error: recoverError } = await recoverSession();
+    if (recoverError) {
+      setError(recoverError === 'No saved session found'
+        ? recoverError
+        : 'Could not recover session. Please create a new one.');
       return;
     }
-    setSession(data);
-    setConnectionStatus("connected");
+    if (recoveredSession) {
+      setSession(recoveredSession);
+    }
   };
-
-  const storedSession = !session ? getSessionFromStorage<GameSession>() : null;
 
   // Render logic based on game state
   if (!session) {
@@ -482,7 +443,7 @@ export default function DMPage() {
   }
 
   // Feedback form (after adventure ends, phase complete)
-  if (session.phase === 'complete') {
+  if (session.phase === GAME_PHASES.COMPLETE) {
     return (
       <div className="min-h-screen bg-gray-50 px-4 py-8">
         <div className="max-w-md mx-auto space-y-6">
@@ -738,7 +699,7 @@ export default function DMPage() {
   }
 
   // Prologue: phase prologue, before Scene 1
-  if (session.phase === 'prologue' && adventure) {
+  if (session.phase === GAME_PHASES.PROLOGUE && adventure) {
     return (
       <div className="min-h-screen bg-gray-50 px-4 py-8">
         <div className="max-w-2xl mx-auto space-y-4">
@@ -845,7 +806,10 @@ export default function DMPage() {
                 const choice = characterTurn?.choices.find(c => c.id === sceneChoice.choiceId);
                 if (!character || !choice || !sceneChoice.roll) return null;
 
-                const outcome = calculateChoiceOutcome(choice, sceneChoice.roll, session.dice_type || 20);
+                // Get outcome - check for turn-level outcomes first (new format), then choice-level (old format)
+                const outcome = characterTurn && hasPerTurnOutcomes(characterTurn)
+                  ? getTurnOutcome(characterTurn, sceneChoice.roll, session.dice_type || 20, choice)
+                  : calculateChoiceOutcome(choice, sceneChoice.roll, session.dice_type || 20);
                 const kidName = getPlayerForCharacter(players, sceneChoice.characterId) || character.name;
 
                 return (
@@ -861,12 +825,34 @@ export default function DMPage() {
                     <p className="text-sm text-gray-600">Chose: {choice.label}</p>
                     <p className="text-sm text-gray-600">Rolled: {sceneChoice.roll}</p>
                     <p className="mt-2 flex items-start gap-2">
-                      <AnimationIndicator animationKey={outcome.animationKey} className="mt-0.5 flex-shrink-0" />
-                      <span>{outcome.text}</span>
+                      <AnimationIndicator animationKey={outcome?.animationKey} className="mt-0.5 flex-shrink-0" />
+                      <span>{outcome?.text ?? 'Outcome pending...'}</span>
                     </p>
                   </div>
                 );
               })}
+
+              {/* Cutscene Active Indicator */}
+              {session.active_cutscene && (
+                <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg space-y-3 mt-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
+                    <p className="font-semibold text-purple-900">Cutscene showing on kids' screen</p>
+                  </div>
+                  <p className="text-sm text-purple-800">{session.active_cutscene.outcomeText}</p>
+                  {session.active_cutscene.reward && (
+                    <p className="text-sm text-purple-700">
+                      Reward: <span className="font-medium">{session.active_cutscene.reward.name}</span>
+                    </p>
+                  )}
+                  <button
+                    onClick={handleDismissCutscene}
+                    className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+                  >
+                    Dismiss Cutscene
+                  </button>
+                </div>
+              )}
 
               {/* Scene outcome + Next/End only when all have acted */}
               {allActed && (
@@ -940,7 +926,7 @@ export default function DMPage() {
           )}
 
           {/* Character Turn UI */}
-          {!allActed && currentCharacterTurn && currentScene && (
+          {!allActed && currentCharacterTurn && currentScene && !session.active_cutscene && (
             <div className="space-y-4">
               {(() => {
                 const character = adventure.characters.find(c => c.id === currentCharacterTurn.characterId);
@@ -949,6 +935,12 @@ export default function DMPage() {
                 const activeTurns = getActiveCharacterTurns(currentScene, players);
                 const totalTurns = activeTurns.length;
                 const prompt = `${kidName} (${character?.name ?? 'Unknown'}), ${currentCharacterTurn.promptText}`;
+                // Get threshold - either from turn level or will be shown per-choice
+                // Scale threshold based on dice type (thresholds are written for d20)
+                const diceType = session.dice_type ?? DEFAULT_DICE_TYPE;
+                const scaleThreshold = (t: number) => Math.ceil(t * (diceType / 20));
+                const turnLevelThreshold = currentCharacterTurn.successThreshold;
+                const scaledTurnThreshold = turnLevelThreshold !== undefined ? scaleThreshold(turnLevelThreshold) : undefined;
 
                 return (
                   <>
@@ -959,20 +951,29 @@ export default function DMPage() {
 
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-gray-700">Choose an action:</label>
-                      {currentCharacterTurn.choices.map((choice) => (
-                        <button
-                          key={choice.id}
-                          onClick={() => setSelectedChoice(choice)}
-                          className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-colors ${
-                            selectedChoice?.id === choice.id
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <p className="font-medium">{choice.label}</p>
-                          <p className="text-xs text-gray-500 mt-1">Success on {choice.successThreshold}+</p>
-                        </button>
-                      ))}
+                      {scaledTurnThreshold !== undefined && (
+                        <p className="text-xs text-gray-500">Success on {scaledTurnThreshold}+</p>
+                      )}
+                      {currentCharacterTurn.choices.map((choice) => {
+                        const choiceThreshold = choice.successThreshold;
+                        const scaledChoiceThreshold = choiceThreshold !== undefined ? scaleThreshold(choiceThreshold) : undefined;
+                        return (
+                          <button
+                            key={choice.id}
+                            onClick={() => setSelectedChoice(choice)}
+                            className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-colors ${
+                              selectedChoice?.id === choice.id
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                          >
+                            <p className="font-medium">{choice.label}</p>
+                            {scaledChoiceThreshold !== undefined && scaledTurnThreshold === undefined && (
+                              <p className="text-xs text-gray-500 mt-1">Success on {scaledChoiceThreshold}+</p>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
 
                     <div className="flex flex-wrap items-end gap-4">

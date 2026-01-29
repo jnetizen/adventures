@@ -1,11 +1,20 @@
 import type { Adventure } from '../types/adventure';
+import { type OperationType } from '../constants/game';
+import { parsePendingOperations, type PendingOperation } from '../schemas/game';
 
 const ADVENTURE_CACHE_PREFIX = 'adventure-cache-';
 const OPERATIONS_QUEUE_KEY = 'offline-operations-queue';
 
-export interface PendingOperation {
+// Re-export PendingOperation type from schemas for backward compatibility
+export type { PendingOperation };
+
+/**
+ * Legacy PendingOperation interface for reference.
+ * Now use the Zod schema type from schemas/game.ts instead.
+ */
+export interface LegacyPendingOperation {
   id: string;
-  type: 'createSession' | 'startAdventure' | 'startScene' | 'submitChoice' | 'advanceScene' | 'submitFeedback' | 'resetSession';
+  type: OperationType;
   sessionId: string;
   data: unknown;
   timestamp: string;
@@ -54,11 +63,15 @@ export async function getAllCachedAdventureIds(): Promise<string[]> {
 }
 
 /**
- * Save operation to offline queue
+ * Save operation to offline queue.
+ * Note: Uses LegacyPendingOperation to allow any operation shape to be saved,
+ * validation happens on read via getPendingOperationsSync.
  */
-export async function saveOperationToQueue(operation: PendingOperation): Promise<void> {
+export async function saveOperationToQueue(operation: LegacyPendingOperation): Promise<void> {
   try {
-    const queue = getPendingOperationsSync();
+    // Read raw queue to preserve any operations (including those that might not validate)
+    const raw = localStorage.getItem(OPERATIONS_QUEUE_KEY);
+    const queue: unknown[] = raw ? JSON.parse(raw) : [];
     queue.push(operation);
     localStorage.setItem(OPERATIONS_QUEUE_KEY, JSON.stringify(queue));
   } catch (e) {
@@ -67,13 +80,16 @@ export async function saveOperationToQueue(operation: PendingOperation): Promise
 }
 
 /**
- * Get all pending operations (sync version for queue management)
+ * Get all pending operations (sync version for queue management).
+ * Uses Zod validation to filter out invalid operations.
  */
 function getPendingOperationsSync(): PendingOperation[] {
   try {
     const raw = localStorage.getItem(OPERATIONS_QUEUE_KEY);
     if (!raw) return [];
-    return JSON.parse(raw) as PendingOperation[];
+    const parsed = JSON.parse(raw);
+    // Validate with Zod - filters out invalid operations
+    return parsePendingOperations(parsed);
   } catch {
     return [];
   }

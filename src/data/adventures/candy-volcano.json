@@ -49,8 +49,8 @@
   ],
   "scoring": {
     "thresholds": [
-      { "minSuccesses": 12, "endingId": "ending-legendary" },
-      { "minSuccesses": 8, "endingId": "ending-great" },
+      { "minSuccesses": 10, "endingId": "ending-legendary" },
+      { "minSuccesses": 6, "endingId": "ending-great" },
       { "minSuccesses": 0, "endingId": "ending-good" }
     ]
   },
@@ -59,7 +59,7 @@
       "id": "scene-1",
       "sceneNumber": 0,
       "narrationText": "Jellybeans rain from the sky! The Candy Volcano glows pink in the distance. BOOM! Lightning strikes the mountain!",
-      "sceneImageUrl": "/images/scenes/sugary-storm.png",
+      "sceneImageUrl": "/images/scenes/candy-volcano/scene-0-sugary-storm.png",
       "leadCharacterId": "spark-wizard",
       "characterTurns": [
         {
@@ -168,7 +168,7 @@
       "id": "scene-2",
       "sceneNumber": 1,
       "narrationText": "A wiggly bridge made of giant gummy worms stretches over hot fudge! It jiggles with every step.",
-      "sceneImageUrl": "/images/scenes/gummy-bridge.png",
+      "sceneImageUrl": "/images/scenes/candy-volcano/scene-1-gummy-bridge.png",
       "leadCharacterId": "frost-wizard",
       "characterTurns": [
         {
@@ -285,7 +285,7 @@
       "id": "scene-3",
       "sceneNumber": 2,
       "narrationText": "Two tall Peppermint Knights guard the volcano gate! 'HALT! Solve our riddle to enter!'",
-      "sceneImageUrl": "/images/scenes/peppermint-guards.png",
+      "sceneImageUrl": "/images/scenes/candy-volcano/scene-2-peppermint-guards.png",
       "leadCharacterId": "bloom-wizard",
       "characterTurns": [
         {
@@ -394,7 +394,7 @@
       "id": "scene-4",
       "sceneNumber": 3,
       "narrationText": "A sad Marzipan Dragon sits by the cracked Candy Core Crystal. 'I didn't mean to break it!'",
-      "sceneImageUrl": "/images/scenes/candy-core.png",
+      "sceneImageUrl": "/images/scenes/candy-volcano/scene-3-candy-core.png",
       "leadCharacterId": "spark-wizard",
       "characterTurns": [
         {
@@ -510,109 +510,12 @@
     {
       "id": "scene-5",
       "sceneNumber": 4,
-      "narrationText": "The volcano bursts — with confetti! Chocolate fountains rise and candy creatures cheer!",
-      "sceneImageUrl": "/images/scenes/candy-festival.png",
-      "leadCharacterId": "bloom-wizard",
-      "characterTurns": [
-        {
-          "characterId": "bloom-wizard",
-          "promptText": "Party time!",
-          "choices": [
-            {
-              "id": "scene5-bloom-swing",
-              "label": "Grow a flower swing",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "The biggest flower swing ever! Gummy bears line up for turns.",
-                "animationKey": "giant-swing"
-              },
-              "failOutcome": {
-                "text": "The swing is SO bouncy everyone flies! But marshmallow clouds catch them.",
-                "animationKey": "bouncy-fly"
-              }
-            },
-            {
-              "id": "scene5-bloom-dance",
-              "label": "Start a dance party",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "The wizard wiggle spreads to every candy creature! Everyone's dancing!",
-                "animationKey": "dance-party"
-              },
-              "failOutcome": {
-                "text": "Bloom invents a silly new dance! It becomes the most popular dance in the valley.",
-                "animationKey": "silly-dance"
-              }
-            }
-          ]
-        },
-        {
-          "characterId": "spark-wizard",
-          "promptText": "Celebrate!",
-          "choices": [
-            {
-              "id": "scene5-spark-bow",
-              "label": "Take a fancy bow",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "Sparkles shoot from the wand mid-bow! The crowd cheers!",
-                "animationKey": "fancy-bow"
-              },
-              "failOutcome": {
-                "text": "Spark's hat falls off! The dragon catches it with a giggle.",
-                "animationKey": "hat-catch"
-              }
-            },
-            {
-              "id": "scene5-spark-fireworks",
-              "label": "Make fireworks",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "Candy-colored fireworks fill the sky! Everyone oohs and aahs.",
-                "animationKey": "candy-fireworks"
-              },
-              "failOutcome": {
-                "text": "The fireworks turn into popcorn! Delicious popcorn rains on everyone.",
-                "animationKey": "popcorn-rain"
-              }
-            }
-          ]
-        },
-        {
-          "characterId": "frost-wizard",
-          "promptText": "One last magic!",
-          "choices": [
-            {
-              "id": "scene5-frost-sculpture",
-              "label": "Make an ice statue",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "A beautiful ice statue of all three wizards! Everyone admires it.",
-                "animationKey": "ice-sculpture"
-              },
-              "failOutcome": {
-                "text": "The statue looks blobby, but the dragon calls it 'abstract art!'",
-                "animationKey": "blobby-art"
-              }
-            },
-            {
-              "id": "scene5-frost-treats",
-              "label": "Snow cones for all",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "Snow cones for everyone! The candy creatures love them.",
-                "animationKey": "snowcone-party"
-              },
-              "failOutcome": {
-                "text": "SO many snow cones appear — friendly snow cone fight! Splat! Splat!",
-                "animationKey": "snowcone-fight"
-              }
-            }
-          ]
-        }
-      ],
+      "narrationText": "The volcano rumbles one last time — and instead of goo, it bursts with CONFETTI! Rainbow sprinkles, chocolate fountains, and cotton candy clouds fill the sky! Every candy creature in Sweet-Top Valley rushes out to celebrate. The Marzipan Dragon soars overhead, breathing sparkly fireworks. 'You did it!' the dragon roars happily. 'You saved us all!'",
+      "sceneImageUrl": "/images/scenes/candy-volcano/scene-4-candy-festival.png",
+      "leadCharacterId": null,
+      "characterTurns": [],
       "outcome": {
-        "resultText": "The dragon crowns you with gumdrop halos! 'You saved Sweet-Top Valley!'",
+        "resultText": "The dragon floats down and places glowing gumdrop halos on each wizard's head. 'Heroes of Sweet-Top Valley!' All the candy creatures cheer and dance as the biggest celebration in candy history begins!",
         "nextSceneId": null
       }
     }

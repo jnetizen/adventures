@@ -29,13 +29,12 @@ Bugs from playtest feedback and other sources. Track status and cross off as fix
 ### BUG-4: Reward popup feels like a system alert, not a celebration
 - **Description:** The reward display on the player screen looks too much like a system interruption dialog. Kids immediately clicked it to dismiss rather than celebrating. Should feel like "amazing reward I should care about" not "system alert getting in the way."
 - **Severity:** Medium
-- **Status:** Open
-- **Affects:** Player screen reward display (likely in PlayPage.tsx or a reward component)
+- **Status:** Fixed
+- **Affects:** [RewardCelebration](src/components/RewardCelebration.tsx)
 - **Source:** Playtest with 3yo, 5yo, 7yo (Jan 27, 2026)
-- **Fix:** Redesign reward UI to feel celebratory — consider: confetti animation, sound effect hook, larger imagery, auto-dismiss with fanfare, less "modal/dialog" styling
-- **Notes:** Save for Gemini/Cursor to redesign
+- **Fix:** Redesigned as game-style treasure chest reveal: animated chest bounces in and opens, rewards burst out with staggered timing, "You found X treasures!" announcement, enhanced confetti (larger shapes, rotation), sparkle effects, tap-anywhere dismiss after 2s delay. Modal/dialog styling completely removed.
 
-- [ ] **Fixed**
+- [x] **Fixed**
 
 ---
 
@@ -82,6 +81,9 @@ Bugs from playtest feedback and other sources. Track status and cross off as fix
 
 ### BUG-3 (fixed)
 - **Fixed:** Addressed via BUG-2 — no "waiting for reveal" state.
+
+### BUG-4 (fixed)
+- **Fixed:** Redesigned RewardCelebration as game-style treasure chest reveal. Features: animated chest entrance with bounce, lid opens with wobble, rewards burst out with stagger, "You found X treasures!" pop-in text, enhanced confetti (larger varied shapes with rotation), sparkle effects. Tap-anywhere dismiss after 2s delay, auto-dismiss at 6s. Modal/button styling completely removed.
 
 ---
 

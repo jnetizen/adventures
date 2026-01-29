@@ -1,4 +1,9 @@
-export type GamePhase = "setup" | "prologue" | "playing" | "complete" | "paused";
+// Import and re-export GamePhase and ConnectionStatusType from constants for backward compatibility
+import { GAME_PHASES, CONNECTION_STATUS, type GamePhase as GamePhaseType, type ConnectionStatusType as ConnectionStatusTypeAlias } from '../constants/game';
+
+export { GAME_PHASES, CONNECTION_STATUS };
+export type GamePhase = GamePhaseType;
+export type ConnectionStatusType = ConnectionStatusTypeAlias;
 
 /** Supported dice types (max value). */
 export type DiceType = 6 | 10 | 12 | 20;
@@ -16,6 +21,26 @@ export interface SceneChoice {
 export interface Player {
   kidName: string;
   characterId: string;
+}
+
+/** Reward collected during adventure (matches adventure Reward type). */
+export interface CollectedReward {
+  id: string;
+  name: string;
+  imageUrl?: string;
+  type?: string;
+}
+
+/** Active cutscene overlay state. */
+export interface ActiveCutscene {
+  /** Character who performed the action. */
+  characterId: string;
+  /** Cutscene image URL to display. */
+  imageUrl: string;
+  /** Outcome text for the parent to read. */
+  outcomeText: string;
+  /** Reward earned (if any). */
+  reward?: CollectedReward;
 }
 
 export interface GameSession {
@@ -43,6 +68,10 @@ export interface GameSession {
   feedback_negative?: string | null;
   feedback_notes?: string | null;
   feedback_submitted_at?: string | null;
+  /** Active cutscene overlay (null = no cutscene showing). */
+  active_cutscene?: ActiveCutscene | null;
+  /** Rewards collected during the adventure. */
+  collected_rewards?: CollectedReward[];
 }
 
 export interface GameState {

@@ -54,8 +54,8 @@
   ],
   "scoring": {
     "thresholds": [
-      { "minSuccesses": 12, "endingId": "ending-legendary" },
-      { "minSuccesses": 8, "endingId": "ending-great" },
+      { "minSuccesses": 10, "endingId": "ending-legendary" },
+      { "minSuccesses": 6, "endingId": "ending-great" },
       { "minSuccesses": 0, "endingId": "ending-good" }
     ]
   },
@@ -64,7 +64,7 @@
       "id": "scene-1",
       "sceneNumber": 0,
       "narrationText": "Dark clouds gather over the Stormy Peaks. You hear a tiny 'SQUEAK!' echo from the mountains. That's Ember!",
-      "sceneImageUrl": "/images/scenes/stormy-peaks.png",
+      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-0-stormy-peaks.png",
       "leadCharacterId": "swift-knight",
       "characterTurns": [
         {
@@ -173,7 +173,7 @@
       "id": "scene-2",
       "sceneNumber": 1,
       "narrationText": "A wobbly rope bridge crosses a deep canyon. The wind is getting stronger! SQUEAK! Ember sounds closer!",
-      "sceneImageUrl": "/images/scenes/rope-bridge.png",
+      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-1-rope-bridge.png",
       "leadCharacterId": "shield-knight",
       "characterTurns": [
         {
@@ -290,7 +290,7 @@
       "id": "scene-3",
       "sceneNumber": 2,
       "narrationText": "A grumpy Mountain Troll sits on the only path! 'NO PASS! Me napping!' But Ember's squeaks are just beyond!",
-      "sceneImageUrl": "/images/scenes/grumpy-troll.png",
+      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-2-grumpy-troll.png",
       "leadCharacterId": "kind-knight",
       "characterTurns": [
         {
@@ -399,7 +399,7 @@
       "id": "scene-4",
       "sceneNumber": 3,
       "narrationText": "Inside the cave, baby Ember shivers on a ledge! She's scared of the thunder. Lightning flashes outside!",
-      "sceneImageUrl": "/images/scenes/cave-ledge.png",
+      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-3-cave-ledge.png",
       "leadCharacterId": "kind-knight",
       "characterTurns": [
         {
@@ -515,109 +515,12 @@
     {
       "id": "scene-5",
       "sceneNumber": 4,
-      "narrationText": "The storm clears! A rainbow appears over the kingdom. Ember's mama dragon swoops down with happy tears!",
-      "sceneImageUrl": "/images/scenes/rainbow-reunion.png",
-      "leadCharacterId": "shield-knight",
-      "characterTurns": [
-        {
-          "characterId": "shield-knight",
-          "promptText": "Mama dragon is here!",
-          "choices": [
-            {
-              "id": "scene5-shield-bow",
-              "label": "Take a knight's bow",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "The most noble bow! Mama dragon bows back with respect.",
-                "animationKey": "noble-bow"
-              },
-              "failOutcome": {
-                "text": "The helmet falls off mid-bow! Ember catches it and puts it back. Giggles!",
-                "animationKey": "helmet-catch"
-              }
-            },
-            {
-              "id": "scene5-shield-wave",
-              "label": "Wave the shield proudly",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "The golden shield catches the rainbow light! Everyone oohs and aahs!",
-                "animationKey": "rainbow-shield"
-              },
-              "failOutcome": {
-                "text": "The shield is heavy and wobbles! Ember helps hold it up. Team effort!",
-                "animationKey": "wobble-help"
-              }
-            }
-          ]
-        },
-        {
-          "characterId": "swift-knight",
-          "promptText": "Celebrate!",
-          "choices": [
-            {
-              "id": "scene5-swift-race",
-              "label": "Victory lap around everyone",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "The fastest, happiest lap ever! Everyone cheers!",
-                "animationKey": "victory-lap"
-              },
-              "failOutcome": {
-                "text": "So excited, trips over own feet! But turns it into a somersault. Ta-da!",
-                "animationKey": "somersault"
-              }
-            },
-            {
-              "id": "scene5-swift-fly",
-              "label": "Ask for a dragon ride",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "Mama dragon gives everyone a ride through the rainbow! Best day ever!",
-                "animationKey": "dragon-ride"
-              },
-              "failOutcome": {
-                "text": "Mama dragon is tired but Ember gives tiny piggyback rides. So cute!",
-                "animationKey": "tiny-ride"
-              }
-            }
-          ]
-        },
-        {
-          "characterId": "kind-knight",
-          "promptText": "Say goodbye to Ember!",
-          "choices": [
-            {
-              "id": "scene5-kind-hug",
-              "label": "One more big hug",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "The best goodbye hug! Ember squeaks 'I'll visit you!'",
-                "animationKey": "goodbye-hug"
-              },
-              "failOutcome": {
-                "text": "The hug is so tight Ember squeaks! But happy squeaks. Friends forever!",
-                "animationKey": "squeeze-squeak"
-              }
-            },
-            {
-              "id": "scene5-kind-promise",
-              "label": "Promise to visit",
-              "successThreshold": 5,
-              "successOutcome": {
-                "text": "Pinky promise with a tiny dragon claw. Best friends forever!",
-                "animationKey": "pinky-promise"
-              },
-              "failOutcome": {
-                "text": "Ember doesn't know what a pinky promise is but puts her whole paw in. Even better!",
-                "animationKey": "paw-promise"
-              }
-            }
-          ]
-        }
-      ],
+      "narrationText": "The storm clears and a beautiful rainbow stretches across the sky! Mama dragon swoops down with happy tears streaming from her eyes. She wraps her wings around Ember in the biggest dragon hug. 'My baby! You found her!' She turns to the knights with grateful eyes. 'Thank you, brave ones. You will always be friends of the dragons!'",
+      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-4-rainbow-reunion.png",
+      "leadCharacterId": null,
+      "characterTurns": [],
       "outcome": {
-        "resultText": "Mama dragon roars happily and the whole kingdom hears! 'The knights saved Ember!'",
+        "resultText": "Mama dragon roars happily and the whole kingdom hears the joyful sound echoing through the mountains: 'The knights saved Ember!' The three brave knights wave as Ember and her mama fly off into the sunset, leaving a trail of sparkles behind them.",
         "nextSceneId": null
       }
     }
