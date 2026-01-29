@@ -32,7 +32,11 @@ export function useSessionSubscription({
   onStatusChange,
 }: UseSessionSubscriptionOptions): void {
   const sessionIdRef = useRef(session?.id);
-  sessionIdRef.current = session?.id;
+
+  // Keep ref in sync with session ID
+  useEffect(() => {
+    sessionIdRef.current = session?.id;
+  }, [session?.id]);
 
   // Function to re-fetch session from database
   const refetchSession = useCallback(async () => {
