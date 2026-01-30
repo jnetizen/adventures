@@ -19,7 +19,7 @@ import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
 import type { GameSession, Player, DiceType } from '../types/game';
 import { DICE_TYPES, DEFAULT_DICE_TYPE } from '../types/game';
-import type { Choice, Character, CharacterTurn, TurnOutcome } from '../types/adventure';
+import type { Choice, Character, CharacterTurn, SceneOutcome, TurnOutcome } from '../types/adventure';
 import {
   useSessionPersistence,
   useOfflineSync,
@@ -123,6 +123,31 @@ const showOutcomeCutscene = async (
     }
   }
 };
+
+const renderSceneOutcome = (outcome: SceneOutcome) => (
+  <div className="bg-green-50 p-4 rounded-lg mt-4">
+    <h3 className="font-semibold text-green-900 mb-2">Scene Outcome</h3>
+    <p className="text-green-800 whitespace-pre-line">{outcome.resultText}</p>
+    {outcome.rewards && outcome.rewards.length > 0 && (
+      <div className="mt-3">
+        <p className="font-semibold text-green-900 mb-2">Rewards earned:</p>
+        <ul className="space-y-2">
+          {outcome.rewards.map((reward) => (
+            <li key={reward.id} className="text-green-800 flex items-center gap-3">
+              {reward.imageUrl ? (
+                <img src={reward.imageUrl} alt={reward.name} className="w-8 h-8 object-contain rounded" />
+              ) : (
+                <PlaceholderImage variant="character" label={reward.name} className="w-8 h-8 flex-shrink-0" />
+              )}
+              <span>{reward.name}</span>
+              <span className="text-xs text-green-600 uppercase">{reward.type}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+);
 
 export default function DMPage() {
   const [session, setSession] = useState<GameSession | null>(null);
@@ -1335,30 +1360,7 @@ export default function DMPage() {
           {/* Scene outcome + Next/End only when all have acted */}
           {currentScene && allActed && !showingEpilogue && (
             <>
-              {currentScene.outcome && (
-                <div className="bg-green-50 p-4 rounded-lg mt-4">
-                  <h3 className="font-semibold text-green-900 mb-2">Scene Outcome</h3>
-                  <p className="text-green-800 whitespace-pre-line">{currentScene.outcome.resultText}</p>
-                  {currentScene.outcome.rewards && currentScene.outcome.rewards.length > 0 && (
-                    <div className="mt-3">
-                      <p className="font-semibold text-green-900 mb-2">Rewards earned:</p>
-                      <ul className="space-y-2">
-                        {currentScene.outcome.rewards.map((reward) => (
-                          <li key={reward.id} className="text-green-800 flex items-center gap-3">
-                            {reward.imageUrl ? (
-                              <img src={reward.imageUrl} alt={reward.name} className="w-8 h-8 object-contain rounded" />
-                            ) : (
-                              <PlaceholderImage variant="character" label={reward.name} className="w-8 h-8 flex-shrink-0" />
-                            )}
-                            <span>{reward.name}</span>
-                            <span className="text-xs text-green-600 uppercase">{reward.type}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
+              {currentScene.outcome && renderSceneOutcome(currentScene.outcome)}
               {isLastScene ? (
                 // Last scene - show "End Adventure" button to go to epilogue
                 <button
