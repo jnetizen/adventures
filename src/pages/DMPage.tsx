@@ -17,7 +17,7 @@ import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
 import type { GameSession, Player, DiceType } from '../types/game';
 import { DICE_TYPES, DEFAULT_DICE_TYPE } from '../types/game';
-import type { Choice, Character } from '../types/adventure';
+import type { Choice, Character, CharacterTurn } from '../types/adventure';
 import {
   useSessionPersistence,
   useOfflineSync,
@@ -59,6 +59,26 @@ const getKidDisplayName = (
   characterId: string,
   fallbackName?: string
 ) => getPlayerForCharacter(players, characterId) || fallbackName || 'Unknown';
+
+const resolveSceneChoiceOutcome = (
+  characterTurn: CharacterTurn,
+  sceneChoice: NonNullable<GameSession['scene_choices']>[number],
+  diceType: number,
+  choice: Choice | null,
+  isClimaxTurn: boolean
+) => {
+  if (isClimaxTurn) {
+    return characterTurn.outcome;
+  }
+
+  if (hasPerTurnOutcomes(characterTurn)) {
+    return getTurnOutcome(characterTurn, sceneChoice.roll!, diceType, choice ?? undefined);
+  }
+
+  return choice
+    ? calculateChoiceOutcome(choice, sceneChoice.roll!, diceType)
+    : null;
+};
 
 export default function DMPage() {
   const [session, setSession] = useState<GameSession | null>(null);
@@ -1261,7 +1281,7 @@ export default function DMPage() {
                 // Handle alwaysSucceed (climax) turns differently
                 const isClimaxTurn = isAlwaysSucceedTurn(characterTurn);
                 const choice = !isClimaxTurn && characterTurn.choices
-                  ? characterTurn.choices.find(c => c.id === sceneChoice.choiceId)
+                  ? characterTurn.choices.find(c => c.id === sceneChoice.choiceId) ?? null
                   : null;
 
                 // For regular turns, require a valid choice
@@ -1269,13 +1289,13 @@ export default function DMPage() {
                 if (!isClimaxTurn && !sceneChoice.roll) return null;
 
                 // Get outcome - climax turns use turn.outcome directly, others check success/fail
-                const outcome = isClimaxTurn
-                  ? characterTurn.outcome
-                  : characterTurn && hasPerTurnOutcomes(characterTurn)
-                    ? getTurnOutcome(characterTurn, sceneChoice.roll!, session.dice_type || 20, choice ?? undefined)
-                    : choice
-                      ? calculateChoiceOutcome(choice, sceneChoice.roll!, session.dice_type || 20)
-                      : null;
+                const outcome = resolveSceneChoiceOutcome(
+                  characterTurn,
+                  sceneChoice,
+                  session.dice_type || 20,
+                  choice,
+                  isClimaxTurn
+                );
                 const kidName = getKidDisplayName(players, sceneChoice.characterId, character.name);
 
                 return (
