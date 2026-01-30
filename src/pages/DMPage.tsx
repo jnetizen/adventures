@@ -18,7 +18,7 @@ import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
 import type { GameSession, Player, DiceType } from '../types/game';
 import { DICE_TYPES, DEFAULT_DICE_TYPE } from '../types/game';
-import type { Choice, Character, CharacterTurn } from '../types/adventure';
+import type { Choice, Character, CharacterTurn, TurnOutcome } from '../types/adventure';
 import {
   useSessionPersistence,
   useOfflineSync,
@@ -79,6 +79,47 @@ const resolveSceneChoiceOutcome = (
   return choice
     ? calculateChoiceOutcome(choice, sceneChoice.roll!, diceType)
     : null;
+};
+
+const showOutcomeCutscene = async (
+  sessionId: string,
+  characterId: string,
+  outcome: TurnOutcome
+) => {
+  if (!outcome.cutsceneImageUrl) return;
+
+  const { error: cutsceneError } = await showCutscene(sessionId, {
+    characterId,
+    imageUrl: outcome.cutsceneImageUrl,
+    outcomeText: outcome.text,
+    reward: outcome.reward ? {
+      id: outcome.reward.id,
+      name: outcome.reward.name,
+      imageUrl: outcome.reward.imageUrl,
+      type: outcome.reward.type,
+    } : undefined,
+  });
+
+  debugLog('session', 'showCutscene called', {
+    characterId,
+    result: cutsceneError ? 'ERROR' : 'SUCCESS',
+  });
+  if (cutsceneError) {
+    console.error('Failed to show cutscene:', cutsceneError);
+  }
+
+  if (outcome.reward) {
+    const { error: rewardError } = await collectReward(sessionId, {
+      id: outcome.reward.id,
+      name: outcome.reward.name,
+      imageUrl: outcome.reward.imageUrl,
+      type: outcome.reward.type,
+    });
+
+    if (rewardError) {
+      console.error('Failed to collect reward:', rewardError);
+    }
+  }
 };
 
 export default function DMPage() {
@@ -440,40 +481,7 @@ export default function DMPage() {
       });
 
       if (turnOutcome?.cutsceneImageUrl) {
-        // Show cutscene on kids' screen
-        const { error: cutsceneError } = await showCutscene(session.id, {
-          characterId: turn.characterId,
-          imageUrl: turnOutcome.cutsceneImageUrl,
-          outcomeText: turnOutcome.text,
-          reward: turnOutcome.reward ? {
-            id: turnOutcome.reward.id,
-            name: turnOutcome.reward.name,
-            imageUrl: turnOutcome.reward.imageUrl,
-            type: turnOutcome.reward.type,
-          } : undefined,
-        });
-        
-        debugLog('session', 'showCutscene called', {
-          characterId: turn.characterId,
-          result: cutsceneError ? 'ERROR' : 'SUCCESS',
-        });
-        if (cutsceneError) {
-          console.error('Failed to show cutscene:', cutsceneError);
-        }
-        
-        // Collect reward if present
-        if (turnOutcome.reward) {
-          const { error: rewardError } = await collectReward(session.id, {
-            id: turnOutcome.reward.id,
-            name: turnOutcome.reward.name,
-            imageUrl: turnOutcome.reward.imageUrl,
-            type: turnOutcome.reward.type,
-          });
-          
-          if (rewardError) {
-            console.error('Failed to collect reward:', rewardError);
-          }
-        }
+        await showOutcomeCutscene(session.id, turn.characterId, turnOutcome);
       }
     }
 
@@ -546,39 +554,7 @@ export default function DMPage() {
 
     // Show cutscene for the outcome
     if (turn.outcome?.cutsceneImageUrl) {
-      const { error: cutsceneError } = await showCutscene(session.id, {
-        characterId: turn.characterId,
-        imageUrl: turn.outcome.cutsceneImageUrl,
-        outcomeText: turn.outcome.text,
-        reward: turn.outcome.reward ? {
-          id: turn.outcome.reward.id,
-          name: turn.outcome.reward.name,
-          imageUrl: turn.outcome.reward.imageUrl,
-          type: turn.outcome.reward.type,
-        } : undefined,
-      });
-
-      debugLog('session', 'showCutscene called for climax turn', {
-        characterId: turn.characterId,
-        result: cutsceneError ? 'ERROR' : 'SUCCESS',
-      });
-      if (cutsceneError) {
-        console.error('Failed to show cutscene:', cutsceneError);
-      }
-
-      // Collect reward if present
-      if (turn.outcome.reward) {
-        const { error: rewardError } = await collectReward(session.id, {
-          id: turn.outcome.reward.id,
-          name: turn.outcome.reward.name,
-          imageUrl: turn.outcome.reward.imageUrl,
-          type: turn.outcome.reward.type,
-        });
-
-        if (rewardError) {
-          console.error('Failed to collect reward:', rewardError);
-        }
-      }
+      await showOutcomeCutscene(session.id, turn.characterId, turn.outcome);
     }
 
     setSubmitting(false);
