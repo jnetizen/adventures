@@ -183,3 +183,20 @@ export function computeParallelSceneStatus(
 export function computeIsSplit(session: GameSession | null): boolean {
   return !!(session?.is_split && session?.character_scenes && session.character_scenes.length > 0);
 }
+
+/**
+ * Group character scene states by scene ID.
+ */
+export function groupCharacterScenesBySceneId(
+  characterScenes: GameSession['character_scenes']
+): Map<string, NonNullable<GameSession['character_scenes']>> {
+  const sceneGroups = new Map<string, NonNullable<GameSession['character_scenes']>>();
+  if (!characterScenes) return sceneGroups;
+
+  for (const cs of characterScenes) {
+    const existing = sceneGroups.get(cs.sceneId) || [];
+    sceneGroups.set(cs.sceneId, [...existing, cs]);
+  }
+
+  return sceneGroups;
+}

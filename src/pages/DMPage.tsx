@@ -12,6 +12,7 @@ import {
   computeAllActed,
   isParallelSceneComplete,
   computeParallelSceneStatus,
+  groupCharacterScenesBySceneId,
 } from '../lib/dmDerivedState';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
@@ -52,20 +53,6 @@ const updateSceneTurnIndex = (
       ? { ...cs, turnIndex }
       : cs
   );
-};
-
-const groupCharacterScenesBySceneId = (
-  characterScenes: GameSession['character_scenes']
-) => {
-  const sceneGroups = new Map<string, NonNullable<GameSession['character_scenes']>>();
-  if (!characterScenes) return sceneGroups;
-
-  for (const cs of characterScenes) {
-    const existing = sceneGroups.get(cs.sceneId) || [];
-    sceneGroups.set(cs.sceneId, [...existing, cs]);
-  }
-
-  return sceneGroups;
 };
 
 const getKidDisplayName = (
