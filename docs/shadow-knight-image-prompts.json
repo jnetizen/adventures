@@ -1,0 +1,253 @@
+{
+  "adventureId": "shadow-knight",
+  "adventureTitle": "The Shadow Knight and the Lost Grove",
+  "totalImages": 23,
+  "estimatedCost": 0.92,
+  "prompts": [
+    {
+      "id": "prologue",
+      "type": "background",
+      "filename": "prologue.png",
+      "scene": "prologue",
+      "prompt": "Generate a 16:9 landscape image. A magical forest kingdom showing signs of decay, ancient trees with leaves turning gray, wilting flowers, soft mist creeping between the trunks, a faint dark castle silhouette visible in the deep forest distance, tiny glowing spirits hiding behind mushrooms looking sad, twilight lighting with purple and gray tones, sense of a once-beautiful place losing its magic, Pixar-adjacent storybook style, soft painterly rendering, melancholy but not scary atmosphere, children's book illustration."
+    },
+    {
+      "id": "scene-1-forest-entrance",
+      "type": "background",
+      "filename": "scene-1-forest-entrance.png",
+      "scene": "scene-1",
+      "prompt": "Generate a 16:9 landscape image. Three young heroes each separately standing at the entrance to a magical forest, large ancient trees forming a natural archway behind them, green healthy trees transitioning to gray dying trees deeper in, colorful mushrooms and flowers at the forest edge, tiny cute forest spirits peeking from behind mushrooms.\n\nLeft side of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents.\n\nCenter of image: A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak.\n\nRight side of image: A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES.\n\nThe three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on forest path, looking brave and ready for adventure, warm golden sunlight, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-2a-misty-woods",
+      "type": "background",
+      "filename": "scene-2a-misty-woods.png",
+      "scene": "scene-2a",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, standing alone in a mysterious misty forest clearing, thick white fog swirling between ancient gnarled trees, an old stone shrine covered in vines visible ahead with a faint green glow emanating from within, a majestic stone wolf statue with glowing eyes guarding the shrine, moss-covered stones and ferns on the ground, shafts of pale light filtering through the canopy, the boy looking determined and brave, feet visible on mossy ground, atmospheric and mysterious but not scary, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-2b-sunny-grove",
+      "type": "background",
+      "filename": "scene-2b-sunny-grove.png",
+      "scene": "scene-2b",
+      "prompt": "Generate a 16:9 landscape image. Two young heroes each separately standing in a beautiful sun-dappled forest clearing, golden light streaming through bright green leaves, dozens of tiny cute forest spirits with leaf faces peeking out from flowers and mushrooms, a white unicorn caught in dark thorny vines near a fallen log looking sad, colorful wildflowers everywhere, butterflies and sparkles in the air.\n\nLeft side of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents.\n\nRight side of image: A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES.\n\nThe two children are spread apart with clear space between them, NOT overlapping, NOT touching, feet visible on grassy ground, looking concerned for the unicorn, warm happy magical atmosphere, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-3a-shadow-barrier",
+      "type": "background",
+      "filename": "scene-3a-shadow-barrier.png",
+      "scene": "scene-3a",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, standing before a massive wall of swirling purple-black shadow magic blocking a dark forest path, the boy holding a glowing green sword (the Grove Blade), dark tendrils of smoke curling and crackling with dark energy, twisted trees on either side, faint green light from the sword pushing back the darkness, the boy looking brave and determined, feet visible on forest floor, dramatic lighting, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-3b-hidden-glade",
+      "type": "background",
+      "filename": "scene-3b-hidden-glade.png",
+      "scene": "scene-3b",
+      "prompt": "Generate a 16:9 landscape image. Two young heroes each separately standing in a magical hidden glade bathed in golden sparkly light, two small waterfalls framing the scene, a rainbow arch overhead, an ancient treasure chest covered in flame symbols buried under soft moss and glowing flowers in the center, a white unicorn standing nearby, tiny forest spirits gasping in wonder, fireflies and golden sparkles floating in the air.\n\nLeft side of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents.\n\nRight side of image: A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES.\n\nThe two children are spread apart with clear space between them, NOT overlapping, NOT touching, feet visible on mossy ground, looking excited about the treasure chest, warm magical atmosphere, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-4-shadow-knight",
+      "type": "background",
+      "filename": "scene-4-shadow-knight.png",
+      "scene": "scene-4",
+      "prompt": "Generate a 16:9 landscape image. Three young heroes each separately facing a towering suit of black midnight-colored knight armor in a dramatic forest clearing at twilight, the Shadow Knight has a glowing crystal trapped in a cage of shadow in its chest, dead gray trees surrounding the clearing, purple-black magic swirling around the knight's feet, storm clouds above with breaks of golden light.\n\nLeft side of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents, fists glowing with fire.\n\nCenter of image: A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES, sitting on a white unicorn.\n\nRight side of image: A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, holding a glowing green sword.\n\nThe three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on ground, looking brave and ready to fight, epic boss battle atmosphere, dramatic lighting, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-5-grove-restored",
+      "type": "background",
+      "filename": "scene-5-grove-restored.png",
+      "scene": "scene-5",
+      "prompt": "Generate a 16:9 landscape image. Three young heroes each separately celebrating in a beautiful magical forest completely restored to life, vibrant green leaves and colorful flowers everywhere, dozens of tiny happy forest spirits dancing around them, golden sunset light streaming through the canopy, butterflies and sparkles and fireflies filling the air, a glowing crystal (the Heart of the Grove) floating peacefully above them.\n\nLeft side of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents, wearing glowing ORANGE gauntlets on his fists.\n\nCenter of image: A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES, standing next to a white unicorn who nuzzles her.\n\nRight side of image: A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, holding a glowing green sword.\n\nThe three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on grassy ground, joyful triumphant expressions, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-oliver-success",
+      "type": "cutscene",
+      "filename": "scene1-oliver-success.png",
+      "scene": "scene-1",
+      "character": "oliver",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents, standing triumphantly with flames bursting from his raised fists, burning through a pile of wet leaves that are turning to ash and smoke, tiny forest spirit cheering beside him, forest entrance background, golden warm lighting, triumphant excited expression, feet visible on forest floor, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-oliver-fail",
+      "type": "cutscene",
+      "filename": "scene1-oliver-fail.png",
+      "scene": "scene-1",
+      "character": "oliver",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents, standing with determined concentrated expression, small flames flickering from his fists growing brighter, pile of damp leaves starting to smoke in front of him, tiny forest spirit watching hopefully, forest entrance background, warm lighting, determined expression, feet visible on forest floor, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-isabella-success",
+      "type": "cutscene",
+      "filename": "scene1-isabella-success.png",
+      "scene": "scene-1",
+      "character": "isabella",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES, twirling gracefully with sparkles emanating from her dress, thorny vines curling away from her like they're dancing, magical sparkle trail around her, forest entrance background, warm golden lighting, joyful delighted expression, feet visible on forest floor, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-isabella-fail",
+      "type": "cutscene",
+      "filename": "scene1-isabella-fail.png",
+      "scene": "scene-1",
+      "character": "isabella",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES, twirling with her biggest smile, vines slowly wiggling and starting to move away, soft sparkles around her, forest entrance background, warm lighting, determined happy expression, feet visible on forest floor, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-alexander-success",
+      "type": "cutscene",
+      "filename": "scene1-alexander-success.png",
+      "scene": "scene-1",
+      "character": "alexander",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood pulled up over his head and cloak billowing, stepping confidently into swirling white mist between trees, tiny forest spirit watching with wide amazed eyes, determined brave expression, mysterious misty forest path ahead, dramatic lighting, feet visible on forest floor, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-alexander-fail",
+      "type": "cutscene",
+      "filename": "scene1-alexander-fail.png",
+      "scene": "scene-1",
+      "character": "alexander",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, taking a breath with eyes closed then opening them with renewed focus, swirling mist around him, tiny forest spirit nodding encouragingly, calm determined expression, misty forest background, soft dramatic lighting, feet visible on forest floor, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2a-alexander-success",
+      "type": "cutscene",
+      "filename": "scene2a-alexander-success.png",
+      "scene": "scene-2a",
+      "character": "alexander",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, holding up a glowing green magical sword (the Grove Blade) triumphantly, a majestic stone wolf bowing its head respectfully beside him, ancient vine-covered shrine in background, misty forest atmosphere, green magical glow from the sword illuminating the scene, proud confident expression, feet visible on stone floor, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2a-alexander-fail",
+      "type": "cutscene",
+      "filename": "scene2a-alexander-fail.png",
+      "scene": "scene-2a",
+      "character": "alexander",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, kneeling respectfully and carefully reaching for a glowing green magical sword in a shrine, stone wolf stepping aside with accepting expression, ancient vine-covered shrine, misty forest atmosphere, soft green glow, humble but brave expression, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2b-oliver-success",
+      "type": "cutscene",
+      "filename": "scene2b-oliver-success.png",
+      "scene": "scene-2b",
+      "character": "oliver",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents, blasting flames from both fists at dark twisted thorny vines that are hissing and shrinking back, a white unicorn lifting its head hopefully in the background, sunny forest clearing, tiny spirits watching excitedly, fierce determined expression, golden warm lighting, feet visible on grassy ground, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2b-oliver-fail",
+      "type": "cutscene",
+      "filename": "scene2b-oliver-fail.png",
+      "scene": "scene-2b",
+      "character": "oliver",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents, hands glowing with fire pressed against dark thorny vines that are starting to wilt and loosen, white unicorn watching with hope, sunny forest clearing, tiny spirits encouraging him, concentrated determined expression, warm lighting, feet visible on grassy ground, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2b-isabella-success",
+      "type": "cutscene",
+      "filename": "scene2b-isabella-success.png",
+      "scene": "scene-2b",
+      "character": "isabella",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES, gently reaching out her hand to a beautiful white unicorn who is nuzzling her palm trustingly, sparkles floating between them, sunny forest clearing with tiny spirits cheering in background, magical bonding moment, tender loving expression, warm golden lighting, feet visible on grassy ground, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2b-isabella-fail",
+      "type": "cutscene",
+      "filename": "scene2b-isabella-fail.png",
+      "scene": "scene-2b",
+      "character": "isabella",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES, walking slowly and gently toward a white unicorn who is starting to relax, soft sparkles around the girl, sunny forest clearing, tiny spirits watching quietly, sweet gentle expression, warm lighting, feet visible on grassy ground, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3a-alexander-success",
+      "type": "cutscene",
+      "filename": "scene3a-alexander-success.png",
+      "scene": "scene-3a",
+      "character": "alexander",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, lunging forward dramatically slashing the glowing Grove Blade through a wall of purple-black shadow magic that is SHATTERING into wisps of smoke, green sword light cutting through darkness, fierce triumphant expression, dramatic action pose, dark forest background with light breaking through, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3a-alexander-fail",
+      "type": "cutscene",
+      "filename": "scene3a-alexander-fail.png",
+      "scene": "scene-3a",
+      "character": "alexander",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, in mid-swing with glowing Grove Blade as a wall of shadow magic crumbles before him, focused calculating expression, green sword glow, wisps of shadow dissolving, dark forest background with light breaking through where wall falls, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3b-oliver-success",
+      "type": "cutscene",
+      "filename": "scene3b-oliver-success.png",
+      "scene": "scene-3b",
+      "character": "oliver",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents, pulling on glowing ORANGE Flame Gauntlets that are bursting with fire, ancient treasure chest open before him with golden light streaming out, magical hidden glade background with sparkles, tiny spirits cheering, triumphant excited expression, warm golden lighting, feet visible on mossy ground, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3b-oliver-fail",
+      "type": "cutscene",
+      "filename": "scene3b-oliver-fail.png",
+      "scene": "scene-3b",
+      "character": "oliver",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents, eyes closed in concentration with hand on a flame-shaped lock that is clicking open, treasure chest beginning to open with warm glow revealing Flame Gauntlets inside, magical hidden glade background, tiny spirits watching hopefully, determined focused expression, warm lighting, feet visible on mossy ground, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3b-isabella-success",
+      "type": "cutscene",
+      "filename": "scene3b-isabella-success.png",
+      "scene": "scene-3b",
+      "character": "isabella",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES, sitting tall and confident on the back of a beautiful white unicorn with sparkly mane, holding the mane, unicorn standing proud and ready for battle, magical hidden glade background with sparkles and tiny spirits cheering, joyful brave expression, warm golden lighting, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3b-isabella-fail",
+      "type": "cutscene",
+      "filename": "scene3b-isabella-fail.png",
+      "scene": "scene-3b",
+      "character": "isabella",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES, sitting on the back of a patient white unicorn and getting steady holding the soft mane, unicorn looking back at her gently, magical hidden glade background with sparkles, tiny spirits watching supportively, determined sweet expression, warm lighting, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene4-oliver",
+      "type": "cutscene",
+      "filename": "scene4-oliver.png",
+      "scene": "scene-4",
+      "character": "oliver",
+      "variant": "climax",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents and glowing ORANGE Flame Gauntlets, throwing a massive flaming punch at a towering black armored Shadow Knight who is staggering back from the impact, BOOM effect, flames and sparks exploding from the strike, dramatic forest clearing background, fierce battle cry expression, dynamic action pose, dramatic lighting with orange fire glow, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene4-isabella",
+      "type": "cutscene",
+      "filename": "scene4-isabella.png",
+      "scene": "scene-4",
+      "character": "isabella",
+      "variant": "climax",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES, riding a charging white unicorn whose horn is glowing with sparkly pink magic, slamming into a black armored Shadow Knight who is dropping to one knee from the impact, CRASH effect, sparkles and magic swirling, dramatic forest clearing background, brave determined expression, dynamic charging pose, dramatic lighting with pink sparkle glow, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene4-alexander",
+      "type": "cutscene",
+      "filename": "scene4-alexander.png",
+      "scene": "scene-4",
+      "character": "alexander",
+      "variant": "climax",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy hero with short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, leaping through the air bringing down a glowing green Grove Blade in a mighty final strike on a black armored Shadow Knight whose armor is CRACKING and SHATTERING, green magical light exploding from the impact, dramatic forest clearing background, heroic triumphant expression, epic dynamic action pose, dramatic lighting with green sword glow, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    }
+  ]
+}

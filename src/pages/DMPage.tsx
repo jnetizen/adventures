@@ -168,6 +168,8 @@ export default function DMPage() {
   // For parallel scenes: which character's branch is being viewed (user can switch between branches)
   // This is a UI-only preference, not persisted to the session
   const [selectedParallelCharacterId, setSelectedParallelCharacterId] = useState<string | null>(null);
+  // For climax scenes: whether to play video or show individual cutscenes
+  const [climaxPlayMode, setClimaxPlayMode] = useState<'cutscenes' | 'video' | null>(null);
 
   // Custom hooks for extracted logic
   useSessionPersistence(session);
@@ -534,11 +536,16 @@ export default function DMPage() {
    */
   const handleSubmitClimaxTurn = async () => {
     const turn = currentCharacterTurn;
+    const turnIndex = isSplit && activeCharacterScene
+      ? activeCharacterScene.turnIndex || 0
+      : session?.current_character_turn_index || 0;
 
     debugLog('session', 'Starting climax turn submission', {
       turnCharacterId: turn?.characterId,
       alwaysSucceed: turn?.alwaysSucceed,
       hasOutcome: !!turn?.outcome,
+      climaxPlayMode,
+      turnIndex,
     });
 
     if (!session || !turn || !turn.alwaysSucceed) {
@@ -588,8 +595,25 @@ export default function DMPage() {
       });
     }
 
-    // Show cutscene for the outcome
-    if (turn.outcome?.cutsceneImageUrl) {
+    // Show cutscene/video for the outcome
+    // If video mode and first turn, show the video
+    // If video mode and not first turn, skip cutscene (video already showed everything)
+    // If cutscenes mode, show individual cutscene as normal
+    if (climaxPlayMode === 'video' && currentScene?.climaxVideoUrl) {
+      if (turnIndex === 0) {
+        // First turn in video mode - show the video
+        const { error: cutsceneError } = await showCutscene(session.id, {
+          characterId: 'climax-video',
+          imageUrl: currentScene.climaxVideoUrl,
+          outcomeText: 'The heroes strike together!',
+        });
+        if (cutsceneError) {
+          console.error('Failed to show climax video:', cutsceneError);
+        }
+      }
+      // For subsequent turns in video mode, don't show individual cutscenes
+    } else if (turn.outcome?.cutsceneImageUrl) {
+      // Cutscenes mode (or no video available) - show individual cutscene
       await showOutcomeCutscene(session.id, turn.characterId, turn.outcome);
     }
 
@@ -763,6 +787,7 @@ export default function DMPage() {
           await dismissCutscene(session.id);
         }
         setShowingEpilogue(false);
+        setClimaxPlayMode(null);
         setSession((prev) => prev ? { ...prev, phase: GAME_PHASES.COMPLETE, active_cutscene: null } : null);
       }
     }
@@ -787,6 +812,7 @@ export default function DMPage() {
     setPlayerAssignments([]);
     setCelebratedSceneIds([]);
     setCelebratedEnding(false);
+    setClimaxPlayMode(null);
   };
 
   const handleRecoverSession = async () => {
@@ -1441,6 +1467,44 @@ export default function DMPage() {
 
                 // For climax turns, show simplified UI with just a GO button
                 if (isClimaxTurn) {
+                  // If this is the first climax turn and scene has video option, show mode selector
+                  const isFirstClimaxTurn = turnIndex === 0;
+                  const hasVideoOption = currentScene.climaxVideoUrl;
+
+                  if (isFirstClimaxTurn && hasVideoOption && climaxPlayMode === null) {
+                    return (
+                      <>
+                        {/* Climax scene indicator */}
+                        <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-3 rounded-lg text-center">
+                          <p className="font-bold text-lg">⚡ CLIMAX ⚡</p>
+                        </div>
+
+                        {/* Climax mode selector */}
+                        <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-lg space-y-4">
+                          <p className="text-lg font-bold text-amber-900 text-center">How do you want to show the finale?</p>
+                          <div className="grid grid-cols-2 gap-3">
+                            <button
+                              onClick={() => setClimaxPlayMode('cutscenes')}
+                              className="flex flex-col items-center gap-2 p-4 bg-white border-2 border-amber-200 rounded-lg hover:border-amber-400 hover:bg-amber-50 transition-colors"
+                            >
+                              <span className="text-3xl">🖼️</span>
+                              <span className="font-semibold text-amber-900">Play Cutscenes</span>
+                              <span className="text-xs text-amber-700 text-center">Show 3 images one at a time</span>
+                            </button>
+                            <button
+                              onClick={() => setClimaxPlayMode('video')}
+                              className="flex flex-col items-center gap-2 p-4 bg-white border-2 border-amber-200 rounded-lg hover:border-amber-400 hover:bg-amber-50 transition-colors"
+                            >
+                              <span className="text-3xl">🎬</span>
+                              <span className="font-semibold text-amber-900">Play Video</span>
+                              <span className="text-xs text-amber-700 text-center">Play animated sequence</span>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  }
+
                   return (
                     <>
                       {/* Climax scene indicator */}

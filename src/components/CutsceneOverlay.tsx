@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { CollectedReward } from '../types/game';
 import PlaceholderImage from './PlaceholderImage';
 
 interface CutsceneOverlayProps {
-  /** URL of the cutscene image to display. */
+  /** URL of the cutscene image or video to display. */
   imageUrl: string;
   /** Outcome text (for screen readers, not displayed prominently). */
   outcomeText: string;
@@ -13,9 +13,16 @@ interface CutsceneOverlayProps {
   reward?: CollectedReward;
 }
 
+/** Check if URL is a video file */
+const isVideoUrl = (url: string) => {
+  const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov'];
+  const lowercaseUrl = url.toLowerCase();
+  return videoExtensions.some(ext => lowercaseUrl.endsWith(ext));
+};
+
 /**
  * Full-screen cutscene overlay displayed on kids' screen after a roll.
- * Shows the outcome illustration with optional reward.
+ * Shows the outcome illustration (image or video) with optional reward.
  * Controlled by DM - no dismiss button on this screen.
  */
 export default function CutsceneOverlay({
@@ -24,14 +31,26 @@ export default function CutsceneOverlay({
   characterName,
   reward,
 }: CutsceneOverlayProps) {
-  const [imageError, setImageError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [mediaError, setMediaError] = useState(false);
+  const [mediaLoaded, setMediaLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Reset loading state when image URL changes
+  const isVideo = isVideoUrl(imageUrl);
+
+  // Reset loading state when URL changes
   useEffect(() => {
-    setImageError(false);
-    setImageLoaded(false);
+    setMediaError(false);
+    setMediaLoaded(false);
   }, [imageUrl]);
+
+  // Auto-play video when loaded
+  useEffect(() => {
+    if (isVideo && videoRef.current && mediaLoaded) {
+      videoRef.current.play().catch(() => {
+        // Autoplay might be blocked, that's ok
+      });
+    }
+  }, [isVideo, mediaLoaded]);
 
   return (
     <div
@@ -39,29 +58,42 @@ export default function CutsceneOverlay({
       role="img"
       aria-label={`${characterName}'s outcome: ${outcomeText}`}
     >
-      {/* Full-screen cutscene image */}
+      {/* Full-screen cutscene media */}
       <div className="absolute inset-0 flex items-center justify-center">
-        {imageError ? (
+        {mediaError ? (
           <PlaceholderImage
             variant="scene"
             label={`${characterName}'s moment`}
             className="w-full h-full object-contain"
+          />
+        ) : isVideo ? (
+          <video
+            ref={videoRef}
+            src={imageUrl}
+            className={`w-full h-full object-contain transition-opacity duration-500 ${
+              mediaLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            onLoadedData={() => setMediaLoaded(true)}
+            onError={() => setMediaError(true)}
+            autoPlay
+            playsInline
+            muted={false}
           />
         ) : (
           <img
             src={imageUrl}
             alt={`${characterName}'s outcome`}
             className={`w-full h-full object-contain transition-opacity duration-500 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0'
+              mediaLoaded ? 'opacity-100' : 'opacity-0'
             }`}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
+            onLoad={() => setMediaLoaded(true)}
+            onError={() => setMediaError(true)}
           />
         )}
       </div>
 
       {/* Loading state */}
-      {!imageLoaded && !imageError && (
+      {!mediaLoaded && !mediaError && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent" />
         </div>

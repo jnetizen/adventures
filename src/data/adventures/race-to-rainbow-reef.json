@@ -75,11 +75,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "You find the perfect path AND spot a shiny golden coin along the way! Treasure AND progress!",
-            "cutsceneImageUrl": "/images/cutscenes/scene1-hunter-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene1-hunter-success.png"
           },
           "failOutcome": {
             "text": "A bubble launches you up - wheee! You land on a soft sponge. A starfish waves at you. 'Nice drop-in!'",
-            "cutsceneImageUrl": "/images/cutscenes/scene1-hunter-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene1-hunter-fail.png"
           }
         },
         {
@@ -98,11 +98,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "You're a blur! Too fast for the bubbles to catch you. The dolphins look jealous.",
-            "cutsceneImageUrl": "/images/cutscenes/scene1-swimmer-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene1-swimmer-success.png"
           },
           "failOutcome": {
             "text": "A bubble hits you and you spin like a top! Dizzy but still moving forward. Wheeeee!",
-            "cutsceneImageUrl": "/images/cutscenes/scene1-swimmer-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene1-swimmer-fail.png"
           }
         },
         {
@@ -121,11 +121,11 @@
           "successThreshold": 0,
           "successOutcome": {
             "text": "The little fish is so grateful! It shows you exactly where the geysers WON'T shoot. New friend!",
-            "cutsceneImageUrl": "/images/cutscenes/scene1-whisperer.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene1-whisperer.png"
           },
           "failOutcome": {
             "text": "The little fish is so grateful! It shows you exactly where the geysers WON'T shoot. New friend!",
-            "cutsceneImageUrl": "/images/cutscenes/scene1-whisperer.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene1-whisperer.png"
           }
         }
       ],
@@ -157,11 +157,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "Your treasure hunter eyes spot it - the gold whirlpool has a faint shimmer! You shoot through like a rocket and grab an ancient pearl along the way!",
-            "cutsceneImageUrl": "/images/cutscenes/scene2-hunter-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene2-hunter-success.png"
           },
           "failOutcome": {
             "text": "You pick a whirlpool and WHOOOOSH - it spins you around three times and spits you out with rainbow streaks in your hair. Stylish AND still ahead of the crabs!",
-            "cutsceneImageUrl": "/images/cutscenes/scene2-hunter-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene2-hunter-fail.png"
           }
         },
         {
@@ -180,11 +180,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "You catch the spin perfectly and ZOOOOOM! You shoot out the other side like a torpedo. Fastest thing in the ocean!",
-            "cutsceneImageUrl": "/images/cutscenes/scene2-swimmer-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene2-swimmer-success.png"
           },
           "failOutcome": {
             "text": "The whirlpool spins you into a dizzy dance! You tumble out doing accidental backflips. A watching octopus holds up a sign: '10 points!'",
-            "cutsceneImageUrl": "/images/cutscenes/scene2-swimmer-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene2-swimmer-fail.png"
           }
         },
         {
@@ -203,11 +203,11 @@
           "successThreshold": 0,
           "successOutcome": {
             "text": "The seahorse feels brave with you! You swim through together holding fins, giggling the whole way. The seahorse gives you a tiny coral crown. 'Best friends now!'",
-            "cutsceneImageUrl": "/images/cutscenes/scene2-whisperer.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene2-whisperer.png"
           },
           "failOutcome": {
             "text": "The seahorse feels brave with you! You swim through together holding fins, giggling the whole way. The seahorse gives you a tiny coral crown. 'Best friends now!'",
-            "cutsceneImageUrl": "/images/cutscenes/scene2-whisperer.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene2-whisperer.png"
           }
         }
       ],
@@ -247,11 +247,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "The octopus sees you looking and sighs. 'FINE. Take the shiny thing if you'll leave me alone!' It's a glittering compass that points toward Rainbow Reef!",
-            "cutsceneImageUrl": "/images/cutscenes/scene3-hunter-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene3-hunter-success.png"
           },
           "failOutcome": {
             "text": "The octopus catches you and wraps you in a gentle arm. 'What are you doing?!' But then he sees your treasure map and gets interested. 'Ooh, is that a MAP? ...Fine, go. But don't tell anyone I'm nice.'",
-            "cutsceneImageUrl": "/images/cutscenes/scene3-hunter-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene3-hunter-fail.png"
           }
         },
         {
@@ -270,11 +270,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "You're SO fast he doesn't even see you! Just a blur and a tiny 'excuse me!' You're through the garden in two seconds flat.",
-            "cutsceneImageUrl": "/images/cutscenes/scene3-swimmer-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene3-swimmer-success.png"
           },
           "failOutcome": {
             "text": "You zip forward but the octopus has EIGHT arms - he catches you mid-zoom! 'Nice try, speedy.' But he's a little impressed. 'Okay fine, you've got guts. Go on.' He plops you down on the other side.",
-            "cutsceneImageUrl": "/images/cutscenes/scene3-swimmer-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene3-swimmer-fail.png"
           }
         },
         {
@@ -293,11 +293,11 @@
           "successThreshold": 0,
           "successOutcome": {
             "text": "You swim right up and say something nice. The octopus tears up with ALL eight eyes. 'No one ever just... talks to me!' He moves aside and gives you a little wave with four arms. 'Good luck, sweet fish!'",
-            "cutsceneImageUrl": "/images/cutscenes/scene3-whisperer.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene3-whisperer.png"
           },
           "failOutcome": {
             "text": "You swim right up and say something nice. The octopus tears up with ALL eight eyes. 'No one ever just... talks to me!' He moves aside and gives you a little wave with four arms. 'Good luck, sweet fish!'",
-            "cutsceneImageUrl": "/images/cutscenes/scene3-whisperer.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene3-whisperer.png"
           }
         }
       ],
@@ -329,11 +329,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "Your treasure hunter instincts kick in! You spot the trick - three shells that need pressing in order. Click click click - the chest glows and starts to open!",
-            "cutsceneImageUrl": "/images/cutscenes/scene4-hunter-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene4-hunter-success.png"
           },
           "failOutcome": {
             "text": "You fumble with the lock and it squirts water in your face! But the chest thinks that's funny and pops open anyway. 'Hehe, you're alright, kid.'",
-            "cutsceneImageUrl": "/images/cutscenes/scene4-hunter-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene4-hunter-fail.png"
           }
         },
         {
@@ -352,11 +352,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "You're a ROCKET! You zoom circles around the dolphins so fast they get confused and swim the wrong way. 'Wait, where'd he go?!' You're back at the chest before they turn around.",
-            "cutsceneImageUrl": "/images/cutscenes/scene4-swimmer-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene4-swimmer-success.png"
           },
           "failOutcome": {
             "text": "The dolphins are fast - but you splash a huge wave right in their face! They stop to fix their hair AGAIN. 'My FIN! Is it messed up?!' Plenty of time now.",
-            "cutsceneImageUrl": "/images/cutscenes/scene4-swimmer-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene4-swimmer-fail.png"
           }
         },
         {
@@ -375,11 +375,11 @@
           "successThreshold": 0,
           "successOutcome": {
             "text": "The mer-fairy smiles with sparkly eyes. 'I've been watching your whole race. You were brave, fast, and KIND.' She waves her wand and the chest bursts open with golden light!",
-            "cutsceneImageUrl": "/images/cutscenes/scene4-whisperer.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene4-whisperer.png"
           },
           "failOutcome": {
             "text": "The mer-fairy smiles with sparkly eyes. 'I've been watching your whole race. You were brave, fast, and KIND.' She waves her wand and the chest bursts open with golden light!",
-            "cutsceneImageUrl": "/images/cutscenes/scene4-whisperer.png"
+            "cutsceneImageUrl": "/images/cutscenes/race-to-rainbow-reef/scene4-whisperer.png"
           }
         }
       ],

@@ -1,0 +1,340 @@
+{
+  "id": "shadow-knight-lost-grove",
+  "title": "The Shadow Knight and the Lost Grove",
+  "theme": "zelda-forest",
+  "estimatedDuration": "15-20 minutes",
+  "characters": {
+    "alexander": {
+      "name": "Alexander",
+      "role": "Shadow Ranger",
+      "color": "DARK GREEN",
+      "description": "Short slightly messy brown hair, brown eyes, rosy cheeks, wearing forest ranger outfit with DARK GREEN hood and cloak, leather boots"
+    },
+    "oliver": {
+      "name": "Oliver",
+      "role": "Flame Striker",
+      "color": "ORANGE",
+      "description": "Short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventurer outfit with ORANGE accents"
+    },
+    "isabella": {
+      "name": "Isabella",
+      "role": "Sparkle Rider",
+      "color": "PINK",
+      "description": "Brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing PINK dress with SPARKLES"
+    }
+  },
+  "scenes": [
+    {
+      "id": "prologue",
+      "type": "narration",
+      "title": "The Dying Grove",
+      "background": "/images/backgrounds/shadow-knight/prologue.png",
+      "narration": "Deep in the heart of the kingdom lies the Ancient Grove - a magical forest where the trees sing and tiny spirits dance among the flowers.\n\nBut something is wrong.\n\nA Shadow Knight has stolen the Heart of the Grove - the glowing crystal that keeps the forest alive. Without it, the leaves are turning gray. The flowers are wilting. The forest spirits are hiding.\n\nThree heroes have come to save the Grove. A Flame Striker with fists of fire. A Sparkle Rider who befriends magical creatures. And a Shadow Ranger who can walk unseen through any forest.\n\nThe entrance to the forest stands before you. Somewhere deep inside, the Shadow Knight waits.\n\nAre you ready?",
+      "nextScene": "scene-1"
+    },
+    {
+      "id": "scene-1",
+      "type": "interactive",
+      "title": "The Forest Entrance",
+      "background": "/images/backgrounds/shadow-knight/scene-1-forest-entrance.png",
+      "narration": "You stand at the edge of the Ancient Grove. The trees here are still green, but you can see the gray creeping in deeper ahead.\n\nA tiny forest spirit peeks out from behind a mushroom. It looks scared - but when it sees you, it chirps hopefully.\n\n'Heroes! You came!' it squeaks. 'The Shadow Knight went THAT way. But the path is tricky. You'll need to prove you're brave enough to enter!'",
+      "characterTurns": [
+        {
+          "character": "oliver",
+          "prompt": "Oliver! The spirit points to a pile of wet leaves blocking the path. 'Can you light the way?'",
+          "roll": {
+            "dc": 10,
+            "outcomes": {
+              "success": {
+                "narration": "Oliver holds up his fist and WHOOSH - flames burst from his hand, burning through the leaves and clearing the path! The spirit cheers.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene1-oliver-success.png"
+              },
+              "fail": {
+                "narration": "Oliver's flames sputter in the damp air - but he doesn't give up! He concentrates harder and the fire grows stronger, slowly burning through the leaves.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene1-oliver-fail.png"
+              }
+            }
+          }
+        },
+        {
+          "character": "isabella",
+          "prompt": "Isabella! The spirit looks at a tangle of thorny vines. 'These only open for something beautiful. Can you show them some sparkle?'",
+          "roll": {
+            "dc": 10,
+            "outcomes": {
+              "success": {
+                "narration": "Isabella twirls and her outfit sparkles in the light! The vines shiver... then curl back like they're dancing! A path opens up.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene1-isabella-success.png"
+              },
+              "fail": {
+                "narration": "Isabella twirls but the vines only wiggle a little. She tries again with her biggest smile, and they slowly curl away to let her through.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene1-isabella-fail.png"
+              }
+            }
+          }
+        },
+        {
+          "character": "alexander",
+          "prompt": "Alexander! You notice something the others don't. Through the trees, there's a faint misty path - almost invisible. The spirit gasps. 'You can SEE that? Only the best rangers can find the Misty Way...'",
+          "roll": {
+            "dc": 10,
+            "outcomes": {
+              "success": {
+                "narration": "Alexander's eyes lock onto the path. 'I'll take the Misty Way,' he says. 'I'll find something to help us.' The spirit nods with wide eyes. 'The Grove Blade is hidden there. If anyone can find it... maybe it's you.'",
+                "cutscene": "/images/cutscenes/shadow-knight/scene1-alexander-success.png"
+              },
+              "fail": {
+                "narration": "The mist swirls and Alexander loses the path for a moment - but he takes a breath, focuses, and finds it again. 'I'm going,' he says. The spirit nods. 'The Grove Blade is hidden there. Good luck, ranger.'",
+                "cutscene": "/images/cutscenes/shadow-knight/scene1-alexander-fail.png"
+              }
+            }
+          }
+        }
+      ],
+      "transition": "Alexander pulls up his hood and steps into the mist. In seconds, he's vanished between the trees - like a shadow.\n\nOliver and Isabella - the spirit tugs at your hands. 'This way! I'll take you the sunny path. My friends will help you!'\n\nThe heroes split up. But they'll meet again soon.",
+      "branches": {
+        "alexander": "scene-2a",
+        "oliver_isabella": "scene-2b"
+      }
+    },
+    {
+      "id": "scene-2a",
+      "type": "interactive",
+      "title": "The Misty Woods",
+      "characters": ["alexander"],
+      "background": "/images/backgrounds/shadow-knight/scene-2a-misty-woods.png",
+      "narration": "Alexander moves alone through the Misty Woods. The fog is thick. The trees look the same in every direction. Most people would be lost instantly.\n\nBut not a Shadow Ranger.\n\nAlexander moves like a ghost, watching for signs - a broken twig here, a mossy stone there. And then... he sees it.\n\nA stone shrine, covered in vines. Inside, something glows faintly. A sword, waiting for a worthy hero.\n\nBut the shrine has a guardian. A stone wolf, eyes glowing, blocking the way.",
+      "characterTurns": [
+        {
+          "character": "alexander",
+          "prompt": "Alexander! The stone wolf growls, but it doesn't attack. It's testing you. Do you have the courage to approach?",
+          "roll": {
+            "dc": 10,
+            "outcomes": {
+              "success": {
+                "narration": "Alexander stands tall and walks forward without hesitation. The stone wolf watches... then bows its head and steps aside. Alexander reaches into the shrine and pulls out the GROVE BLADE. It hums with ancient power.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene2a-alexander-success.png",
+                "reward": {
+                  "item": "Grove Blade",
+                  "description": "An ancient sword that glows with forest magic"
+                }
+              },
+              "fail": {
+                "narration": "Alexander steps forward but the wolf growls louder. He pauses - then kneels down slowly, showing he means no harm. The wolf sniffs the air... and steps aside. Alexander carefully takes the GROVE BLADE from the shrine.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene2a-alexander-fail.png",
+                "reward": {
+                  "item": "Grove Blade",
+                  "description": "An ancient sword that glows with forest magic"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "nextScene": "scene-3a"
+    },
+    {
+      "id": "scene-2b",
+      "type": "interactive",
+      "title": "The Sunny Grove",
+      "characters": ["oliver", "isabella"],
+      "background": "/images/backgrounds/shadow-knight/scene-2b-sunny-grove.png",
+      "narration": "Oliver and Isabella follow the little spirit into a beautiful sunny clearing. The light sparkles through the leaves. Tiny spirits peek out everywhere - from flowers, from mushrooms, from hollow logs.\n\n'Welcome, heroes!' they chirp. 'Welcome to the heart of the happy forest!'\n\nBut then Isabella sees something. Near a fallen log, caught in a tangle of shadowy thorns... a UNICORN. Its white coat is dirty. Its horn flickers weakly. It's trapped.\n\n'The Shadow Knight's magic,' a spirit whispers sadly. 'We couldn't free her.'",
+      "characterTurns": [
+        {
+          "character": "oliver",
+          "prompt": "Oliver! The thorns are dark and twisted. Maybe your fire can burn them away?",
+          "roll": {
+            "dc": 10,
+            "outcomes": {
+              "success": {
+                "narration": "Oliver blasts the thorns with flames from his fists and they HISS and shrink back from the heat! The unicorn lifts its head hopefully.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene2b-oliver-success.png"
+              },
+              "fail": {
+                "narration": "The thorns resist Oliver's flames at first, but he keeps blasting. Slowly, they start to wilt and loosen.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene2b-oliver-fail.png"
+              }
+            }
+          }
+        },
+        {
+          "character": "isabella",
+          "prompt": "Isabella! The unicorn looks so scared. Can you show her you're friendly?",
+          "roll": {
+            "dc": 10,
+            "outcomes": {
+              "success": {
+                "narration": "Isabella walks up slowly, sparkling softly, and holds out her hand. The unicorn's eyes meet hers. It trusts her.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene2b-isabella-success.png",
+                "reward": {
+                  "item": "Unicorn Companion",
+                  "description": "A magical unicorn who will fight by Isabella's side"
+                }
+              },
+              "fail": {
+                "narration": "Isabella's a little nervous too! But she keeps walking closer, slow and gentle, and the unicorn relaxes.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene2b-isabella-fail.png",
+                "reward": {
+                  "item": "Unicorn Companion",
+                  "description": "A magical unicorn who will fight by Isabella's side"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "transition": "The last thorns fall away. The unicorn stands up, shaky but free. She walks straight to Isabella and nuzzles her gently.\n\n'She likes you!' the spirits cheer. 'She wants you to be her rider!'\n\nIsabella has found her unicorn. And this unicorn is ready to fight.",
+      "nextScene": "scene-3b"
+    },
+    {
+      "id": "scene-3a",
+      "type": "interactive",
+      "title": "The Shadow Barrier",
+      "characters": ["alexander"],
+      "background": "/images/backgrounds/shadow-knight/scene-3a-shadow-barrier.png",
+      "narration": "Alexander moves deeper into the forest. The mist is darker here. The trees look twisted and wrong.\n\nAnd then he sees it - a wall of pure shadow, blocking the path forward. Dark magic swirls and crackles. No ordinary weapon could cut through this.\n\nBut the Grove Blade isn't ordinary.\n\nAlexander holds up the sword. It glows brighter, pushing back the darkness. But he'll need to strike true to break through.",
+      "characterTurns": [
+        {
+          "character": "alexander",
+          "prompt": "Alexander! The shadow wall pulses like it's alive. You need to find the weak point and strike with all your courage!",
+          "roll": {
+            "dc": 10,
+            "outcomes": {
+              "success": {
+                "narration": "Alexander sees it - a crack in the darkness, just for a second. He LUNGES forward and slashes with the Grove Blade. The wall SHATTERS into a thousand wisps of smoke. The path is open.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene3a-alexander-success.png"
+              },
+              "fail": {
+                "narration": "Alexander swings but the shadows shift away from his blade. He pauses, watches the pattern, and tries again - this time he finds the rhythm and cuts through. The wall crumbles.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene3a-alexander-fail.png"
+              }
+            }
+          }
+        }
+      ],
+      "transition": "Beyond the barrier, Alexander can see a clearing. And in that clearing... a dark figure waits.\n\nThe Shadow Knight.\n\nBut Alexander isn't alone for long. He hears something behind him - familiar voices, and the sound of hoofbeats...",
+      "nextScene": "scene-4"
+    },
+    {
+      "id": "scene-3b",
+      "type": "interactive",
+      "title": "The Hidden Glade",
+      "characters": ["oliver", "isabella"],
+      "background": "/images/backgrounds/shadow-knight/scene-3b-hidden-glade.png",
+      "narration": "The unicorn leads Oliver and Isabella through a secret path - between two waterfalls, under a rainbow arch, into a hidden glade that sparkles with golden light.\n\n'Ooooh!' the forest spirits gasp. 'The old place! We forgot about the old place!'\n\nIn the center of the glade, buried under soft moss and glowing flowers, is an ancient treasure chest. It's covered in symbols of flame.\n\n'This was left here long ago,' a spirit whispers. 'For a Flame Striker. We could never open it.'",
+      "characterTurns": [
+        {
+          "character": "oliver",
+          "prompt": "Oliver! The chest has a lock shaped like a flame. It needs YOUR fire to open. Put your hand on the lock!",
+          "roll": {
+            "dc": 10,
+            "outcomes": {
+              "success": {
+                "narration": "Oliver presses his palm against the lock and concentrates. His hand glows warm, then HOT - and CLICK! The chest opens with a burst of golden light. Inside: the FLAME GAUNTLETS, burning bright.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene3b-oliver-success.png",
+                "reward": {
+                  "item": "Flame Gauntlets",
+                  "description": "Magical gauntlets that make Oliver's fists burn with fire"
+                }
+              },
+              "fail": {
+                "narration": "Oliver tries but the lock doesn't budge at first. He closes his eyes and thinks about being brave. Warmth spreads through him - and the lock clicks open. The FLAME GAUNTLETS are his.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene3b-oliver-fail.png",
+                "reward": {
+                  "item": "Flame Gauntlets",
+                  "description": "Magical gauntlets that make Oliver's fists burn with fire"
+                }
+              }
+            }
+          }
+        },
+        {
+          "character": "isabella",
+          "prompt": "Isabella! While Oliver gets his gauntlets, the unicorn kneels down in front of you. She wants you to climb on her back!",
+          "roll": {
+            "dc": 10,
+            "outcomes": {
+              "success": {
+                "narration": "Isabella climbs onto the unicorn's back like she's done it a hundred times. She holds the sparkly mane tight. The unicorn stands tall, ready for battle.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene3b-isabella-success.png"
+              },
+              "fail": {
+                "narration": "Isabella slips a little at first, but the unicorn is patient. She tries again, holding the soft mane, and this time she's steady. They're a team now.",
+                "cutscene": "/images/cutscenes/shadow-knight/scene3b-isabella-fail.png"
+              }
+            }
+          }
+        }
+      ],
+      "transition": "Oliver pulls on the Flame Gauntlets. His fists ERUPT with fire - but it doesn't hurt. It feels like power.\n\nIsabella sits tall on her unicorn, who paws the ground, ready to charge.\n\n'The Shadow Knight is close!' a spirit calls. 'Your brother needs you! GO!'\n\nThey race through the forest - and burst into a clearing where Alexander is waiting, Grove Blade in hand.\n\nThe three heroes are together again.\n\nAnd the Shadow Knight stands before them.",
+      "nextScene": "scene-4"
+    },
+    {
+      "id": "scene-4",
+      "type": "interactive",
+      "title": "The Shadow Knight",
+      "isClimax": true,
+      "climaxMode": "rapid-fire",
+      "climaxVideoUrl": "/images/cutscenes/shadow-knight/scene4-climax-video.mp4",
+      "background": "/images/backgrounds/shadow-knight/scene-4-shadow-knight.png",
+      "narration": "The Shadow Knight towers before you. His armor is dark as midnight. In his chest, trapped in a cage of shadow, the Heart of the Grove flickers weakly.\n\n'So,' the Knight's voice echoes. 'Three little heroes think they can defeat me?'\n\nAlexander grips the Grove Blade. Oliver's gauntlets burn bright. Isabella's unicorn stamps and snorts.\n\n'We don't THINK,' Alexander says. 'We KNOW.'\n\nThe Shadow Knight raises his sword.\n\n'THEN COME AND PROVE IT!'",
+      "setupNarration": "Heroes! It's time! You'll need ALL THREE of you to win this fight!\n\nOliver - you'll strike first with your Flame Gauntlets!\n\nIsabella - you and your unicorn will charge next!\n\nAlexander - you'll land the final blow with the Grove Blade!\n\nEveryone roll your dice! Let's see what you've got!",
+      "rapidFireIntro": "HERE WE GO!",
+      "characterTurns": [
+        {
+          "character": "oliver",
+          "alwaysSucceed": true,
+          "outcome": {
+            "narration": "Oliver CHARGES! His Flame Gauntlets blaze with fire as he throws a massive punch right at the Shadow Knight's shield - BOOM! The knight staggers back!",
+            "cutscene": "/images/cutscenes/shadow-knight/scene4-oliver.png"
+          }
+        },
+        {
+          "character": "isabella",
+          "alwaysSucceed": true,
+          "outcome": {
+            "narration": "Isabella and her unicorn RACE forward! The unicorn's horn glows with sparkly magic as they slam into the Shadow Knight - CRASH! He drops to one knee!",
+            "cutscene": "/images/cutscenes/shadow-knight/scene4-isabella.png"
+          }
+        },
+        {
+          "character": "alexander",
+          "alwaysSucceed": true,
+          "outcome": {
+            "narration": "Alexander leaps into the air, Grove Blade shining like a star - and brings it down with all his strength! The Shadow Knight's armor CRACKS and SHATTERS!",
+            "cutscene": "/images/cutscenes/shadow-knight/scene4-alexander.png"
+          }
+        }
+      ],
+      "resolution": "The darkness explodes outward - and then fades away like smoke in sunlight.\n\nWhere the Shadow Knight stood... there's just an empty suit of armor. And floating above it, finally free: the HEART OF THE GROVE.\n\nIt drifts down gently into the center of the clearing and pulses with warm, golden light.\n\nYou did it. All three of you. TOGETHER.",
+      "nextScene": "scene-5"
+    },
+    {
+      "id": "scene-5",
+      "type": "narration",
+      "title": "The Grove Restored",
+      "background": "/images/backgrounds/shadow-knight/scene-5-grove-restored.png",
+      "narration": "The moment the Heart returns to the forest, everything changes.\n\nThe gray leaves burst into green. Flowers bloom in every color. The twisted trees straighten and stretch toward the sun. Tiny spirits pour out of hiding, dancing and cheering.\n\n'HEROES! HEROES! HEROES!'\n\nThe unicorn nuzzles Isabella proudly. The spirits swarm around Oliver, admiring his gauntlets. And the biggest spirit of all - an old one with a long mossy beard - approaches Alexander.\n\n'Shadow Ranger,' he says solemnly. 'You found the Grove Blade when no one else could. You struck down the darkness. The forest will remember your name.'\n\nHe turns to all three of you.\n\n'Flame Striker. Sparkle Rider. Shadow Ranger. You saved us all. These gifts are yours to keep - forever.'",
+      "rewards": [
+        {
+          "character": "oliver",
+          "narration": "Oliver, the Flame Gauntlets are yours. Whenever you need power, they'll burn bright.",
+          "item": "Flame Gauntlets"
+        },
+        {
+          "character": "isabella",
+          "narration": "Isabella, the unicorn will always be your friend. Whenever you need her, just sparkle - and she'll come.",
+          "item": "Unicorn Companion"
+        },
+        {
+          "character": "alexander",
+          "narration": "Alexander, the Grove Blade is yours. A weapon for a true hero.",
+          "item": "Grove Blade"
+        }
+      ],
+      "closing": "The three heroes stand together in the restored grove as the sun sets through the golden leaves.\n\nThe forest is safe. The Heart is home. And somewhere out there... another adventure is waiting.\n\nTHE END.",
+      "nextScene": null
+    }
+  ]
+}

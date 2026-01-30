@@ -11,9 +11,12 @@
     "db:migrate": "supabase db push",
     "db:migrate:new": "supabase migration new",
     "db:status": "supabase migration list",
-    "db:reset": "supabase db reset"
+    "db:reset": "supabase db reset",
+    "generate-images": "tsx src/scripts/generateAdventureImages.ts"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "dotenv": "^16.4.0",
     "@supabase/supabase-js": "^2.91.1",
     "autoprefixer": "^10.4.23",
     "lucide-react": "^0.563.0",
@@ -25,6 +28,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "commander": "^12.0.0",
+    "tsx": "^4.7.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",

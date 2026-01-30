@@ -90,6 +90,8 @@ export interface Scene {
   isClimax?: boolean;
   /** Climax mode: 'rapid-fire' means quick succession of character moments. */
   climaxMode?: 'rapid-fire';
+  /** Optional video URL for climax scene (alternative to individual cutscenes). */
+  climaxVideoUrl?: string;
 }
 
 export interface Character {
