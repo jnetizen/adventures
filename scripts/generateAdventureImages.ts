@@ -15,15 +15,15 @@ import { program } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import { generateImage, estimateCost } from '../services/imageGeneration';
-import type { AdventureImageManifest, ImagePrompt } from '../types/imageGeneration';
+import { generateImage, estimateCost } from './imageGenerationService.js';
+import type { AdventureImageManifest, ImagePrompt } from './imageGeneration.js';
 
 // ESM equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Paths relative to project root
-const PROJECT_ROOT = path.resolve(__dirname, '../..');
+const PROJECT_ROOT = path.resolve(__dirname, '..');
 const DOCS_DIR = path.join(PROJECT_ROOT, 'docs');
 const PUBLIC_IMAGES_DIR = path.join(PROJECT_ROOT, 'public/images');
 

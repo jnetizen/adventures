@@ -12,7 +12,7 @@
     "db:migrate:new": "supabase migration new",
     "db:status": "supabase migration list",
     "db:reset": "supabase db reset",
-    "generate-images": "tsx src/scripts/generateAdventureImages.ts"
+    "generate-images": "tsx scripts/generateAdventureImages.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

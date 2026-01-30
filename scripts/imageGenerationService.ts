@@ -6,7 +6,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import type {
   ImageGenerationOptions,
   ImageGenerationResult,
-} from '../types/imageGeneration';
+} from './imageGeneration.js';
 
 // Retry configuration
 const MAX_RETRIES = 3;
