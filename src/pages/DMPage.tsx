@@ -54,6 +54,20 @@ const updateSceneTurnIndex = (
   );
 };
 
+const groupCharacterScenesBySceneId = (
+  characterScenes: GameSession['character_scenes']
+) => {
+  const sceneGroups = new Map<string, NonNullable<GameSession['character_scenes']>>();
+  if (!characterScenes) return sceneGroups;
+
+  for (const cs of characterScenes) {
+    const existing = sceneGroups.get(cs.sceneId) || [];
+    sceneGroups.set(cs.sceneId, [...existing, cs]);
+  }
+
+  return sceneGroups;
+};
+
 const getKidDisplayName = (
   players: Player[],
   characterId: string,
@@ -1199,12 +1213,7 @@ export default function DMPage() {
           {/* Parallel Scene Selector - shown when party is split */}
           {isSplit && session.character_scenes && session.character_scenes.length > 1 && (() => {
             // Group characters by scene
-            const sceneGroups = new Map<string, typeof session.character_scenes>();
-            for (const cs of session.character_scenes!) {
-              const existing = sceneGroups.get(cs.sceneId) || [];
-              sceneGroups.set(cs.sceneId, [...existing, cs]);
-            }
-            const uniqueScenes = Array.from(sceneGroups.entries());
+            const uniqueScenes = Array.from(groupCharacterScenesBySceneId(session.character_scenes).entries());
 
             return (
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
