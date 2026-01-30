@@ -81,6 +81,13 @@ const resolveSceneChoiceOutcome = (
     : null;
 };
 
+const getDiceScaleHelpers = (diceType: number) => {
+  const scaleThreshold = (t: number) => Math.ceil(t * (diceType / 20));
+  const label = `Dice Roll (1-${diceType})`;
+  const rollPrompt = `or roll d${diceType}`;
+  return { scaleThreshold, label, rollPrompt };
+};
+
 const showOutcomeCutscene = async (
   sessionId: string,
   characterId: string,
@@ -1464,7 +1471,7 @@ export default function DMPage() {
                 // Get threshold - either from turn level or will be shown per-choice
                 // Scale threshold based on dice type (thresholds are written for d20)
                 const diceType = session.dice_type ?? DEFAULT_DICE_TYPE;
-                const scaleThreshold = (t: number) => Math.ceil(t * (diceType / 20));
+                const { scaleThreshold, label: diceLabel, rollPrompt } = getDiceScaleHelpers(diceType);
                 const turnLevelThreshold = currentCharacterTurn.successThreshold;
                 const scaledTurnThreshold = turnLevelThreshold !== undefined ? scaleThreshold(turnLevelThreshold) : undefined;
 
@@ -1507,7 +1514,7 @@ export default function DMPage() {
                     <div className="flex flex-wrap items-end gap-4">
                       <div className="flex-1 min-w-[140px]">
                         <label htmlFor="diceRoll" className="block text-sm font-medium text-gray-700 mb-2">
-                          Dice Roll (1-{session.dice_type ?? DEFAULT_DICE_TYPE})
+                          {diceLabel}
                         </label>
                         <input
                           id="diceRoll"
@@ -1521,7 +1528,7 @@ export default function DMPage() {
                         />
                       </div>
                       <div className="flex flex-col items-center gap-1">
-                        <span className="text-xs text-gray-500">or roll d{session.dice_type ?? DEFAULT_DICE_TYPE}</span>
+                        <span className="text-xs text-gray-500">{rollPrompt}</span>
                         <DiceRoller
                           onRoll={(v) => setDiceRoll(String(v))}
                           disabled={submitting}
