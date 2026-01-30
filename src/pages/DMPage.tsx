@@ -240,14 +240,23 @@ export default function DMPage() {
     setSession(data);
   };
 
-  const loadAdventureById = async (adventureId: string) => {
-    if (!session) return;
+  const persistAdventureSelection = async (adventureId: string) => {
+    if (!session) return false;
     setError(null);
 
     // Save to database so player screen can see the selection
     const { error: selectError } = await selectAdventure(session.id, adventureId);
     if (selectError) {
       setError(formatError(selectError));
+      return false;
+    }
+    return true;
+  };
+
+  const loadAdventureById = async (adventureId: string) => {
+    if (!session) return;
+    const didPersist = await persistAdventureSelection(adventureId);
+    if (!didPersist) {
       return;
     }
 
