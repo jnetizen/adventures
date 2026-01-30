@@ -19,14 +19,9 @@ import DiceRoller from '../components/DiceRoller';
 import PlaceholderImage from '../components/PlaceholderImage';
 import AdventurePreviewGrid from '../components/AdventurePreviewGrid';
 import { deriveSceneLabel } from '../lib/deriveSceneLabel';
+import { getKidDisplayName } from '../lib/players';
 import type { GameSession } from '../types/game';
 import ConnectionStatus from '../components/ConnectionStatus';
-
-const getKidDisplayName = (
-  players: GameSession['players'] | null | undefined,
-  characterId: string,
-  fallbackName = 'Hero'
-) => players?.find(player => player.characterId === characterId)?.kidName ?? fallbackName;
 
 export default function PlayPage() {
   const [roomCode, setRoomCode] = useState('');
@@ -124,7 +119,7 @@ export default function PlayPage() {
       if (latestChoice.roll !== undefined) {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- trigger dice animation on new roll
         setPendingDiceRoll({
-          kidName: getKidDisplayName(session?.players, latestChoice.characterId),
+          kidName: getKidDisplayName(session?.players, latestChoice.characterId, 'Hero'),
           roll: latestChoice.roll,
           characterId: latestChoice.characterId,
         });

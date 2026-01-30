@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
 import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure } from '../lib/gameState';
 import { formatError } from '../lib/errorRecovery';
-import { getActiveCharacterTurns, getPlayerForCharacter, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn } from '../lib/adventures';
+import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn } from '../lib/adventures';
 import {
   computeIsSplit,
   computeActiveParallelCharacterId,
@@ -14,6 +14,7 @@ import {
   computeParallelSceneStatus,
   groupCharacterScenesBySceneId,
 } from '../lib/dmDerivedState';
+import { getKidDisplayName } from '../lib/players';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
 import type { GameSession, Player, DiceType } from '../types/game';
@@ -54,12 +55,6 @@ const updateSceneTurnIndex = (
       : cs
   );
 };
-
-const getKidDisplayName = (
-  players: Player[],
-  characterId: string,
-  fallbackName?: string
-) => getPlayerForCharacter(players, characterId) || fallbackName || 'Unknown';
 
 const resolveSceneChoiceOutcome = (
   characterTurn: CharacterTurn,
