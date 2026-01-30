@@ -1,5 +1,6 @@
 import type { Adventure, Scene, CharacterTurn, Choice, ChoiceOutcome, Ending, TurnOutcome, SingleEnding } from '../types/adventure';
 import type { GameSession, Player, CharacterSceneState } from '../types/game';
+import { getCurrentScene, getSceneById, getCurrentSceneWithBranching } from './sceneLookup';
 
 // Adventure JSON files in src/data/adventures/
 import candyVolcano from '../data/adventures/candy-volcano.json';
@@ -60,14 +61,6 @@ export function getAdventureList(): AdventureListItem[] {
 export async function loadAdventure(adventureId: string): Promise<Adventure | null> {
   const adventure = adventures[adventureId];
   return adventure ?? null;
-}
-
-/**
- * Get the current scene from an adventure by scene number
- */
-export function getCurrentScene(adventure: Adventure, sceneNumber: number): Scene | null {
-  const found = adventure.scenes.find(scene => scene.sceneNumber === sceneNumber) || null;
-  return found;
 }
 
 /**
@@ -271,28 +264,7 @@ export function hasTieredEndings(adventure: Adventure): boolean {
 // Branching/Parallel Scene Support
 // ============================================
 
-/**
- * Get a scene by its ID.
- */
-export function getSceneById(adventure: Adventure, sceneId: string): Scene | null {
-  return adventure.scenes.find(s => s.id === sceneId) ?? null;
-}
-
-/**
- * Get the current scene, supporting both legacy sceneNumber and new sceneId.
- * Prefers current_scene_id if set, falls back to current_scene number.
- */
-export function getCurrentSceneWithBranching(
-  adventure: Adventure,
-  session: GameSession
-): Scene | null {
-  // Prefer scene ID if available
-  if (session.current_scene_id) {
-    return getSceneById(adventure, session.current_scene_id);
-  }
-  // Fall back to legacy scene number lookup
-  return getCurrentScene(adventure, session.current_scene);
-}
+export { getCurrentScene, getSceneById, getCurrentSceneWithBranching };
 
 /**
  * Check if a scene outcome leads to branching (different scenes for different characters).
