@@ -27,6 +27,7 @@ export const OPERATION_TYPES = {
   CREATE_SESSION: 'createSession',
   START_ADVENTURE: 'startAdventure',
   START_SCENE: 'startScene',
+  START_SCENE_BY_ID: 'startSceneById',
   SUBMIT_CHOICE: 'submitChoice',
   ADVANCE_SCENE: 'advanceScene',
   SUBMIT_FEEDBACK: 'submitFeedback',
@@ -34,6 +35,8 @@ export const OPERATION_TYPES = {
   SHOW_CUTSCENE: 'showCutscene',
   DISMISS_CUTSCENE: 'dismissCutscene',
   COLLECT_REWARD: 'collectReward',
+  SPLIT_PARTY: 'splitParty',
+  REUNITE_PARTY: 'reuniteParty',
 } as const;
 
 export type OperationType = (typeof OPERATION_TYPES)[keyof typeof OPERATION_TYPES];

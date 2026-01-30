@@ -8,7 +8,7 @@ export type ConnectionStatusType = ConnectionStatusTypeAlias;
 /** Supported dice types (max value). */
 export type DiceType = 6 | 10 | 12 | 20;
 export const DICE_TYPES: DiceType[] = [6, 10, 12, 20];
-export const DEFAULT_DICE_TYPE: DiceType = 20;
+export const DEFAULT_DICE_TYPE: DiceType = 6;
 
 /** Choices made this scene, for batched reveal. */
 export interface SceneChoice {
@@ -43,10 +43,21 @@ export interface ActiveCutscene {
   reward?: CollectedReward;
 }
 
+/** Per-character scene tracking for parallel/branching scenes */
+export interface CharacterSceneState {
+  characterId: string;
+  sceneId: string;
+  turnIndex: number;
+  choices: SceneChoice[];
+}
+
 export interface GameSession {
   id: string;
   room_code: string;
+  /** @deprecated Use current_scene_id for branching support. Kept for backward compatibility. */
   current_scene: number;
+  /** Current scene ID (supports branching). Falls back to current_scene lookup if not set. */
+  current_scene_id?: string | null;
   phase: GamePhase;
   created_at: string;
   updated_at: string;
@@ -72,6 +83,10 @@ export interface GameSession {
   active_cutscene?: ActiveCutscene | null;
   /** Rewards collected during the adventure. */
   collected_rewards?: CollectedReward[];
+  /** Per-character scene state for parallel/branching scenes */
+  character_scenes?: CharacterSceneState[] | null;
+  /** True when party is split across parallel scenes */
+  is_split?: boolean | null;
 }
 
 export interface GameState {

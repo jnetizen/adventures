@@ -2,7 +2,7 @@ import { supabase } from './supabase';
 import { retryWithBackoff } from './errorRecovery';
 import { isOnline, saveOperationToQueue, getPendingOperations, removeOperationFromQueue } from './offlineStorage';
 import { GAME_PHASES, OPERATION_TYPES } from '../constants/game';
-import type { GameSession, Player, SceneChoice, ActiveCutscene, CollectedReward } from '../types/game';
+import type { GameSession, Player, SceneChoice, ActiveCutscene, CollectedReward, CharacterSceneState } from '../types/game';
 
 /**
  * Generates a random 4-letter uppercase room code
@@ -114,6 +114,32 @@ export async function incrementScene(sessionId: string): Promise<{ error: Error 
   }
 
   return updateScene(sessionId, data.current_scene + 1);
+}
+
+/**
+ * Selects an adventure for a session (without starting it).
+ * Used by player screen to choose which adventure to play.
+ */
+export async function selectAdventure(
+  sessionId: string,
+  adventureId: string
+): Promise<{ error: Error | null }> {
+  if (!isOnline()) {
+    // For offline, we'll just return success - the selection will sync when back online
+    return { error: null };
+  }
+
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        adventure_id: adventureId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
 }
 
 /**
@@ -481,6 +507,187 @@ export async function collectReward(
   });
 }
 
+// ============================================
+// Branching/Parallel Scene Functions
+// ============================================
+
+/**
+ * Starts a scene by ID (supports branching where sceneNumber isn't unique).
+ * Used when transitioning to scenes in branching adventures.
+ */
+export async function startSceneById(
+  sessionId: string,
+  sceneId: string,
+  sceneNumber: number
+): Promise<{ error: Error | null }> {
+  if (!isOnline()) {
+    await saveOperationToQueue({
+      id: generateOperationId(),
+      type: OPERATION_TYPES.START_SCENE_BY_ID,
+      sessionId,
+      data: { sceneId, sceneNumber },
+      timestamp: new Date().toISOString(),
+    });
+    return { error: null };
+  }
+
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        current_scene: sceneNumber,
+        current_scene_id: sceneId,
+        current_character_turn_index: 0,
+        scene_choices: [],
+        phase: GAME_PHASES.PLAYING,
+        is_split: false,
+        character_scenes: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Splits the party into parallel scenes.
+ * Each character goes to their designated scene.
+ */
+export async function splitParty(
+  sessionId: string,
+  characterScenes: CharacterSceneState[]
+): Promise<{ error: Error | null }> {
+  if (!isOnline()) {
+    await saveOperationToQueue({
+      id: generateOperationId(),
+      type: OPERATION_TYPES.SPLIT_PARTY,
+      sessionId,
+      data: { characterScenes },
+      timestamp: new Date().toISOString(),
+    });
+    return { error: null };
+  }
+
+  return retryWithBackoff(async () => {
+    // Set the first character's scene as the "current" scene for display purposes
+    const firstScene = characterScenes[0];
+
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        is_split: true,
+        character_scenes: characterScenes,
+        current_scene_id: firstScene?.sceneId ?? null,
+        current_character_turn_index: 0,
+        scene_choices: [],
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Reunites the party after parallel scenes.
+ * All characters move to the same scene.
+ */
+export async function reuniteParty(
+  sessionId: string,
+  sceneId: string,
+  sceneNumber: number
+): Promise<{ error: Error | null }> {
+  if (!isOnline()) {
+    await saveOperationToQueue({
+      id: generateOperationId(),
+      type: OPERATION_TYPES.REUNITE_PARTY,
+      sessionId,
+      data: { sceneId, sceneNumber },
+      timestamp: new Date().toISOString(),
+    });
+    return { error: null };
+  }
+
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        is_split: false,
+        character_scenes: null,
+        current_scene: sceneNumber,
+        current_scene_id: sceneId,
+        current_character_turn_index: 0,
+        scene_choices: [],
+        phase: GAME_PHASES.PLAYING,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Updates a character's state in parallel scene tracking.
+ * Used to advance turns or record choices for a specific character.
+ */
+export async function updateCharacterSceneState(
+  sessionId: string,
+  characterId: string,
+  updates: Partial<CharacterSceneState>
+): Promise<{ error: Error | null }> {
+  return retryWithBackoff(async () => {
+    // Get current character scenes
+    const { data: session, error: fetchError } = await supabase
+      .from('sessions')
+      .select('character_scenes')
+      .eq('id', sessionId)
+      .single();
+
+    if (fetchError || !session) {
+      return { error: fetchError || new Error('Session not found') };
+    }
+
+    const characterScenes = (session.character_scenes as CharacterSceneState[] | null) ?? [];
+    const updatedScenes = characterScenes.map(cs =>
+      cs.characterId === characterId
+        ? { ...cs, ...updates }
+        : cs
+    );
+
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        character_scenes: updatedScenes,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Sets the active parallel scene (which branch the DM is currently viewing/managing).
+ */
+export async function setActiveParallelScene(
+  sessionId: string,
+  sceneId: string
+): Promise<{ error: Error | null }> {
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        current_scene_id: sceneId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
 /**
  * Helper for exhaustive switch - ensures all operation types are handled.
  */
@@ -545,6 +752,15 @@ export async function syncPendingOperations(): Promise<{ synced: number; errors:
           break;
         case OPERATION_TYPES.COLLECT_REWARD:
           result = await collectReward(op.sessionId, op.data.reward);
+          break;
+        case OPERATION_TYPES.START_SCENE_BY_ID:
+          result = await startSceneById(op.sessionId, op.data.sceneId, op.data.sceneNumber);
+          break;
+        case OPERATION_TYPES.SPLIT_PARTY:
+          result = await splitParty(op.sessionId, op.data.characterScenes);
+          break;
+        case OPERATION_TYPES.REUNITE_PARTY:
+          result = await reuniteParty(op.sessionId, op.data.sceneId, op.data.sceneNumber);
           break;
         default:
           // Exhaustive check - if this errors, we're missing a case

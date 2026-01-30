@@ -27,13 +27,20 @@ export interface Choice {
 export interface CharacterTurn {
   characterId: string;
   promptText: string;
-  choices: Choice[];
+  /** Choices for this turn. Null for alwaysSucceed climax turns. */
+  choices: Choice[] | null;
   /** Turn-level success threshold (used when choices don't have individual thresholds). */
   successThreshold?: number;
   /** Turn-level success outcome with cutscene and reward. */
   successOutcome?: TurnOutcome;
   /** Turn-level fail outcome with cutscene and reward. */
   failOutcome?: TurnOutcome;
+  /** If true, this turn triggers the party to split into different scenes */
+  triggersSceneSplit?: boolean;
+  /** If true, this turn always succeeds (no dice roll needed). Uses outcome field. */
+  alwaysSucceed?: boolean;
+  /** Single outcome for alwaysSucceed turns (no success/fail split). */
+  outcome?: TurnOutcome;
 }
 
 export interface Reward {
@@ -43,20 +50,46 @@ export interface Reward {
   imageUrl?: string;
 }
 
+/** Character-specific reward (for endings where each character gets something different) */
+export interface CharacterReward {
+  characterId: string;
+  item: string;
+  description: string;
+  imageUrl?: string;
+}
+
 export interface SceneOutcome {
   resultText: string;
-  nextSceneId: string | null;
+  /**
+   * Next scene ID. Can be:
+   * - string: all characters go to the same scene
+   * - null: this is the final scene
+   * - Record<characterId, sceneId>: characters branch to different scenes
+   */
+  nextSceneId: string | null | Record<string, string>;
   rewards?: Reward[];
 }
 
 export interface Scene {
   id: string;
   sceneNumber: number;
+  /** Optional title for the scene (shown in UI) */
+  title?: string;
   narrationText: string;
   sceneImageUrl: string;
   leadCharacterId?: string;
   characterTurns: CharacterTurn[];
   outcome?: SceneOutcome;
+  /** True if this scene runs in parallel with another */
+  isParallelScene?: boolean;
+  /** ID of the scene this runs in parallel with */
+  parallelWith?: string;
+  /** Which characters are active in this scene (for branching) */
+  activeCharacters?: string[];
+  /** True if this is a climax scene (dramatic finale). */
+  isClimax?: boolean;
+  /** Climax mode: 'rapid-fire' means quick succession of character moments. */
+  climaxMode?: 'rapid-fire';
 }
 
 export interface Character {
@@ -64,6 +97,8 @@ export interface Character {
   name: string;
   description: string;
   imageUrl: string;
+  /** Optional pre-assignment to a player name */
+  assignedTo?: string;
 }
 
 export interface AgeRating {
@@ -130,6 +165,10 @@ export interface SingleEnding {
   endingImageUrl?: string;
   /** Loot screen configuration for displaying collected rewards. */
   lootScreen?: LootScreen;
+  /** Standard rewards (shared by all). */
+  rewards?: Reward[];
+  /** Character-specific rewards (each character gets their own). */
+  characterRewards?: CharacterReward[];
 }
 
 export interface Adventure {

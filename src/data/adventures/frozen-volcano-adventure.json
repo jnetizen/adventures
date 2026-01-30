@@ -1,0 +1,384 @@
+{
+  "id": "frozen-volcano",
+  "title": "The Frozen Volcano",
+  "description": "Long ago, a magical blizzard froze the great Fire Mountain! Now the Ice Dragon who guards it has gone missing, and the mountain is cracking. Can three brave explorers find the dragon and save the mountain before it shatters?",
+  "preview": {
+    "tagline": "Find the legendary Frost Blade and save the mountain!",
+    "themes": ["volcano", "ice", "fire", "quest", "treasure", "dragon", "sword"],
+    "estimatedMinutes": 15,
+    "previewImageUrl": "/images/adventures/frozen-volcano-preview.png",
+    "ageRating": {
+      "minAge": 5,
+      "reason": "Action sequences and ice/fire imagery",
+      "intensity": ["exciting", "action"]
+    }
+  },
+  "prologue": {
+    "prologueImageUrl": "/images/prologues/frozen-volcano-prologue.png",
+    "worldIntro": "Welcome to Fire Mountain - but something is WRONG! A magical blizzard struck years ago, freezing the volcano in ice. The wise Ice Dragon has protected it ever since... but now she's vanished! Without her, the mountain is cracking - fire and ice fighting each other. The King has called for brave explorers to find the Ice Dragon and save the mountain before it shatters into a thousand pieces!",
+    "characterIntros": [
+      {
+        "characterId": "frost-scout",
+        "introText": "Frost Scout is the bravest explorer in the kingdom! With sharp eyes and quick feet, no path is too dangerous and no mystery stays unsolved."
+      },
+      {
+        "characterId": "ember-keeper",
+        "introText": "Ember Keeper has a magical torch that never goes out! It keeps everyone warm and lights up even the darkest caves."
+      },
+      {
+        "characterId": "crystal-singer",
+        "introText": "Crystal Singer has the most beautiful voice in the land! Ice crystals dance when she sings, and even grumpy creatures can't help but smile."
+      }
+    ],
+    "missionBrief": "The three explorers must climb the Frozen Volcano, find the missing Ice Dragon, and convince her to return. But the mountain is full of cracking ice, steam vents, and magical creatures. Work together - and you might just save the day!"
+  },
+  "characters": [
+    {
+      "id": "frost-scout",
+      "name": "Frost Scout",
+      "description": "The bravest explorer with sharp eyes and quick feet - Alexander's character",
+      "imageUrl": "/images/characters/frost-scout.png",
+      "assignedTo": "alexander"
+    },
+    {
+      "id": "ember-keeper",
+      "name": "Ember Keeper",
+      "description": "Carries a magical torch that never goes out - Oliver's character",
+      "imageUrl": "/images/characters/ember-keeper.png",
+      "assignedTo": "oliver"
+    },
+    {
+      "id": "crystal-singer",
+      "name": "Crystal Singer",
+      "description": "Has a beautiful voice that makes ice crystals dance - Isabella's character",
+      "imageUrl": "/images/characters/crystal-singer.png",
+      "assignedTo": "isabella"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene-1",
+      "sceneNumber": 0,
+      "title": "The Cracking Gates",
+      "narrationText": "You arrive at the great Ice Gates of Fire Mountain. But the gates are cracking! Chunks of ice fall around you. Steam shoots up through the cracks. You need to get through - fast!",
+      "sceneImageUrl": "/images/scenes/frozen-volcano/scene-1-cracking-gates.png",
+      "characterTurns": [
+        {
+          "characterId": "ember-keeper",
+          "promptText": "The gates are frozen solid but cracking!",
+          "choices": [
+            {
+              "id": "scene1-ember-warm",
+              "label": "Warm a path with your torch"
+            },
+            {
+              "id": "scene1-ember-find",
+              "label": "Find a crack big enough to squeeze through"
+            }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "Your torch melts just enough ice to slip through! The ice sparkles as it drips away.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene1-oliver.png"
+          },
+          "failOutcome": {
+            "text": "The ice is REALLY thick! But your torch makes it glow pretty colors, and you find a gap to wiggle through.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene1-oliver.png"
+          }
+        },
+        {
+          "characterId": "crystal-singer",
+          "promptText": "A baby ice fox is trapped under fallen ice!",
+          "choices": [
+            {
+              "id": "scene1-crystal-sing",
+              "label": "Sing to calm it down"
+            },
+            {
+              "id": "scene1-crystal-call",
+              "label": "Call for help"
+            }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "Your song is so gentle! The fox relaxes and you lift the ice together. It yips happily and follows you!",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene1-isabella.png"
+          },
+          "failOutcome": {
+            "text": "Your song cracks a tiny bit MORE ice - oops! But the fox thinks it's funny and wiggles free on its own.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene1-isabella.png"
+          }
+        },
+        {
+          "characterId": "frost-scout",
+          "promptText": "The ground cracks beneath you and you start sliding toward a hidden cave! How do you handle the fall?",
+          "choices": [
+            {
+              "id": "scene1-frost-grab",
+              "label": "Grab onto the ice and control your slide"
+            },
+            {
+              "id": "scene1-frost-roll",
+              "label": "Tuck and roll with it"
+            }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "You grab an icicle and swing yourself down gracefully, landing on your feet in the hidden cave. On the walls, you see ancient carvings of a legendary ice sword. The mountain chose you to find it...",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene1-alexander-success.png"
+          },
+          "failOutcome": {
+            "text": "You tumble head over heels - WHOMP! You land in a pile of snow at the bottom. But when you look up, you see ancient carvings of a legendary sword on the walls. The mountain chose you to find it...",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene1-alexander-fail.png"
+          },
+          "triggersSceneSplit": true
+        }
+      ],
+      "outcome": {
+        "resultText": "The group splits up! Alexander follows the mysterious sword carvings into the ice cave. Oliver and Isabella continue up the main path. You'll meet again at the Dragon's Nest!",
+        "nextSceneId": {
+          "frost-scout": "scene-2a",
+          "ember-keeper": "scene-2b",
+          "crystal-singer": "scene-2b"
+        }
+      }
+    },
+    {
+      "id": "scene-2a",
+      "sceneNumber": 1,
+      "title": "The Frost Blade Chamber",
+      "narrationText": "You follow the carvings deeper into the cave. They tell a story - long ago, a hero used the Frost Blade to save the mountain. Now the sword waits for a new hero. You can SEE it glowing at the far end - but a deep chasm blocks your path!",
+      "sceneImageUrl": "/images/scenes/frozen-volcano/scene-2a-frost-blade-chamber.png",
+      "isParallelScene": true,
+      "parallelWith": "scene-2b",
+      "activeCharacters": ["frost-scout"],
+      "characterTurns": [
+        {
+          "characterId": "frost-scout",
+          "promptText": "A deep crack in the ice blocks your path - too wide to jump!",
+          "choices": [
+            {
+              "id": "scene2a-frost-bridge",
+              "label": "Find something to bridge the gap"
+            },
+            {
+              "id": "scene2a-frost-climb",
+              "label": "Climb down and back up the other side"
+            }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "You spot a fallen ice pillar! You push it with all your strength - it tips, crashes across the gap - PERFECT BRIDGE! You sprint across, grab the Frost Blade from the pedestal, and raise it high. It hums with power. You're ready.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene2a-alexander-success.png"
+          },
+          "failOutcome": {
+            "text": "You try to climb down but the ice is slippery - you slide to the bottom! You scramble up the other side, heart pounding. But you made it. You pull the Frost Blade from the pedestal and it glows in your hands. Worth it.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene2a-alexander-fail.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "The Frost Blade is yours! It glows with ancient power. Somewhere above, Oliver and Isabella are making their own way. Time to keep moving!",
+        "nextSceneId": "scene-3a"
+      }
+    },
+    {
+      "id": "scene-2b",
+      "sceneNumber": 1,
+      "title": "The Steam Bridge",
+      "narrationText": "Oliver and Isabella reach a narrow bridge of ice. Below, hot steam shoots up in bursts! The Ember Keeper and Crystal Singer need to cross together.",
+      "sceneImageUrl": "/images/scenes/frozen-volcano/scene-2b-steam-bridge.png",
+      "isParallelScene": true,
+      "parallelWith": "scene-2a",
+      "activeCharacters": ["ember-keeper", "crystal-singer"],
+      "characterTurns": [
+        {
+          "characterId": "ember-keeper",
+          "promptText": "Steam is blasting up - it might melt the bridge!",
+          "choices": [
+            {
+              "id": "scene2b-ember-see",
+              "label": "Use your torch to see the steam pattern"
+            },
+            {
+              "id": "scene2b-ember-fast",
+              "label": "Walk fast between the bursts"
+            }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "Your torch lights up the steam - you can see exactly where it shoots from! 'Follow me!' you say, and find the safe path.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene2b-oliver.png"
+          },
+          "failOutcome": {
+            "text": "A steam burst surprises you - WHOOSH! Your hair gets a little poofy, but you're okay. Isabella giggles and helps you across.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene2b-oliver.png"
+          }
+        },
+        {
+          "characterId": "crystal-singer",
+          "promptText": "The bridge is cracking under your feet!",
+          "choices": [
+            {
+              "id": "scene2b-crystal-sing",
+              "label": "Sing a soothing song to the ice"
+            },
+            {
+              "id": "scene2b-crystal-run",
+              "label": "Run across quickly"
+            }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "You sing a beautiful note and the ice stops cracking! It even seems to get a little stronger. The bridge holds!",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene2b-isabella.png"
+          },
+          "failOutcome": {
+            "text": "You run but the ice cracks more - eek! You leap the last bit and land safely. 'That was close!' you laugh.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene2b-isabella.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "You made it across! The path leads up toward the Dragon's Nest. Somewhere in the caves, Alexander is finding his own way...",
+        "nextSceneId": "scene-3b"
+      }
+    },
+    {
+      "id": "scene-3a",
+      "sceneNumber": 2,
+      "title": "The Frozen Waterfall",
+      "narrationText": "The Frost Blade glows as you near the exit - but a frozen waterfall blocks your path! Huge chunks of ice crash down every few seconds. You need to get through without getting smashed!",
+      "sceneImageUrl": "/images/scenes/frozen-volcano/scene-3a-frozen-waterfall.png",
+      "isParallelScene": true,
+      "parallelWith": "scene-3b",
+      "activeCharacters": ["frost-scout"],
+      "characterTurns": [
+        {
+          "characterId": "frost-scout",
+          "promptText": "Ice chunks are falling like boulders!",
+          "choices": [
+            {
+              "id": "scene3a-frost-sprint",
+              "label": "Time the falls and sprint through"
+            },
+            {
+              "id": "scene3a-frost-blade",
+              "label": "Use the Frost Blade to carve a path"
+            }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "You watch the pattern - CRASH, pause, CRASH, pause - NOW! You sprint through, the Frost Blade lighting your way, sliding under a falling chunk at the last second. MADE IT! You burst through to the other side, sword glowing, ready for whatever's next.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene3a-alexander-success.png"
+          },
+          "failOutcome": {
+            "text": "You charge forward but the timing's off - a chunk clips your shoulder and spins you around! You stumble through to the other side, clutching the Frost Blade. Bruised but not beaten. You shake it off and keep moving.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene3a-alexander-fail.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "You made it through! The Frost Blade pulses with energy. Ahead, you hear roaring and crashing - something is happening at the Dragon's Nest!",
+        "nextSceneId": "scene-4"
+      }
+    },
+    {
+      "id": "scene-3b",
+      "sceneNumber": 2,
+      "title": "The Singing Crystals",
+      "narrationText": "Oliver and Isabella enter a cavern of singing crystals! The tall ice pillars hum and chime when the wind blows. It's like being inside a giant music box. But the path through is a maze!",
+      "sceneImageUrl": "/images/scenes/frozen-volcano/scene-3b-singing-crystals.png",
+      "isParallelScene": true,
+      "parallelWith": "scene-3a",
+      "activeCharacters": ["ember-keeper", "crystal-singer"],
+      "characterTurns": [
+        {
+          "characterId": "ember-keeper",
+          "promptText": "The crystals are confusing - which way is right?",
+          "choices": [
+            {
+              "id": "scene3b-ember-warm",
+              "label": "Follow the warmest path with your torch"
+            },
+            {
+              "id": "scene3b-ember-touch",
+              "label": "Touch the crystals to find the way"
+            }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "Your torch flickers toward the right path - fire knows where to go! 'This way!' you lead Isabella through the maze.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene3b-oliver.png"
+          },
+          "failOutcome": {
+            "text": "You touch a crystal and it makes a LOUD BONG sound! Everyone freezes. But then a tiny crystal creature peeks out and waves you the right way.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene3b-oliver.png"
+          }
+        },
+        {
+          "characterId": "crystal-singer",
+          "promptText": "A crystal creature is blocking the exit!",
+          "choices": [
+            {
+              "id": "scene3b-crystal-lullaby",
+              "label": "Sing it a lullaby"
+            },
+            {
+              "id": "scene3b-crystal-ask",
+              "label": "Ask it nicely to move"
+            }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "You sing the sweetest lullaby! The crystal creature yawns, curls up, and falls asleep right where it is. It's SO cute. You tiptoe past.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene3b-isabella.png"
+          },
+          "failOutcome": {
+            "text": "Your song is a little off-key - oops! But the crystal creature thinks it's hilarious and moves aside, giggling in little chimes.",
+            "cutsceneImageUrl": "/images/cutscenes/frozen-volcano/scene3b-isabella.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "You're through the crystal maze! The path opens up ahead. You can hear Alexander's voice echoing from another tunnel... the Dragon's Nest is just ahead!",
+        "nextSceneId": "scene-4"
+      }
+    },
+    {
+      "id": "scene-4",
+      "sceneNumber": 3,
+      "title": "The Battle at the Dragon's Nest",
+      "narrationText": "You all reach the Dragon's Nest - but it's a BATTLE! Fire is shooting up from below. Ice is cracking and falling from above. The Ice Dragon is in the middle, trying to hold the mountain together, but she's too weak!\n\n'It's too late!' she cries. 'Fire and ice are tearing the mountain apart!'\n\nThen she sees Alexander... and the sword in his hand.\n\n'The Frost Blade! You found it! That sword can heal the mountain - but you must strike the Heart Stone at the center!'\n\nThe Heart Stone glows red and blue in the middle of the chaos - but fire and ice are exploding everywhere. It's dangerous. It needs a hero.\n\n'I'll do it,' says Alexander, gripping the sword.\n\nOliver holds up his torch. 'I'll clear a path with fire!'\n\nIsabella starts to sing. 'I'll calm the ice!'\n\nTOGETHER!",
+      "sceneImageUrl": "/images/scenes/frozen-volcano/scene-4-dragons-nest.png",
+      "activeCharacters": ["frost-scout", "ember-keeper", "crystal-singer"],
+      "characterTurns": [],
+      "outcome": {
+        "resultText": "Oliver's torch blazes bright - the fire parts! Isabella's song rings out - the falling ice slows to a gentle drift! A path opens to the Heart Stone.\n\nAlexander RUNS. Fire on his left. Ice on his right. The Frost Blade glowing in his hands.\n\nHe reaches the Heart Stone, raises the sword high—\n\nAnd STRIKES!\n\nFLASH! A wave of blue-white light explodes from the blade. Fire and ice STOP fighting. They swirl together - not crashing, but dancing. The cracks in the mountain seal. The Ice Dragon rises, her eyes bright.\n\n'You did it. All of you. The mountain is healed!'\n\nShe lands before the three explorers and bows her great head.\n\n'Oliver - your fire showed the way. Take this Eternal Ember. It will never go out.'\n\n'Isabella - your song calmed the storm. Take this Singing Crystal. It will always remind you of your beautiful voice.'\n\n'And Alexander - you found the Frost Blade when no one else could. You struck the Heart Stone when no one else would. Keep the blade. You've earned it, hero.'\n\nThe Ice Dragon takes flight, circling the healed mountain. Rainbow light fills the sky.\n\nAnd far below, three explorers look up at what they saved - together.",
+        "nextSceneId": null
+      }
+    }
+  ],
+  "ending": {
+    "title": "Heroes of Fire Mountain!",
+    "narrationText": "The Frozen Volcano is saved! Fire and ice live together in balance again, more beautiful than ever. The King throws the biggest party the kingdom has ever seen. And whenever you look up at Fire Mountain, you can see the Ice Dragon flying in the rainbow sky, watching over her home once more.",
+    "endingImageUrl": "/images/scenes/frozen-volcano/scene-5-healed-mountain.png",
+    "characterRewards": [
+      {
+        "characterId": "ember-keeper",
+        "item": "Eternal Ember",
+        "description": "A magical ember that will never go out"
+      },
+      {
+        "characterId": "crystal-singer",
+        "item": "Singing Crystal",
+        "description": "A crystal that sings when you're happy"
+      },
+      {
+        "characterId": "frost-scout",
+        "item": "The Frost Blade",
+        "description": "The legendary sword that saved the mountain"
+      }
+    ]
+  }
+}

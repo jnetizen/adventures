@@ -80,12 +80,23 @@ export const GamePhaseSchema = z.enum([
 // =============================================================================
 
 /**
+ * Character scene state schema for session (lazy validation - defined before GameSession).
+ */
+export const SessionCharacterSceneStateSchema = z.object({
+  characterId: z.string().min(1),
+  sceneId: z.string().min(1),
+  turnIndex: z.number().int().min(0),
+  choices: z.array(SceneChoiceSchema),
+});
+
+/**
  * Full game session schema - validates Supabase session responses.
  */
 export const GameSessionSchema = z.object({
   id: z.string().uuid(),
   room_code: z.string().length(4),
   current_scene: z.number().int().min(0),
+  current_scene_id: z.string().nullable().optional(),
   phase: GamePhaseSchema,
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
@@ -102,6 +113,8 @@ export const GameSessionSchema = z.object({
   feedback_submitted_at: z.string().datetime().nullable().optional(),
   active_cutscene: ActiveCutsceneSchema.nullable().optional(),
   collected_rewards: z.array(CollectedRewardSchema).optional(),
+  character_scenes: z.array(SessionCharacterSceneStateSchema).nullable().optional(),
+  is_split: z.boolean().optional(),
 });
 
 export type GameSession = z.infer<typeof GameSessionSchema>;
@@ -117,6 +130,7 @@ export const OperationTypeSchema = z.enum([
   OPERATION_TYPES.CREATE_SESSION,
   OPERATION_TYPES.START_ADVENTURE,
   OPERATION_TYPES.START_SCENE,
+  OPERATION_TYPES.START_SCENE_BY_ID,
   OPERATION_TYPES.SUBMIT_CHOICE,
   OPERATION_TYPES.ADVANCE_SCENE,
   OPERATION_TYPES.SUBMIT_FEEDBACK,
@@ -124,6 +138,8 @@ export const OperationTypeSchema = z.enum([
   OPERATION_TYPES.SHOW_CUTSCENE,
   OPERATION_TYPES.DISMISS_CUTSCENE,
   OPERATION_TYPES.COLLECT_REWARD,
+  OPERATION_TYPES.SPLIT_PARTY,
+  OPERATION_TYPES.REUNITE_PARTY,
 ]) as z.ZodType<OperationType>;
 
 /**
@@ -212,6 +228,47 @@ export const CollectRewardDataSchema = z.object({
 export type CollectRewardData = z.infer<typeof CollectRewardDataSchema>;
 
 /**
+ * Start scene by ID operation data schema.
+ */
+export const StartSceneByIdDataSchema = z.object({
+  sceneId: z.string().min(1),
+  sceneNumber: z.number().int().min(0),
+});
+
+export type StartSceneByIdData = z.infer<typeof StartSceneByIdDataSchema>;
+
+/**
+ * Character scene state schema for parallel scenes.
+ */
+export const CharacterSceneStateSchema = z.object({
+  characterId: z.string().min(1),
+  sceneId: z.string().min(1),
+  turnIndex: z.number().int().min(0),
+  choices: z.array(SceneChoiceSchema),
+});
+
+export type CharacterSceneState = z.infer<typeof CharacterSceneStateSchema>;
+
+/**
+ * Split party operation data schema.
+ */
+export const SplitPartyDataSchema = z.object({
+  characterScenes: z.array(CharacterSceneStateSchema),
+});
+
+export type SplitPartyData = z.infer<typeof SplitPartyDataSchema>;
+
+/**
+ * Reunite party operation data schema.
+ */
+export const ReunitePartyDataSchema = z.object({
+  sceneId: z.string().min(1),
+  sceneNumber: z.number().int().min(0),
+});
+
+export type ReunitePartyData = z.infer<typeof ReunitePartyDataSchema>;
+
+/**
  * Base pending operation schema.
  */
 export const PendingOperationBaseSchema = z.object({
@@ -263,6 +320,18 @@ export const PendingOperationSchema = z.discriminatedUnion('type', [
   PendingOperationBaseSchema.extend({
     type: z.literal(OPERATION_TYPES.COLLECT_REWARD),
     data: CollectRewardDataSchema,
+  }),
+  PendingOperationBaseSchema.extend({
+    type: z.literal(OPERATION_TYPES.START_SCENE_BY_ID),
+    data: StartSceneByIdDataSchema,
+  }),
+  PendingOperationBaseSchema.extend({
+    type: z.literal(OPERATION_TYPES.SPLIT_PARTY),
+    data: SplitPartyDataSchema,
+  }),
+  PendingOperationBaseSchema.extend({
+    type: z.literal(OPERATION_TYPES.REUNITE_PARTY),
+    data: ReunitePartyDataSchema,
   }),
 ]);
 

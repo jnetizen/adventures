@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { findSessionByCode } from '../lib/gameState';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { findSessionByCode, selectAdventure } from '../lib/gameState';
 import { formatError } from '../lib/errorRecovery';
-import { getCurrentScene, allCharactersActed, calculateEnding, getAdventureList } from '../lib/adventures';
+import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById } from '../lib/adventures';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
 import {
@@ -31,6 +31,8 @@ export default function PlayPage() {
   const [celebratedSceneIds, setCelebratedSceneIds] = useState<string[]>([]);
   const [celebratedEnding, setCelebratedEnding] = useState(false);
   const [sceneImageError, setSceneImageError] = useState(false);
+  const [prologueImageError, setPrologueImageError] = useState(false);
+  const [selectingAdventure, setSelectingAdventure] = useState(false);
 
   // Dice roll animation state
   const [pendingDiceRoll, setPendingDiceRoll] = useState<{
@@ -67,10 +69,27 @@ export default function PlayPage() {
     onStatusChange: handleStatusChange,
   });
 
-  // Compute derived state (currentScene) from session and adventure
-  const currentScene = session && adventure
-    ? getCurrentScene(adventure, session.current_scene)
+  // Derived: is the party currently split?
+  const isSplit = !!(session?.is_split && session?.character_scenes && session.character_scenes.length > 0);
+
+  // For split party: get the active character's scene state (based on current_scene_id set by DM)
+  const activeCharacterScene = isSplit && session?.character_scenes && session?.current_scene_id
+    ? session.character_scenes.find(cs => cs.sceneId === session.current_scene_id) || session.character_scenes[0]
     : null;
+
+  // Compute derived state (currentScene) from session and adventure
+  // When split, use the active character's scene to match what DM is showing
+  const currentScene = (() => {
+    if (!session || !adventure) return null;
+
+    // When party is split, show the scene the DM is currently managing
+    if (isSplit && activeCharacterScene) {
+      return getSceneById(adventure, activeCharacterScene.sceneId);
+    }
+
+    // Standard lookup (supports both scene ID and legacy scene number)
+    return getCurrentSceneWithBranching(adventure, session);
+  })();
 
   // Get available adventures for preview while waiting
   const availableAdventures = useMemo(() => getAdventureList(), []);
@@ -81,6 +100,7 @@ export default function PlayPage() {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- sync celebration state when session resets
       setCelebratedSceneIds([]);
       setCelebratedEnding(false);
+      setPrologueImageError(false);
     }
   }, [session?.phase, session?.adventure_id]);
 
@@ -107,12 +127,20 @@ export default function PlayPage() {
     }
   }, [session?.scene_choices, processedRollCount, session?.players]);
 
-  // Reset dice roll tracking when scene changes
+  // Track the last scene we processed to avoid re-triggering animations when switching parallel scenes
+  const lastSceneRef = useRef<string | null>(null);
+  const currentSceneKey = `${session?.current_scene}-${session?.current_scene_id}`;
+
+  // Reset dice roll tracking when scene changes (support both scene number and scene ID for branching)
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset roll tracking on scene change
-    setProcessedRollCount(0);
-    setPendingDiceRoll(null);
-  }, [session?.current_scene]);
+    if (lastSceneRef.current !== currentSceneKey) {
+      // Scene actually changed - set count to current choices to avoid animating old choices
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset roll tracking on scene change
+      setProcessedRollCount(session?.scene_choices?.length ?? 0);
+      setPendingDiceRoll(null);
+      lastSceneRef.current = currentSceneKey;
+    }
+  }, [currentSceneKey, session?.scene_choices?.length]);
 
   const handleJoin = async () => {
     if (!roomCode.trim()) {
@@ -150,14 +178,45 @@ export default function PlayPage() {
     }
   };
 
+  const handleSelectAdventure = async (adventureId: string) => {
+    if (!session) return;
+    setError(null);
+    setSelectingAdventure(true);
+
+    const { error: selectError } = await selectAdventure(session.id, adventureId);
+    setSelectingAdventure(false);
+
+    if (selectError) {
+      setError(formatError(selectError));
+      return;
+    }
+
+    // Update local state
+    setSession((prev) => prev ? { ...prev, adventure_id: adventureId } : null);
+  };
+
   // Compute these first so adventureEnded can use them
-  const allActed = currentScene && session && allCharactersActed(currentScene, session);
+  // For parallel scenes, check if all characters in THIS branch have acted
+  const allActed = (() => {
+    if (!currentScene || !session) return false;
+
+    if (isSplit && activeCharacterScene) {
+      // For parallel scenes, check against the active characters in this scene
+      const activeCharacters = getSceneActiveCharacters(currentScene, session.players || []);
+      const scenePlayers = (session.players || []).filter(p => activeCharacters.includes(p.characterId));
+      const activeTurns = getActiveCharacterTurns(currentScene, scenePlayers);
+      return activeCharacterScene.turnIndex >= activeTurns.length;
+    }
+
+    // Standard check for non-split scenarios
+    return allCharactersActed(currentScene, session);
+  })();
   const isLastScene = !!currentScene && !currentScene.outcome?.nextSceneId;
 
-  // Show ending when on last scene and all characters have acted (matches DM behavior)
-  // OR when phase is explicitly set to complete
+  // Show ending only when phase is explicitly set to complete by the DM
+  // Don't auto-trigger based on isLastScene - let DM control the flow
   const adventureEnded =
-    (session?.phase === GAME_PHASES.COMPLETE || (isLastScene && allActed)) &&
+    session?.phase === GAME_PHASES.COMPLETE &&
     !!currentScene &&
     !!adventure;
 
@@ -224,7 +283,26 @@ export default function PlayPage() {
           variant="ending"
         />
       )}
-      {!session || !adventure || !currentScene ? (
+      {/* Show full-screen prologue when adventure is selected but game hasn't started (SETUP or PROLOGUE phase) */}
+      {session && adventure && (session.phase === GAME_PHASES.SETUP || session.phase === GAME_PHASES.PROLOGUE) ? (
+        <div className="w-full h-[100dvh] fixed inset-0 bg-black">
+          {adventure.prologue?.prologueImageUrl && !prologueImageError ? (
+            <img
+              src={adventure.prologue.prologueImageUrl}
+              alt={`The world of ${adventure.title}`}
+              className="w-full h-full object-contain"
+              onError={() => setPrologueImageError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-amber-100 to-orange-100">
+              <div className="text-center p-8">
+                <h1 className="text-4xl font-bold text-amber-900 mb-4">{adventure.title}</h1>
+                <p className="text-xl text-amber-700">The adventure begins...</p>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : !session || !adventure || (!currentScene && session?.phase !== GAME_PHASES.PROLOGUE) ? (
         <div className="px-4 py-8">
           <div className="max-w-2xl mx-auto space-y-6">
             <h1 className="text-2xl font-bold text-gray-900 text-center">Player Screen</h1>
@@ -291,7 +369,11 @@ export default function PlayPage() {
               </div>
             </div>
           ) : !adventure ? (
-            <AdventurePreviewGrid adventures={availableAdventures} />
+            <AdventurePreviewGrid
+              adventures={availableAdventures}
+              onSelect={handleSelectAdventure}
+              loading={selectingAdventure}
+            />
           ) : !currentScene ? (
             <div className="text-center py-8 px-6 rounded-xl bg-amber-50/60 border border-amber-100">
               <p className="text-gray-700 font-medium">Waiting for scene to start...</p>
@@ -315,10 +397,10 @@ export default function PlayPage() {
             <EndingPage adventure={adventure} session={session} />
           </div>
         </div>
-      ) : (
+      ) : currentScene ? (
         <>
           {/* BUG-1 fix: Full-screen scene image only. No overlays — results/turns live on DM. */}
-          <div className="w-full h-screen fixed inset-0">
+          <div className="w-full h-[100dvh] fixed inset-0 bg-black">
             {sceneImageError ? (
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
                 <PlaceholderImage
@@ -331,7 +413,7 @@ export default function PlayPage() {
               <img
                 src={currentScene.sceneImageUrl}
                 alt={`Scene ${currentScene.sceneNumber + 1}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 onError={() => setSceneImageError(true)}
               />
             )}
@@ -372,7 +454,7 @@ export default function PlayPage() {
             </div>
           )}
         </>
-      )}
+      ) : null}
     </div>
   );
 }

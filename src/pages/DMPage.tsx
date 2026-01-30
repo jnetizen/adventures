@@ -1,8 +1,18 @@
 import { useState, useCallback } from 'react';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
-import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward } from '../lib/gameState';
+import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure } from '../lib/gameState';
 import { formatError } from '../lib/errorRecovery';
-import { getCurrentScene, getCurrentCharacterTurn, getActiveCharacterTurns, getPlayerForCharacter, calculateChoiceOutcome, allCharactersActed, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold } from '../lib/adventures';
+import { getActiveCharacterTurns, getPlayerForCharacter, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn } from '../lib/adventures';
+import {
+  computeIsSplit,
+  computeActiveParallelCharacterId,
+  computeActiveCharacterScene,
+  computeCurrentScene,
+  computeCurrentCharacterTurn,
+  computeAllActed,
+  isParallelSceneComplete,
+  computeParallelSceneStatus,
+} from '../lib/dmDerivedState';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
 import type { GameSession, Player, DiceType } from '../types/game';
@@ -40,6 +50,11 @@ export default function DMPage() {
   const [advancing, setAdvancing] = useState(false);
   const [celebratedSceneIds, setCelebratedSceneIds] = useState<string[]>([]);
   const [celebratedEnding, setCelebratedEnding] = useState(false);
+  // For narrative scenes (no turns) and epilogue display
+  const [showingEpilogue, setShowingEpilogue] = useState(false);
+  // For parallel scenes: which character's branch is being viewed (user can switch between branches)
+  // This is a UI-only preference, not persisted to the session
+  const [selectedParallelCharacterId, setSelectedParallelCharacterId] = useState<string | null>(null);
 
   // Custom hooks for extracted logic
   useSessionPersistence(session);
@@ -78,20 +93,44 @@ export default function DMPage() {
     diceType: session?.dice_type,
   });
 
-  // Compute derived state (currentScene and currentCharacterTurn) from session and adventure
-  const currentScene = session && adventure 
-    ? getCurrentScene(adventure, session.current_scene)
-    : null;
+  // Derived: is the party currently split?
+  const isSplit = computeIsSplit(session);
 
-  const currentCharacterTurn = (() => {
-    if (!session || !adventure || !currentScene) return null;
-    const players = session.players || [];
-    if (session.phase === GAME_PHASES.PLAYING && players.length > 0) {
-      const turnIndex = session.current_character_turn_index || 0;
-      return getCurrentCharacterTurn(currentScene, turnIndex, players);
-    }
-    return null;
-  })();
+  // Debug logging for split state
+  if (session?.phase === GAME_PHASES.PLAYING) {
+    console.log('[Split State Debug]', {
+      is_split: session?.is_split,
+      character_scenes: session?.character_scenes,
+      isSplit,
+      current_scene_id: session?.current_scene_id,
+    });
+  }
+
+  // Derive active parallel character: use user's selection if valid, otherwise first character in split
+  const activeParallelCharacterId = computeActiveParallelCharacterId(
+    isSplit,
+    session?.character_scenes,
+    selectedParallelCharacterId
+  );
+
+  // For split party: get the active character's scene state
+  const activeCharacterScene = computeActiveCharacterScene(
+    isSplit,
+    session?.character_scenes,
+    activeParallelCharacterId
+  );
+
+  // Compute derived state (currentScene and currentCharacterTurn) from session and adventure
+  // When split, use the active character's scene; otherwise use branching-aware lookup
+  const currentScene = computeCurrentScene(session, adventure, isSplit, activeCharacterScene);
+
+  const currentCharacterTurn = computeCurrentCharacterTurn(
+    session,
+    adventure,
+    currentScene,
+    isSplit,
+    activeCharacterScene
+  );
 
   const handleCreateSession = async () => {
     setError(null);
@@ -108,9 +147,17 @@ export default function DMPage() {
     setSession(data);
   };
 
-  const loadAdventureById = (adventureId: string) => {
+  const loadAdventureById = async (adventureId: string) => {
     if (!session) return;
     setError(null);
+
+    // Save to database so player screen can see the selection
+    const { error: selectError } = await selectAdventure(session.id, adventureId);
+    if (selectError) {
+      setError(formatError(selectError));
+      return;
+    }
+
     // Set adventure_id on session - the useAdventureLoader hook will load the adventure
     setSession((prev) => prev ? { ...prev, adventure_id: adventureId } : null);
     setAssignmentStep('kids');
@@ -258,7 +305,23 @@ export default function DMPage() {
   };
 
   const handleSubmitChoice = async () => {
-    if (!session || !currentCharacterTurn || !selectedChoice || !diceRoll.trim()) {
+    // Capture turn data at the start to avoid race conditions with subscription updates
+    const turn = currentCharacterTurn;
+    const choice = selectedChoice;
+
+    console.log('[Submit Debug] Starting submit with:', {
+      turnCharacterId: turn?.characterId,
+      turnPrompt: turn?.promptText?.substring(0, 50),
+      isSplit,
+      activeSceneTurnIndex: activeCharacterScene?.turnIndex,
+      globalTurnIndex: session?.current_character_turn_index,
+      choiceId: choice?.id,
+      diceRoll,
+      hasSuccessOutcome: !!turn?.successOutcome,
+      hasFailOutcome: !!turn?.failOutcome,
+    });
+
+    if (!session || !turn || !choice || !diceRoll.trim()) {
       setError('Please select a choice and enter a dice roll');
       return;
     }
@@ -271,14 +334,14 @@ export default function DMPage() {
     }
 
     // Get the success threshold (from turn or choice level)
-    const threshold = getSuccessThreshold(currentCharacterTurn, selectedChoice);
+    const threshold = getSuccessThreshold(turn, choice);
 
     setError(null);
     setSubmitting(true);
     const { error: submitError } = await submitCharacterChoice(
       session.id,
-      currentCharacterTurn.characterId,
-      selectedChoice.id,
+      turn.characterId,
+      choice.id,
       roll,
       threshold
     );
@@ -289,14 +352,58 @@ export default function DMPage() {
       return;
     }
 
+    // If in split mode, also update the character scene's turn index
+    // Important: Update ALL characters sharing the same scene, not just the one who acted
+    if (isSplit && activeCharacterScene) {
+      const newTurnIndex = (activeCharacterScene.turnIndex || 0) + 1;
+      const currentSceneId = activeCharacterScene.sceneId;
+
+      // Update all characters in the same scene
+      const charactersInSameScene = session.character_scenes?.filter(
+        cs => cs.sceneId === currentSceneId
+      ) || [];
+
+      for (const charScene of charactersInSameScene) {
+        await updateCharacterSceneState(session.id, charScene.characterId, {
+          turnIndex: newTurnIndex,
+        });
+      }
+
+      // Update local state for all characters in the same scene
+      setSession((prev) => {
+        if (!prev?.character_scenes) return prev;
+        return {
+          ...prev,
+          character_scenes: prev.character_scenes.map(cs =>
+            cs.sceneId === currentSceneId
+              ? { ...cs, turnIndex: newTurnIndex }
+              : cs
+          ),
+        };
+      });
+    }
+
     // Check if this turn has cutscene outcomes (new format)
-    if (hasPerTurnOutcomes(currentCharacterTurn)) {
-      const turnOutcome = getTurnOutcome(currentCharacterTurn, roll, maxRoll, selectedChoice);
-      
+    // Use captured turn data to avoid race conditions
+    console.log('[Cutscene Debug] Checking cutscene for turn:', {
+      characterId: turn.characterId,
+      hasPerTurnOutcomes: hasPerTurnOutcomes(turn),
+      successOutcome: turn.successOutcome,
+      failOutcome: turn.failOutcome,
+    });
+    if (hasPerTurnOutcomes(turn)) {
+      const turnOutcome = getTurnOutcome(turn, roll, maxRoll, choice);
+      console.log('[Cutscene Debug] Turn outcome:', {
+        roll,
+        maxRoll,
+        outcome: turnOutcome,
+        cutsceneImageUrl: turnOutcome?.cutsceneImageUrl,
+      });
+
       if (turnOutcome?.cutsceneImageUrl) {
         // Show cutscene on kids' screen
         const { error: cutsceneError } = await showCutscene(session.id, {
-          characterId: currentCharacterTurn.characterId,
+          characterId: turn.characterId,
           imageUrl: turnOutcome.cutsceneImageUrl,
           outcomeText: turnOutcome.text,
           reward: turnOutcome.reward ? {
@@ -307,6 +414,7 @@ export default function DMPage() {
           } : undefined,
         });
         
+        console.log('[Cutscene Debug] showCutscene called for:', turn.characterId, 'result:', cutsceneError ? 'ERROR' : 'SUCCESS');
         if (cutsceneError) {
           console.error('Failed to show cutscene:', cutsceneError);
         }
@@ -334,6 +442,109 @@ export default function DMPage() {
     setDiceRoll('');
   };
 
+  /**
+   * Handle submission for alwaysSucceed (climax) turns.
+   * No dice roll needed - just triggers the cutscene and advances.
+   */
+  const handleSubmitClimaxTurn = async () => {
+    const turn = currentCharacterTurn;
+
+    console.log('[Climax Turn Debug] Starting climax turn submission:', {
+      turnCharacterId: turn?.characterId,
+      alwaysSucceed: turn?.alwaysSucceed,
+      hasOutcome: !!turn?.outcome,
+    });
+
+    if (!session || !turn || !turn.alwaysSucceed) {
+      setError('Invalid climax turn state');
+      return;
+    }
+
+    setError(null);
+    setSubmitting(true);
+
+    // For alwaysSucceed turns, we still call submitCharacterChoice but with
+    // a dummy roll that always succeeds. We use the max dice value.
+    const diceType = session.dice_type ?? DEFAULT_DICE_TYPE;
+    const { error: submitError } = await submitCharacterChoice(
+      session.id,
+      turn.characterId,
+      'climax-action', // Dummy choice ID for climax turns
+      diceType, // Always max roll = always success
+      1 // Threshold of 1 means any roll succeeds
+    );
+
+    if (submitError) {
+      setSubmitting(false);
+      setError(formatError(submitError));
+      return;
+    }
+
+    // Update character scene state if in split mode
+    if (isSplit && activeCharacterScene) {
+      const newTurnIndex = (activeCharacterScene.turnIndex || 0) + 1;
+      const currentSceneId = activeCharacterScene.sceneId;
+
+      const charactersInSameScene = session.character_scenes?.filter(
+        cs => cs.sceneId === currentSceneId
+      ) || [];
+
+      for (const charScene of charactersInSameScene) {
+        await updateCharacterSceneState(session.id, charScene.characterId, {
+          turnIndex: newTurnIndex,
+        });
+      }
+
+      setSession((prev) => {
+        if (!prev?.character_scenes) return prev;
+        return {
+          ...prev,
+          character_scenes: prev.character_scenes.map(cs =>
+            cs.sceneId === currentSceneId
+              ? { ...cs, turnIndex: newTurnIndex }
+              : cs
+          ),
+        };
+      });
+    }
+
+    // Show cutscene for the outcome
+    if (turn.outcome?.cutsceneImageUrl) {
+      const { error: cutsceneError } = await showCutscene(session.id, {
+        characterId: turn.characterId,
+        imageUrl: turn.outcome.cutsceneImageUrl,
+        outcomeText: turn.outcome.text,
+        reward: turn.outcome.reward ? {
+          id: turn.outcome.reward.id,
+          name: turn.outcome.reward.name,
+          imageUrl: turn.outcome.reward.imageUrl,
+          type: turn.outcome.reward.type,
+        } : undefined,
+      });
+
+      console.log('[Climax Turn Debug] showCutscene called for:', turn.characterId, 'result:', cutsceneError ? 'ERROR' : 'SUCCESS');
+      if (cutsceneError) {
+        console.error('Failed to show cutscene:', cutsceneError);
+      }
+
+      // Collect reward if present
+      if (turn.outcome.reward) {
+        const { error: rewardError } = await collectReward(session.id, {
+          id: turn.outcome.reward.id,
+          name: turn.outcome.reward.name,
+          imageUrl: turn.outcome.reward.imageUrl,
+          type: turn.outcome.reward.type,
+        });
+
+        if (rewardError) {
+          console.error('Failed to collect reward:', rewardError);
+        }
+      }
+    }
+
+    setSubmitting(false);
+  };
+
   const handleDismissCutscene = async () => {
     if (!session) return;
     setError(null);
@@ -343,26 +554,166 @@ export default function DMPage() {
     }
   };
 
+  const handleShowEpilogue = async () => {
+    if (!session || !adventure?.ending) return;
+    setError(null);
+    setShowingEpilogue(true);
+
+    // Show the ending image on the player screen using the cutscene mechanism
+    if (adventure.ending.endingImageUrl) {
+      const { error: cutsceneError } = await showCutscene(session.id, {
+        characterId: 'epilogue',
+        imageUrl: adventure.ending.endingImageUrl,
+        outcomeText: adventure.ending.title || 'The End',
+      });
+      if (cutsceneError) {
+        console.error('Failed to show epilogue image:', cutsceneError);
+      }
+    }
+  };
+
   const handleNextScene = async () => {
     if (!session || !currentScene || !adventure) return;
 
     setError(null);
     setAdvancing(true);
-    let nextSceneNumber: number | null = null;
-    
-    if (currentScene.outcome?.nextSceneId) {
-      const nextScene = adventure.scenes.find(s => s.id === currentScene.outcome!.nextSceneId);
-      nextSceneNumber = nextScene?.sceneNumber ?? null;
+
+    const outcome = currentScene.outcome;
+
+    // Check if this is a branching outcome (characters go to different scenes)
+    if (outcome && isBranchingOutcome(outcome)) {
+      // Initialize character scene states for parallel scenes
+      const characterScenes = initializeCharacterScenes(currentScene, session.players || []);
+
+      if (characterScenes.length > 0) {
+        const { error: splitError } = await splitParty(session.id, characterScenes);
+        setAdvancing(false);
+        if (splitError) {
+          setError(formatError(splitError));
+          return;
+        }
+        // Update local state to reflect split
+        setSession((prev) => prev ? {
+          ...prev,
+          is_split: true,
+          character_scenes: characterScenes,
+          current_scene_id: characterScenes[0]?.sceneId ?? null,
+        } : null);
+        return;
+      }
     }
 
-    const { error: advanceError } = await advanceToNextScene(session.id, nextSceneNumber);
-    setAdvancing(false);
-    if (advanceError) {
-      setError(formatError(advanceError));
-      return;
+    // If in split mode, advance each character to their next scene
+    if (isSplit && session.character_scenes && session.character_scenes.length > 0) {
+      // Calculate the next scene for each character based on their current scene
+      const updatedCharacterScenes: typeof session.character_scenes = [];
+      const nextSceneIds = new Set<string>();
+
+      for (const cs of session.character_scenes) {
+        const charScene = getSceneById(adventure, cs.sceneId);
+        const nextId = charScene?.outcome?.nextSceneId;
+
+        if (typeof nextId === 'string') {
+          nextSceneIds.add(nextId);
+          updatedCharacterScenes.push({
+            ...cs,
+            sceneId: nextId,
+            turnIndex: 0,
+            choices: [],
+          });
+        }
+      }
+
+      // Check if all characters are going to the same scene (reunion)
+      if (nextSceneIds.size === 1) {
+        const reunionSceneId = [...nextSceneIds][0];
+        const reunionScene = getSceneById(adventure, reunionSceneId);
+
+        // If the reunion scene is NOT a parallel scene, reunite the party
+        if (reunionScene && !reunionScene.isParallelScene) {
+          const { error: reuniteError } = await reuniteParty(
+            session.id,
+            reunionSceneId,
+            reunionScene.sceneNumber
+          );
+          setAdvancing(false);
+          if (reuniteError) {
+            setError(formatError(reuniteError));
+            return;
+          }
+          setSession((prev) => prev ? {
+            ...prev,
+            is_split: false,
+            character_scenes: null,
+            current_scene: reunionScene.sceneNumber,
+            current_scene_id: reunionSceneId,
+            current_character_turn_index: 0,
+            scene_choices: [],
+          } : null);
+          return;
+        }
+      }
+
+      // Still in parallel mode - update character scenes to next level
+      if (updatedCharacterScenes.length > 0) {
+        const { error: splitError } = await splitParty(session.id, updatedCharacterScenes);
+        setAdvancing(false);
+        if (splitError) {
+          setError(formatError(splitError));
+          return;
+        }
+        setSession((prev) => prev ? {
+          ...prev,
+          character_scenes: updatedCharacterScenes,
+          current_scene_id: updatedCharacterScenes[0]?.sceneId ?? null,
+        } : null);
+        return;
+      }
     }
-    if (nextSceneNumber === null) {
-      setSession((prev) => prev ? { ...prev, phase: GAME_PHASES.COMPLETE } : null);
+
+    // Standard scene transition (single nextSceneId or end of adventure)
+    let nextSceneNumber: number | null = null;
+    let nextSceneId: string | null = null;
+
+    if (outcome?.nextSceneId && typeof outcome.nextSceneId === 'string') {
+      const nextScene = getSceneById(adventure, outcome.nextSceneId);
+      nextSceneNumber = nextScene?.sceneNumber ?? null;
+      nextSceneId = outcome.nextSceneId;
+    }
+
+    // Use scene ID-based navigation if available, otherwise fall back to legacy
+    if (nextSceneId && nextSceneNumber !== null) {
+      const { error: advanceError } = await startSceneById(session.id, nextSceneId, nextSceneNumber);
+      setAdvancing(false);
+      if (advanceError) {
+        setError(formatError(advanceError));
+        return;
+      }
+      setSession((prev) => prev ? {
+        ...prev,
+        current_scene: nextSceneNumber!,
+        current_scene_id: nextSceneId,
+        current_character_turn_index: 0,
+        scene_choices: [],
+        is_split: false,
+        character_scenes: undefined,
+      } : null);
+    } else {
+      // End of adventure or legacy navigation
+      const { error: advanceError } = await advanceToNextScene(session.id, nextSceneNumber);
+      setAdvancing(false);
+      if (advanceError) {
+        setError(formatError(advanceError));
+        return;
+      }
+      if (nextSceneNumber === null) {
+        // End of adventure - dismiss any active cutscene and reset epilogue state
+        if (session.active_cutscene) {
+          await dismissCutscene(session.id);
+        }
+        setShowingEpilogue(false);
+        setSession((prev) => prev ? { ...prev, phase: GAME_PHASES.COMPLETE, active_cutscene: null } : null);
+      }
     }
   };
 
@@ -725,7 +1076,26 @@ export default function DMPage() {
   }
 
   // Game is playing - show current state
-  const allActed = currentScene && allCharactersActed(currentScene, session);
+  // For parallel scenes, check if all characters in THIS branch have acted
+  const allActed = computeAllActed(session, currentScene, isSplit, activeCharacterScene);
+
+  // Find all parallel scenes at the current level and check their completion status
+  const parallelSceneStatus = computeParallelSceneStatus(adventure, session, isSplit);
+
+  // Handler to switch to next incomplete parallel scene
+  const handleSwitchToNextParallelScene = async () => {
+    if (!session || !parallelSceneStatus.nextIncompleteSceneId) return;
+
+    // Find the character for the next incomplete scene
+    const nextCharScene = session.character_scenes?.find(
+      cs => cs.sceneId === parallelSceneStatus.nextIncompleteSceneId
+    );
+
+    if (nextCharScene) {
+      setSelectedParallelCharacterId(nextCharScene.characterId);
+      await setActiveParallelScene(session.id, parallelSceneStatus.nextIncompleteSceneId);
+    }
+  };
   const sceneRewards = allActed && currentScene?.outcome?.rewards;
   const showSceneCelebration = !!(
     sceneRewards &&
@@ -788,6 +1158,72 @@ export default function DMPage() {
             </span>
           </div>
 
+          {/* Parallel Scene Selector - shown when party is split */}
+          {isSplit && session.character_scenes && session.character_scenes.length > 1 && (() => {
+            // Group characters by scene
+            const sceneGroups = new Map<string, typeof session.character_scenes>();
+            for (const cs of session.character_scenes!) {
+              const existing = sceneGroups.get(cs.sceneId) || [];
+              sceneGroups.set(cs.sceneId, [...existing, cs]);
+            }
+            const uniqueScenes = Array.from(sceneGroups.entries());
+
+            return (
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <p className="text-sm font-semibold text-purple-900 mb-3">Party Split - Select Path</p>
+                <div className="flex flex-wrap gap-2">
+                  {uniqueScenes.map(([sceneId, charactersInScene]) => {
+                    const scene = getSceneById(adventure, sceneId);
+                    const isActive = activeCharacterScene?.sceneId === sceneId;
+                    const isComplete = isParallelSceneComplete(adventure, session, sceneId);
+
+                    // Get kid names for all characters in this scene
+                    const characterNames = charactersInScene.map(cs => {
+                      const kidName = getPlayerForCharacter(players, cs.characterId);
+                      const character = adventure.characters.find(c => c.id === cs.characterId);
+                      return kidName || character?.name || 'Unknown';
+                    });
+
+                    return (
+                      <button
+                        key={sceneId}
+                        onClick={async () => {
+                          // Select the first character in this scene
+                          const firstChar = charactersInScene[0];
+                          if (firstChar) {
+                            setSelectedParallelCharacterId(firstChar.characterId);
+                            await setActiveParallelScene(session.id, sceneId);
+                          }
+                        }}
+                        className={`
+                          flex-1 min-w-[120px] px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${isActive
+                            ? 'bg-purple-600 text-white shadow-md'
+                            : isComplete
+                              ? 'bg-green-100 text-green-700 border border-green-300'
+                              : 'bg-white text-purple-700 border border-purple-300 hover:bg-purple-100'
+                          }
+                        `}
+                      >
+                        <div className="text-center">
+                          <div className="font-semibold flex items-center justify-center gap-1">
+                            {isComplete && <CheckCircle2 className="w-4 h-4" />}
+                            {characterNames.join(' & ')}
+                          </div>
+                          {scene?.title && (
+                            <div className={`text-xs mt-0.5 ${isActive ? 'text-purple-200' : isComplete ? 'text-green-600' : 'text-purple-500'}`}>
+                              {scene.title}
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Scene Narration */}
           {currentScene && (
             <div className="bg-blue-50 p-4 rounded-lg">
@@ -803,17 +1239,30 @@ export default function DMPage() {
               {session.scene_choices?.map((sceneChoice, index) => {
                 const character = adventure.characters.find(c => c.id === sceneChoice.characterId);
                 const characterTurn = currentScene.characterTurns.find(ct => ct.characterId === sceneChoice.characterId);
-                const choice = characterTurn?.choices.find(c => c.id === sceneChoice.choiceId);
-                if (!character || !choice || !sceneChoice.roll) return null;
+                if (!character || !characterTurn) return null;
 
-                // Get outcome - check for turn-level outcomes first (new format), then choice-level (old format)
-                const outcome = characterTurn && hasPerTurnOutcomes(characterTurn)
-                  ? getTurnOutcome(characterTurn, sceneChoice.roll, session.dice_type || 20, choice)
-                  : calculateChoiceOutcome(choice, sceneChoice.roll, session.dice_type || 20);
+                // Handle alwaysSucceed (climax) turns differently
+                const isClimaxTurn = isAlwaysSucceedTurn(characterTurn);
+                const choice = !isClimaxTurn && characterTurn.choices
+                  ? characterTurn.choices.find(c => c.id === sceneChoice.choiceId)
+                  : null;
+
+                // For regular turns, require a valid choice
+                if (!isClimaxTurn && !choice) return null;
+                if (!isClimaxTurn && !sceneChoice.roll) return null;
+
+                // Get outcome - climax turns use turn.outcome directly, others check success/fail
+                const outcome = isClimaxTurn
+                  ? characterTurn.outcome
+                  : characterTurn && hasPerTurnOutcomes(characterTurn)
+                    ? getTurnOutcome(characterTurn, sceneChoice.roll!, session.dice_type || 20, choice ?? undefined)
+                    : choice
+                      ? calculateChoiceOutcome(choice, sceneChoice.roll!, session.dice_type || 20)
+                      : null;
                 const kidName = getPlayerForCharacter(players, sceneChoice.characterId) || character.name;
 
                 return (
-                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                  <div key={index} className={`p-3 rounded-lg ${isClimaxTurn ? 'bg-amber-50 border border-amber-200' : 'bg-gray-50'}`}>
                     <div className="flex items-center gap-3 mb-2">
                       <PlaceholderImage
                         variant="character"
@@ -821,9 +1270,16 @@ export default function DMPage() {
                         className="w-10 h-10 flex-shrink-0"
                       />
                       <p className="font-semibold">{kidName} ({character.name})</p>
+                      {isClimaxTurn && (
+                        <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold">CLIMAX</span>
+                      )}
                     </div>
-                    <p className="text-sm text-gray-600">Chose: {choice.label}</p>
-                    <p className="text-sm text-gray-600">Rolled: {sceneChoice.roll}</p>
+                    {!isClimaxTurn && choice && (
+                      <>
+                        <p className="text-sm text-gray-600">Chose: {choice.label}</p>
+                        <p className="text-sm text-gray-600">Rolled: {sceneChoice.roll}</p>
+                      </>
+                    )}
                     <p className="mt-2 flex items-start gap-2">
                       <AnimationIndicator animationKey={outcome?.animationKey} className="mt-0.5 flex-shrink-0" />
                       <span>{outcome?.text ?? 'Outcome pending...'}</span>
@@ -831,98 +1287,120 @@ export default function DMPage() {
                   </div>
                 );
               })}
+            </div>
+          )}
 
-              {/* Cutscene Active Indicator */}
-              {session.active_cutscene && (
-                <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg space-y-3 mt-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
-                    <p className="font-semibold text-purple-900">Cutscene showing on kids' screen</p>
-                  </div>
-                  <p className="text-sm text-purple-800">{session.active_cutscene.outcomeText}</p>
-                  {session.active_cutscene.reward && (
-                    <p className="text-sm text-purple-700">
-                      Reward: <span className="font-medium">{session.active_cutscene.reward.name}</span>
-                    </p>
+          {/* Cutscene Active Indicator - shown regardless of scene choices */}
+          {currentScene && session.active_cutscene && (
+            <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg space-y-3 mt-4">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
+                <p className="font-semibold text-purple-900">Cutscene showing on kids' screen</p>
+              </div>
+              <p className="text-sm text-purple-800">{session.active_cutscene.outcomeText}</p>
+              {session.active_cutscene.reward && (
+                <p className="text-sm text-purple-700">
+                  Reward: <span className="font-medium">{session.active_cutscene.reward.name}</span>
+                </p>
+              )}
+              <button
+                onClick={handleDismissCutscene}
+                className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+              >
+                Dismiss Cutscene
+              </button>
+            </div>
+          )}
+
+          {/* Scene outcome + Next/End only when all have acted */}
+          {currentScene && allActed && !showingEpilogue && (
+            <>
+              {currentScene.outcome && (
+                <div className="bg-green-50 p-4 rounded-lg mt-4">
+                  <h3 className="font-semibold text-green-900 mb-2">Scene Outcome</h3>
+                  <p className="text-green-800 whitespace-pre-line">{currentScene.outcome.resultText}</p>
+                  {currentScene.outcome.rewards && currentScene.outcome.rewards.length > 0 && (
+                    <div className="mt-3">
+                      <p className="font-semibold text-green-900 mb-2">Rewards earned:</p>
+                      <ul className="space-y-2">
+                        {currentScene.outcome.rewards.map((reward) => (
+                          <li key={reward.id} className="text-green-800 flex items-center gap-3">
+                            {reward.imageUrl ? (
+                              <img src={reward.imageUrl} alt={reward.name} className="w-8 h-8 object-contain rounded" />
+                            ) : (
+                              <PlaceholderImage variant="character" label={reward.name} className="w-8 h-8 flex-shrink-0" />
+                            )}
+                            <span>{reward.name}</span>
+                            <span className="text-xs text-green-600 uppercase">{reward.type}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
-                  <button
-                    onClick={handleDismissCutscene}
-                    className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
-                  >
-                    Dismiss Cutscene
-                  </button>
                 </div>
               )}
-
-              {/* Scene outcome + Next/End only when all have acted */}
-              {allActed && (
-                <>
-                  {currentScene.outcome && (
-                    <div className="bg-green-50 p-4 rounded-lg mt-4">
-                      <h3 className="font-semibold text-green-900 mb-2">Scene Outcome</h3>
-                      <p className="text-green-800">{currentScene.outcome.resultText}</p>
-                      {currentScene.outcome.rewards && currentScene.outcome.rewards.length > 0 && (
-                        <div className="mt-3">
-                          <p className="font-semibold text-green-900 mb-2">Rewards earned:</p>
-                          <ul className="space-y-2">
-                            {currentScene.outcome.rewards.map((reward) => (
-                              <li key={reward.id} className="text-green-800 flex items-center gap-3">
-                                {reward.imageUrl ? (
-                                  <img src={reward.imageUrl} alt={reward.name} className="w-8 h-8 object-contain rounded" />
-                                ) : (
-                                  <PlaceholderImage variant="character" label={reward.name} className="w-8 h-8 flex-shrink-0" />
-                                )}
-                                <span>{reward.name}</span>
-                                <span className="text-xs text-green-600 uppercase">{reward.type}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  {!currentScene.outcome?.nextSceneId ? (
-                    <EndingPage
-                  adventure={adventure}
-                  session={session}
-                  actions={
-                    <div className="mt-4">
-                      <button
-                        onClick={handleNextScene}
-                        disabled={advancing}
-                        className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {advancing ? (
-                          <span className="flex items-center justify-center gap-2">
-                            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                            Ending...
-                          </span>
-                        ) : (
-                          'End Adventure'
-                        )}
-                      </button>
-                    </div>
-                  }
-                />
+              {isLastScene ? (
+                // Last scene - show "End Adventure" button to go to epilogue
+                <button
+                  onClick={handleShowEpilogue}
+                  className="w-full mt-4 bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                >
+                  End Adventure
+                </button>
+              ) : isSplit && !parallelSceneStatus.allComplete ? (
+                // Still have incomplete parallel scenes - switch to next one
+                <button
+                  onClick={handleSwitchToNextParallelScene}
+                  disabled={advancing}
+                  className="w-full mt-4 bg-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Continue to Next Path
+                </button>
+              ) : (
+                // All parallel scenes complete (or not split) - proceed to next scene
+                <button
+                  onClick={handleNextScene}
+                  disabled={advancing}
+                  className="w-full mt-4 bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {advancing ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                      Advancing...
+                    </span>
                   ) : (
-                    <button
-                      onClick={handleNextScene}
-                      disabled={advancing}
-                      className="w-full mt-4 bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {advancing ? (
-                        <span className="flex items-center justify-center gap-2">
-                          <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                          Advancing...
-                        </span>
-                      ) : (
-                        'Next Scene'
-                      )}
-                    </button>
+                    'Next Scene'
                   )}
-                </>
+                </button>
               )}
-            </div>
+            </>
+          )}
+
+          {/* Epilogue display - shown after DM clicks "End Adventure" */}
+          {currentScene && showingEpilogue && (
+            <EndingPage
+              adventure={adventure}
+              session={session}
+              hideImage={true}
+              actions={
+                <div className="mt-4">
+                  <button
+                    onClick={handleNextScene}
+                    disabled={advancing}
+                    className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {advancing ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                        Ending...
+                      </span>
+                    ) : (
+                      'End Adventure'
+                    )}
+                  </button>
+                </div>
+              }
+            />
           )}
 
           {/* Character Turn UI */}
@@ -931,10 +1409,49 @@ export default function DMPage() {
               {(() => {
                 const character = adventure.characters.find(c => c.id === currentCharacterTurn.characterId);
                 const kidName = getPlayerForCharacter(players, currentCharacterTurn.characterId) || character?.name || 'Unknown';
-                const turnIndex = session.current_character_turn_index || 0;
+                const turnIndex = isSplit && activeCharacterScene
+                  ? activeCharacterScene.turnIndex || 0
+                  : session.current_character_turn_index || 0;
                 const activeTurns = getActiveCharacterTurns(currentScene, players);
                 const totalTurns = activeTurns.length;
                 const prompt = `${kidName} (${character?.name ?? 'Unknown'}), ${currentCharacterTurn.promptText}`;
+                const isClimaxTurn = isAlwaysSucceedTurn(currentCharacterTurn);
+
+                // For climax turns, show simplified UI with just a GO button
+                if (isClimaxTurn) {
+                  return (
+                    <>
+                      {/* Climax scene indicator */}
+                      {currentScene.isClimax && (
+                        <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-3 rounded-lg text-center">
+                          <p className="font-bold text-lg">⚡ CLIMAX ⚡</p>
+                        </div>
+                      )}
+
+                      <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-lg">
+                        <p className="text-sm text-amber-700 mb-1">Turn {turnIndex + 1} of {totalTurns}</p>
+                        <p className="text-lg font-bold text-amber-900 mt-2">{prompt}</p>
+                      </div>
+
+                      <button
+                        onClick={handleSubmitClimaxTurn}
+                        disabled={submitting}
+                        className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 px-4 rounded-lg font-bold text-xl hover:from-amber-600 hover:to-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                      >
+                        {submitting ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+                            GO!
+                          </span>
+                        ) : (
+                          '⚡ GO! ⚡'
+                        )}
+                      </button>
+                    </>
+                  );
+                }
+
+                // Standard turn with choices and dice roll
                 // Get threshold - either from turn level or will be shown per-choice
                 // Scale threshold based on dice type (thresholds are written for d20)
                 const diceType = session.dice_type ?? DEFAULT_DICE_TYPE;
@@ -949,32 +1466,34 @@ export default function DMPage() {
                       <p className="text-base font-medium text-yellow-900 mt-2">{prompt}</p>
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">Choose an action:</label>
-                      {scaledTurnThreshold !== undefined && (
-                        <p className="text-xs text-gray-500">Success on {scaledTurnThreshold}+</p>
-                      )}
-                      {currentCharacterTurn.choices.map((choice) => {
-                        const choiceThreshold = choice.successThreshold;
-                        const scaledChoiceThreshold = choiceThreshold !== undefined ? scaleThreshold(choiceThreshold) : undefined;
-                        return (
-                          <button
-                            key={choice.id}
-                            onClick={() => setSelectedChoice(choice)}
-                            className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-colors ${
-                              selectedChoice?.id === choice.id
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                          >
-                            <p className="font-medium">{choice.label}</p>
-                            {scaledChoiceThreshold !== undefined && scaledTurnThreshold === undefined && (
-                              <p className="text-xs text-gray-500 mt-1">Success on {scaledChoiceThreshold}+</p>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    {currentCharacterTurn.choices && currentCharacterTurn.choices.length > 0 && (
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Choose an action:</label>
+                        {scaledTurnThreshold !== undefined && (
+                          <p className="text-xs text-gray-500">Success on {scaledTurnThreshold}+</p>
+                        )}
+                        {currentCharacterTurn.choices.map((choice) => {
+                          const choiceThreshold = choice.successThreshold;
+                          const scaledChoiceThreshold = choiceThreshold !== undefined ? scaleThreshold(choiceThreshold) : undefined;
+                          return (
+                            <button
+                              key={choice.id}
+                              onClick={() => setSelectedChoice(choice)}
+                              className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-colors ${
+                                selectedChoice?.id === choice.id
+                                  ? 'border-blue-500 bg-blue-50'
+                                  : 'border-gray-200 hover:border-gray-300'
+                              }`}
+                            >
+                              <p className="font-medium">{choice.label}</p>
+                              {scaledChoiceThreshold !== undefined && scaledTurnThreshold === undefined && (
+                                <p className="text-xs text-gray-500 mt-1">Success on {scaledChoiceThreshold}+</p>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
 
                     <div className="flex flex-wrap items-end gap-4">
                       <div className="flex-1 min-w-[140px]">

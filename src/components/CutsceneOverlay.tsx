@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { CollectedReward } from '../types/game';
 import PlaceholderImage from './PlaceholderImage';
 
@@ -27,6 +27,12 @@ export default function CutsceneOverlay({
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  // Reset loading state when image URL changes
+  useEffect(() => {
+    setImageError(false);
+    setImageLoaded(false);
+  }, [imageUrl]);
+
   return (
     <div
       className="fixed inset-0 z-50 bg-black animate-fade-in"
@@ -39,13 +45,13 @@ export default function CutsceneOverlay({
           <PlaceholderImage
             variant="scene"
             label={`${characterName}'s moment`}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         ) : (
           <img
             src={imageUrl}
             alt={`${characterName}'s outcome`}
-            className={`w-full h-full object-cover transition-opacity duration-500 ${
+            className={`w-full h-full object-contain transition-opacity duration-500 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             onLoad={() => setImageLoaded(true)}

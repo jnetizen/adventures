@@ -9,6 +9,8 @@ interface EndingPageProps {
   session: GameSession;
   /** Optional action buttons (e.g. End Adventure, Start New) — DM only */
   actions?: React.ReactNode;
+  /** Hide the ending image (use when image is shown elsewhere, e.g. on player screen) */
+  hideImage?: boolean;
 }
 
 const tierLabels: Record<string, string> = {
@@ -65,7 +67,7 @@ function LootScreen({
   );
 }
 
-export default function EndingPage({ adventure, session, actions }: EndingPageProps) {
+export default function EndingPage({ adventure, session, actions, hideImage = false }: EndingPageProps) {
   const successCount = session.success_count ?? 0;
   const collectedRewards = session.collected_rewards ?? [];
   const [endingImageError, setEndingImageError] = useState(false);
@@ -99,8 +101,8 @@ export default function EndingPage({ adventure, session, actions }: EndingPagePr
   if (singleEnding) {
     return (
       <div className="space-y-6">
-        {/* Ending image if available */}
-        {singleEnding.endingImageUrl && !endingImageError && (
+        {/* Ending image if available (hidden when shown on player screen via cutscene) */}
+        {singleEnding.endingImageUrl && !endingImageError && !hideImage && (
           <div className="rounded-xl overflow-hidden shadow-lg">
             <img
               src={singleEnding.endingImageUrl}
