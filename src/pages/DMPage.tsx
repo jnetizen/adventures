@@ -36,6 +36,24 @@ import FeedbackForm from '../components/FeedbackForm';
 import RewardCelebration from '../components/RewardCelebration';
 import DiceRoller from '../components/DiceRoller';
 
+const getCharactersInScene = (
+  characterScenes: GameSession['character_scenes'] | null | undefined,
+  sceneId: string
+) => characterScenes?.filter(cs => cs.sceneId === sceneId) ?? [];
+
+const updateSceneTurnIndex = (
+  characterScenes: GameSession['character_scenes'] | null | undefined,
+  sceneId: string,
+  turnIndex: number
+): GameSession['character_scenes'] | null | undefined => {
+  if (!characterScenes) return characterScenes;
+  return characterScenes.map(cs =>
+    cs.sceneId === sceneId
+      ? { ...cs, turnIndex }
+      : cs
+  );
+};
+
 export default function DMPage() {
   const [session, setSession] = useState<GameSession | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusType>(CONNECTION_STATUS.DISCONNECTED);
@@ -359,9 +377,7 @@ export default function DMPage() {
       const currentSceneId = activeCharacterScene.sceneId;
 
       // Update all characters in the same scene
-      const charactersInSameScene = session.character_scenes?.filter(
-        cs => cs.sceneId === currentSceneId
-      ) || [];
+      const charactersInSameScene = getCharactersInScene(session.character_scenes, currentSceneId);
 
       for (const charScene of charactersInSameScene) {
         await updateCharacterSceneState(session.id, charScene.characterId, {
@@ -374,11 +390,7 @@ export default function DMPage() {
         if (!prev?.character_scenes) return prev;
         return {
           ...prev,
-          character_scenes: prev.character_scenes.map(cs =>
-            cs.sceneId === currentSceneId
-              ? { ...cs, turnIndex: newTurnIndex }
-              : cs
-          ),
+          character_scenes: updateSceneTurnIndex(prev.character_scenes, currentSceneId, newTurnIndex),
         };
       });
     }
@@ -485,9 +497,7 @@ export default function DMPage() {
       const newTurnIndex = (activeCharacterScene.turnIndex || 0) + 1;
       const currentSceneId = activeCharacterScene.sceneId;
 
-      const charactersInSameScene = session.character_scenes?.filter(
-        cs => cs.sceneId === currentSceneId
-      ) || [];
+      const charactersInSameScene = getCharactersInScene(session.character_scenes, currentSceneId);
 
       for (const charScene of charactersInSameScene) {
         await updateCharacterSceneState(session.id, charScene.characterId, {
@@ -499,11 +509,7 @@ export default function DMPage() {
         if (!prev?.character_scenes) return prev;
         return {
           ...prev,
-          character_scenes: prev.character_scenes.map(cs =>
-            cs.sceneId === currentSceneId
-              ? { ...cs, turnIndex: newTurnIndex }
-              : cs
-          ),
+          character_scenes: updateSceneTurnIndex(prev.character_scenes, currentSceneId, newTurnIndex),
         };
       });
     }
