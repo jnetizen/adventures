@@ -54,6 +54,12 @@ const updateSceneTurnIndex = (
   );
 };
 
+const getKidDisplayName = (
+  players: Player[],
+  characterId: string,
+  fallbackName?: string
+) => getPlayerForCharacter(players, characterId) || fallbackName || 'Unknown';
+
 export default function DMPage() {
   const [session, setSession] = useState<GameSession | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusType>(CONNECTION_STATUS.DISCONNECTED);
@@ -116,7 +122,7 @@ export default function DMPage() {
 
   // Debug logging for split state
   if (session?.phase === GAME_PHASES.PLAYING) {
-    console.log('[Split State Debug]', {
+    debugLog('session', 'Split state update', {
       is_split: session?.is_split,
       character_scenes: session?.character_scenes,
       isSplit,
@@ -327,7 +333,7 @@ export default function DMPage() {
     const turn = currentCharacterTurn;
     const choice = selectedChoice;
 
-    console.log('[Submit Debug] Starting submit with:', {
+    debugLog('session', 'Starting submit', {
       turnCharacterId: turn?.characterId,
       turnPrompt: turn?.promptText?.substring(0, 50),
       isSplit,
@@ -397,7 +403,7 @@ export default function DMPage() {
 
     // Check if this turn has cutscene outcomes (new format)
     // Use captured turn data to avoid race conditions
-    console.log('[Cutscene Debug] Checking cutscene for turn:', {
+    debugLog('session', 'Checking cutscene for turn', {
       characterId: turn.characterId,
       hasPerTurnOutcomes: hasPerTurnOutcomes(turn),
       successOutcome: turn.successOutcome,
@@ -405,7 +411,7 @@ export default function DMPage() {
     });
     if (hasPerTurnOutcomes(turn)) {
       const turnOutcome = getTurnOutcome(turn, roll, maxRoll, choice);
-      console.log('[Cutscene Debug] Turn outcome:', {
+      debugLog('session', 'Turn outcome resolved', {
         roll,
         maxRoll,
         outcome: turnOutcome,
@@ -426,7 +432,10 @@ export default function DMPage() {
           } : undefined,
         });
         
-        console.log('[Cutscene Debug] showCutscene called for:', turn.characterId, 'result:', cutsceneError ? 'ERROR' : 'SUCCESS');
+        debugLog('session', 'showCutscene called', {
+          characterId: turn.characterId,
+          result: cutsceneError ? 'ERROR' : 'SUCCESS',
+        });
         if (cutsceneError) {
           console.error('Failed to show cutscene:', cutsceneError);
         }
@@ -461,7 +470,7 @@ export default function DMPage() {
   const handleSubmitClimaxTurn = async () => {
     const turn = currentCharacterTurn;
 
-    console.log('[Climax Turn Debug] Starting climax turn submission:', {
+    debugLog('session', 'Starting climax turn submission', {
       turnCharacterId: turn?.characterId,
       alwaysSucceed: turn?.alwaysSucceed,
       hasOutcome: !!turn?.outcome,
@@ -528,7 +537,10 @@ export default function DMPage() {
         } : undefined,
       });
 
-      console.log('[Climax Turn Debug] showCutscene called for:', turn.characterId, 'result:', cutsceneError ? 'ERROR' : 'SUCCESS');
+      debugLog('session', 'showCutscene called for climax turn', {
+        characterId: turn.characterId,
+        result: cutsceneError ? 'ERROR' : 'SUCCESS',
+      });
       if (cutsceneError) {
         console.error('Failed to show cutscene:', cutsceneError);
       }
@@ -1185,9 +1197,8 @@ export default function DMPage() {
 
                     // Get kid names for all characters in this scene
                     const characterNames = charactersInScene.map(cs => {
-                      const kidName = getPlayerForCharacter(players, cs.characterId);
                       const character = adventure.characters.find(c => c.id === cs.characterId);
-                      return kidName || character?.name || 'Unknown';
+                      return getKidDisplayName(players, cs.characterId, character?.name);
                     });
 
                     return (
@@ -1265,7 +1276,7 @@ export default function DMPage() {
                     : choice
                       ? calculateChoiceOutcome(choice, sceneChoice.roll!, session.dice_type || 20)
                       : null;
-                const kidName = getPlayerForCharacter(players, sceneChoice.characterId) || character.name;
+                const kidName = getKidDisplayName(players, sceneChoice.characterId, character.name);
 
                 return (
                   <div key={index} className={`p-3 rounded-lg ${isClimaxTurn ? 'bg-amber-50 border border-amber-200' : 'bg-gray-50'}`}>
@@ -1414,7 +1425,7 @@ export default function DMPage() {
             <div className="space-y-4">
               {(() => {
                 const character = adventure.characters.find(c => c.id === currentCharacterTurn.characterId);
-                const kidName = getPlayerForCharacter(players, currentCharacterTurn.characterId) || character?.name || 'Unknown';
+                const kidName = getKidDisplayName(players, currentCharacterTurn.characterId, character?.name);
                 const turnIndex = isSplit && activeCharacterScene
                   ? activeCharacterScene.turnIndex || 0
                   : session.current_character_turn_index || 0;
