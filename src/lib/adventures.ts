@@ -8,6 +8,8 @@ import dragonKnightRescue from '../data/adventures/dragon-knight-rescue.json';
 import fireGemQuest from '../data/adventures/fire-gem-quest.json';
 import raceToRainbowReef from '../data/adventures/race-to-rainbow-reef.json';
 import frozenVolcano from '../data/adventures/frozen-volcano-adventure-v2.json';
+import shadowKnight from '../data/adventures/shadow-knight-adventure.json';
+import rainbowBridge from '../data/adventures/rainbow-bridge-adventure.json';
 
 const adventures: Record<string, Adventure> = {
   'candy-volcano': candyVolcano as Adventure,
@@ -15,6 +17,8 @@ const adventures: Record<string, Adventure> = {
   'fire-gem-quest': fireGemQuest as Adventure,
   'race-to-rainbow-reef': raceToRainbowReef as Adventure,
   'frozen-volcano': frozenVolcano as Adventure,
+  'shadow-knight-lost-grove': shadowKnight as Adventure,
+  'rainbow-bridge': rainbowBridge as Adventure,
 };
 
 /**

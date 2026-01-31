@@ -1,0 +1,409 @@
+{
+  "id": "rainbow-bridge",
+  "title": "The Rainbow Bridge",
+  "description": "The Storm Giant has shattered the Rainbow Bridge! Can three heroes restore the sky kingdom?",
+  "preview": {
+    "tagline": "Can you defeat the Storm Giant and save the Cloud Kingdom?",
+    "themes": ["sky", "dragons", "rainbows", "courage"],
+    "estimatedMinutes": 18,
+    "previewImageUrl": "/images/scenes/rainbow-bridge/prologue.png",
+    "ageRating": {
+      "minAge": 4,
+      "reason": "Sky adventure with a storm giant villain and magical creatures",
+      "intensity": ["mild", "action"]
+    }
+  },
+  "prologue": {
+    "prologueImageUrl": "/images/scenes/rainbow-bridge/prologue.png",
+    "worldIntro": "High above the world floats the Cloud Kingdom - a magical place of floating islands, golden sunlight, and the great Rainbow Bridge that connects them all.\n\nBut something terrible has happened.\n\nThe Storm Giant has risen from the deep clouds. His eyes glow red with ancient anger. With one mighty blow, he shattered the Rainbow Bridge into a thousand pieces. Now the Cloud Kingdom is trapped in endless storms, and the Cloud Palace cries out for help.",
+    "characterIntros": [
+      {
+        "characterId": "sky-stalker",
+        "introText": "Sky Stalker is a brave archer who can sense hidden paths through the clouds. With keen eyes and steady hands, they never miss their mark."
+      },
+      {
+        "characterId": "sun-flare",
+        "introText": "Sun Flare is a fire warrior whose flames burn bright even in the darkest storms. Their courage lights the way for others."
+      },
+      {
+        "characterId": "cloud-dancer",
+        "introText": "Cloud Dancer can walk on clouds and speak to sky creatures. Their gentle heart wins friends everywhere they go."
+      }
+    ],
+    "missionBrief": "The broken bridge stretches before you. Somewhere in the storm, the Storm Giant waits at the Cloud Palace. Find him, defeat him, and save the Cloud Kingdom!"
+  },
+  "characters": [
+    {
+      "id": "sky-stalker",
+      "name": "Sky Stalker",
+      "description": "A brave archer in DARK BLUE armor with SILVER trim who can sense hidden paths through the clouds",
+      "imageUrl": "/images/characters/sky-stalker.png"
+    },
+    {
+      "id": "sun-flare",
+      "name": "Sun Flare",
+      "description": "A fire warrior in ORANGE armor with GOLD accents whose flames burn bright even in the darkest storms",
+      "imageUrl": "/images/characters/sun-flare.png"
+    },
+    {
+      "id": "cloud-dancer",
+      "name": "Cloud Dancer",
+      "description": "A graceful hero in a PINK dress with WHITE flowing cape who can walk on clouds and speak to sky creatures",
+      "imageUrl": "/images/characters/cloud-dancer.png"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene-1",
+      "sceneNumber": 0,
+      "title": "The First Crossing",
+      "narrationText": "The heroes stand at the edge of the first broken bridge. Chunks of rainbow float in the misty air. Far ahead, through swirling clouds, they can see the dark shape of the Storm Giant waiting at the Cloud Palace.",
+      "sceneImageUrl": "/images/scenes/rainbow-bridge/scene-1.png",
+      "characterTurns": [
+        {
+          "characterId": "sun-flare",
+          "promptText": "The gap is too wide to jump! How do you get across?",
+          "choices": [
+            { "id": "action-fire-bridge", "label": "Create a fire bridge" },
+            { "id": "action-flame-jump", "label": "Rocket flame jump" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "WHOOOOSH! The Sun Flare blasts fire from their hands and rockets across the gap like a comet, trailing orange flames behind!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene1-sun-flare-success.png"
+          },
+          "failOutcome": {
+            "text": "The rocket jump sends the Sun Flare spinning in circles - WHEE! They land in a giggling heap on the other side, a little dizzy but safe!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene1-sun-flare-fail.png"
+          }
+        },
+        {
+          "characterId": "cloud-dancer",
+          "promptText": "Storm winds are blocking the path. What do you do?",
+          "choices": [
+            { "id": "heart-cloud-walk", "label": "Dance across the clouds" },
+            { "id": "heart-sing", "label": "Sing to calm the winds" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The Cloud Dancer twirls gracefully onto a fluffy cloud. It holds! They dance from cloud to cloud, cape flowing like ribbons in the wind.",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene1-cloud-dancer-success.png"
+          },
+          "failOutcome": {
+            "text": "The Cloud Dancer steps on a cloud and - BOING! - it bounces like a trampoline! They giggle while bouncing their way across, higher and higher!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene1-cloud-dancer-fail.png"
+          }
+        },
+        {
+          "characterId": "sky-stalker",
+          "promptText": "You see something glowing through the storm clouds. What do you do?",
+          "choices": [
+            { "id": "leader-investigate", "label": "Follow the glow" },
+            { "id": "leader-scout", "label": "Scout the path ahead" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The Sky Stalker's eyes narrow. Through the swirling storm, they spot it - the Thunder Spire! An ancient tower crackling with lightning. Something powerful waits there. Something meant for them.",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene1-sky-stalker-success.png"
+          },
+          "failOutcome": {
+            "text": "The storm makes it hard to see, but the Sky Stalker catches a glimpse of something - a tall tower, flickering with lightning. Instincts say: go there.",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene1-sky-stalker-fail.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "The Sky Stalker points to the Thunder Spire. 'I need to go there. Alone.' The Sun Flare nods. 'We'll find another way to help. Meet us at the Storm Giant!' The heroes split up - the Sky Stalker into the dark storm, the Sun Flare and Cloud Dancer toward the golden light breaking through the clouds.",
+        "nextSceneId": {
+          "sky-stalker": "scene-2a",
+          "sun-flare": "scene-2b",
+          "cloud-dancer": "scene-2b"
+        }
+      }
+    },
+    {
+      "id": "scene-2a",
+      "sceneNumber": 1,
+      "title": "The Thunder Spire",
+      "isParallelScene": true,
+      "parallelWith": "scene-2b",
+      "activeCharacters": ["sky-stalker"],
+      "narrationText": "The Sky Stalker climbs alone through the raging storm. Lightning cracks around them. Finally, they reach the Thunder Spire - an ancient tower that seems to touch the sky itself. At the top, something glows with electric blue light.",
+      "sceneImageUrl": "/images/scenes/rainbow-bridge/scene-2a.png",
+      "characterTurns": [
+        {
+          "characterId": "sky-stalker",
+          "promptText": "The only way up is a staircase of invisible cloud-steps. You must trust and step into thin air. Do you have the courage?",
+          "choices": [
+            { "id": "leader-leap", "label": "Take the leap of faith" },
+            { "id": "leader-observe", "label": "Study the pattern first" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The Sky Stalker takes a deep breath and steps into empty air. For one terrifying moment, nothing - then a cloud SOLIDIFIES under their foot! Each brave step creates the next. They climb the invisible staircase like a true Sky Stalker.",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene2a-sky-stalker-success.png",
+            "reward": {
+              "id": "lightning-bow",
+              "name": "The Lightning Bow",
+              "imageUrl": "/images/rewards/lightning-bow.png",
+              "type": "weapon"
+            }
+          },
+          "failOutcome": {
+            "text": "The Sky Stalker hesitates - but then remembers the team is counting on them. Eyes squeezed shut, they JUMP. The clouds catch them! They bounce up, up, up to the top!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene2a-sky-stalker-fail.png",
+            "reward": {
+              "id": "lightning-bow",
+              "name": "The Lightning Bow",
+              "imageUrl": "/images/rewards/lightning-bow.png",
+              "type": "weapon"
+            }
+          }
+        },
+        {
+          "characterId": "sky-stalker",
+          "promptText": "At the top, the Lightning Bow floats in a cage of electricity. A voice booms: 'PROVE YOU ARE WORTHY.' How do you prove yourself?",
+          "choices": [
+            { "id": "leader-reach", "label": "Reach through the lightning" },
+            { "id": "leader-answer", "label": "Answer with courage" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The Sky Stalker reaches into the crackling cage. Lightning dances across their arm - it doesn't hurt, it ENERGIZES them! They grasp the bow and pull it free. The voice whispers: 'Worthy.'",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene2a-claim-success.png"
+          },
+          "failOutcome": {
+            "text": "The lightning zaps the Sky Stalker's fingers - ZAP ZAP ZAP! Their hair stands straight up! But they don't let go. They pull the bow free with the silliest hairstyle ever.",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene2a-claim-fail.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "The Sky Stalker holds the Lightning Bow high. It crackles with power in their hands. They can feel it - this is the weapon that can defeat the Storm Giant. Now they need to light the ancient beacons to signal their friends.",
+        "nextSceneId": "scene-3a"
+      }
+    },
+    {
+      "id": "scene-2b",
+      "sceneNumber": 1,
+      "title": "The Cloud Meadow",
+      "isParallelScene": true,
+      "parallelWith": "scene-2a",
+      "activeCharacters": ["sun-flare", "cloud-dancer"],
+      "narrationText": "The Sun Flare and Cloud Dancer follow the golden light to a beautiful meadow of soft clouds and gentle sunshine. But they hear a sound - a tiny roar, and a sad whinny. Someone needs help!",
+      "sceneImageUrl": "/images/scenes/rainbow-bridge/scene-2b.png",
+      "characterTurns": [
+        {
+          "characterId": "sun-flare",
+          "promptText": "You find a baby dragon trapped in a cage made of storm-ice! The little dragon shivers and looks up with big hopeful eyes.",
+          "choices": [
+            { "id": "action-melt-cage", "label": "Melt the ice cage" },
+            { "id": "action-warm-dragon", "label": "Warm the dragon first" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The Sun Flare's flames dance around the cage, melting the storm-ice gently. The ice drips away and the little dragon LEAPS into their arms, nuzzling with smoky purrs!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene2b-sun-flare-success.png",
+            "reward": {
+              "id": "ember-dragon",
+              "name": "Ember the Storm Dragon",
+              "imageUrl": "/images/rewards/ember-dragon.png",
+              "type": "companion"
+            }
+          },
+          "failOutcome": {
+            "text": "The fire melts the cage so fast it turns into a tiny rainstorm - SPLASH! The baby dragon shakes off the water like a puppy and sneezes a smoke ring. Best friends already!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene2b-sun-flare-fail.png",
+            "reward": {
+              "id": "ember-dragon",
+              "name": "Ember the Storm Dragon",
+              "imageUrl": "/images/rewards/ember-dragon.png",
+              "type": "companion"
+            }
+          }
+        },
+        {
+          "characterId": "cloud-dancer",
+          "promptText": "You see a beautiful pegasus tangled in storm-vines! Its rainbow mane is all knotted and it looks so sad.",
+          "choices": [
+            { "id": "heart-gentle", "label": "Gently untangle it" },
+            { "id": "heart-dance", "label": "Dance to make it happy" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The Cloud Dancer kneels beside the pegasus and sings softly while gentle fingers work through the tangles. The pegasus relaxes. When the last vine falls away, it nuzzles their cheek and kneels down - inviting them to climb on!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene2b-cloud-dancer-success.png",
+            "reward": {
+              "id": "rainbow-pegasus",
+              "name": "Starshine the Rainbow Pegasus",
+              "imageUrl": "/images/rewards/rainbow-pegasus.png",
+              "type": "mount"
+            }
+          },
+          "failOutcome": {
+            "text": "The Cloud Dancer accidentally tickles the pegasus while untangling! It laughs a sparkly horsey laugh - HA HA HA - and shakes so hard all the vines fly off! The pegasus gives a big slobbery kiss and lets them climb aboard.",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene2b-cloud-dancer-fail.png",
+            "reward": {
+              "id": "rainbow-pegasus",
+              "name": "Starshine the Rainbow Pegasus",
+              "imageUrl": "/images/rewards/rainbow-pegasus.png",
+              "type": "mount"
+            }
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "The Sun Flare hugs their new dragon friend - they'll call him Ember! The Cloud Dancer strokes Starshine's rainbow mane. But they see dark clouds gathering near the palace. They need to find a way to help their friend!",
+        "nextSceneId": "scene-3b"
+      }
+    },
+    {
+      "id": "scene-3a",
+      "sceneNumber": 2,
+      "title": "The Lightning Beacons",
+      "isParallelScene": true,
+      "parallelWith": "scene-3b",
+      "activeCharacters": ["sky-stalker"],
+      "narrationText": "The Sky Stalker descends from the Thunder Spire with the Lightning Bow in hand. Ahead, three ancient beacons stand - stone pillars that haven't been lit in a thousand years. If they can light them, they'll signal their friends and weaken the Storm Giant's power!",
+      "sceneImageUrl": "/images/scenes/rainbow-bridge/scene-3a.png",
+      "characterTurns": [
+        {
+          "characterId": "sky-stalker",
+          "promptText": "The first beacon is covered in storm-ice. You nock a lightning arrow...",
+          "choices": [
+            { "id": "leader-precise-shot", "label": "Take a precise shot" },
+            { "id": "leader-rapid-fire", "label": "Rapid fire three arrows" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The Sky Stalker draws the bow. The arrow crackles with electricity. They breathe... aim... RELEASE! The lightning arrow strikes the beacon's heart and it BLAZES to life with brilliant blue light!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene3a-beacon1-success.png"
+          },
+          "failOutcome": {
+            "text": "The shot goes wide - but the lightning bounces off three clouds and STILL hits the beacon! Sometimes even accidents look cool. The beacon blazes to life!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene3a-beacon1-fail.png"
+          }
+        },
+        {
+          "characterId": "sky-stalker",
+          "promptText": "Two more beacons to go! But storm winds push against you, trying to stop you!",
+          "choices": [
+            { "id": "leader-push-through", "label": "Push through the storm" },
+            { "id": "leader-use-wind", "label": "Use the wind" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "Clever! The Sky Stalker fires INTO the wind. The gale catches the lightning arrows and whips them in a huge arc - they swing around and strike both beacons from behind! The Storm Giant ROARS in the distance. He felt that!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene3a-beacon2-success.png"
+          },
+          "failOutcome": {
+            "text": "The wind is TOO strong - it blows the arrows into a spin cycle! They whirl around and around until they're one big ball of lightning that CRASHES into both beacons at once! Messy but effective!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene3a-beacon2-fail.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "All three beacons blaze with electric fire. Across the sky, the Sky Stalker sees an answering signal - a burst of orange flame and a trail of rainbow light. Their friends are coming! They race toward the Storm Giant's lair.",
+        "nextSceneId": "scene-4"
+      }
+    },
+    {
+      "id": "scene-3b",
+      "sceneNumber": 2,
+      "title": "Racing Through the Sky",
+      "isParallelScene": true,
+      "parallelWith": "scene-3a",
+      "activeCharacters": ["sun-flare", "cloud-dancer"],
+      "narrationText": "Ember the dragon has grown bigger - now the size of a large dog! His wings are strong enough to fly! The Cloud Dancer sits proudly on Starshine the pegasus. But between them and the Storm Giant is a maze of floating rocks and storm clouds!",
+      "sceneImageUrl": "/images/scenes/rainbow-bridge/scene-3b.png",
+      "characterTurns": [
+        {
+          "characterId": "sun-flare",
+          "promptText": "Storm clouds block the path! You and Ember need to clear the way!",
+          "choices": [
+            { "id": "action-dragon-fire", "label": "Dragon fire blast!" },
+            { "id": "action-dive-bomb", "label": "Dive bomb through!" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The Sun Flare points forward and Ember takes a HUGE breath - then WHOOOOSH! A stream of orange fire parts the storm clouds like curtains! 'Good boy, Ember!' they cheer as they rocket through!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene3b-sun-flare-success.png"
+          },
+          "failOutcome": {
+            "text": "Ember's fire comes out as a big smoky burp - BURRRRP! But the smoke makes the storm clouds cough and move aside anyway! Ember looks embarrassed but gets a hug. 'Still worked!'",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene3b-sun-flare-fail.png"
+          }
+        },
+        {
+          "characterId": "cloud-dancer",
+          "promptText": "You see lightning beacons blazing - that's your friend's signal! You need to answer!",
+          "choices": [
+            { "id": "heart-rainbow-trail", "label": "Create a rainbow trail" },
+            { "id": "heart-sparkle-burst", "label": "Sparkle burst signal" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The Cloud Dancer whispers to Starshine and the pegasus SOARS into the sky, rainbow light streaming from her mane! The beautiful trail arcs across the clouds - their friend will definitely see that!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene3b-cloud-dancer-success.png"
+          },
+          "failOutcome": {
+            "text": "Starshine gets so excited she does a loop-de-loop! The rainbow trail turns into a giant smiley face in the sky! The Cloud Dancer giggles. 'Well, they'll DEFINITELY notice THAT!'",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene3b-cloud-dancer-fail.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "The heroes have found each other! The Sun Flare on Ember, the Cloud Dancer on Starshine, and the Sky Stalker running across the clouds with the Lightning Bow blazing. Together, they race toward the Cloud Palace where the Storm Giant waits...",
+        "nextSceneId": "scene-4"
+      }
+    },
+    {
+      "id": "scene-4",
+      "sceneNumber": 3,
+      "title": "The Storm Giant",
+      "isClimax": true,
+      "climaxMode": "rapid-fire",
+      "climaxVideoUrl": "/images/cutscenes/rainbow-bridge/scene4-climax-video.mp4",
+      "narrationText": "The Storm Giant towers before them, a massive figure of swirling black clouds and crackling red lightning. His eyes glow like angry embers. 'YOU CANNOT STOP THE STORM!' he roars, thunder shaking the sky.\n\nThe heroes stand together - the Sun Flare and Ember, the Cloud Dancer on Starshine, the Sky Stalker with Lightning Bow drawn.\n\nThis is it. Time to save the Cloud Kingdom!\n\nHERE WE GO! EVERYONE TOGETHER!",
+      "sceneImageUrl": "/images/scenes/rainbow-bridge/scene-4.png",
+      "characterTurns": [
+        {
+          "characterId": "sun-flare",
+          "promptText": "Sun Flare! Ember! NOW!",
+          "alwaysSucceed": true,
+          "outcome": {
+            "text": "The Sun Flare and Ember fly straight at the Storm Giant! Together they breathe a MASSIVE flame - twice as big as before! BOOOOOM! The fire blasts through the Storm Giant's chest, melting a huge hole in his storm-armor! The giant staggers!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene4-sun-flare.png"
+          }
+        },
+        {
+          "characterId": "cloud-dancer",
+          "promptText": "Cloud Dancer! Starshine! YOUR TURN!",
+          "alwaysSucceed": true,
+          "outcome": {
+            "text": "Starshine gallops through the sky, rainbow light blazing! The Cloud Dancer holds on tight as they charge straight at the giant! CRAAAASH! The rainbow light SHATTERS the Storm Giant's shield into a million sparkling pieces! He throws his arms up, defenseless!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene4-cloud-dancer.png"
+          }
+        },
+        {
+          "characterId": "sky-stalker",
+          "promptText": "SKY STALKER! FINISH IT!",
+          "alwaysSucceed": true,
+          "outcome": {
+            "text": "The Sky Stalker draws the Lightning Bow one last time. The arrow glows brighter than ever before. They aim at the Storm Giant's heart... SHAAAATTER! The lightning arrow strikes true! The Storm Giant's dark clouds EXPLODE apart - and inside... a gentle Cloud Guardian blinks awake, finally freed from the curse!",
+            "cutsceneImageUrl": "/images/cutscenes/rainbow-bridge/scene4-sky-stalker.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "The Storm Giant is gone. In his place stands a kind Cloud Guardian, gray and gentle, tears of gratitude streaming down his misty face. 'Thank you,' he whispers. 'Thank you for freeing me.'",
+        "nextSceneId": null
+      }
+    }
+  ],
+  "ending": {
+    "title": "The Rainbow Returns",
+    "endingImageUrl": "/images/scenes/rainbow-bridge/ending.png",
+    "text": "The Cloud Guardian waves his hands, and something magical happens. All across the sky, the broken pieces of the Rainbow Bridge begin to float upward. They spin and dance and connect - rebuilding the bridge more beautiful than ever before!\n\nThe Cloud Palace gates swing open. Tiny cloud sprites pour out, cheering! They surround the heroes with sparkles and songs of thanks.\n\nThe grateful Cloud Guardian kneels before each hero:\n\n'Sun Flare, and brave Ember - you brought light to the darkest storm.'\n\n'Cloud Dancer, and swift Starshine - you brought joy to a kingdom that had forgotten how to smile.'\n\n'Sky Stalker, master of the Lightning Bow - you brought courage when all seemed lost.'\n\nThe Rainbow Bridge gleams in the sunshine, connecting all the floating islands once more. The Cloud Kingdom is saved!\n\nAnother adventure complete. Another kingdom saved. And somewhere out there... another adventure waits."
+  }
+}

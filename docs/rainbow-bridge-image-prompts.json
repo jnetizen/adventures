@@ -1,0 +1,295 @@
+{
+  "adventureId": "rainbow-bridge",
+  "adventureTitle": "Rainbow Bridge to the Cloud Kingdom",
+  "totalImages": 33,
+  "estimatedCost": 0.033,
+  "notes": "Character slots: leader (oldest), action (middle), heart (youngest).",
+  "characterDescriptions": {
+    "leader": "A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks",
+    "action": "A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks",
+    "heart": "A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks"
+  },
+  "prompts": [
+    {
+      "id": "prologue",
+      "filename": "prologue.png",
+      "type": "background",
+      "scene": "prologue",
+      "prompt": "Generate a 16:9 landscape image. A magnificent floating Cloud Kingdom in the sky, with fluffy white islands connected by a shattered rainbow bridge. In the distance, a dark massive Storm Giant made of black storm clouds and red lightning looms over a beautiful Cloud Palace with golden spires. The sky is dramatic with both golden sunlight breaking through and dark storm clouds gathering. Floating islands with waterfalls that fall into mist below. Epic fantasy atmosphere, NO characters visible, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-1",
+      "filename": "scene-1.png",
+      "type": "background",
+      "scene": "scene-1",
+      "prompt": "Generate a 16:9 landscape image. Three young heroes each separately standing at the edge of a broken rainbow bridge high in the sky, chunks of colorful rainbow floating in misty clouds around them, distant Storm Giant visible as a dark threatening shape.\n\nLeft side of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, excited expression, hands glowing with fire.\n\nCenter of image: A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, looking ahead with determined eyes.\n\nRight side of image: A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, looking curious and brave.\n\nThe three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, feet visible on rainbow bridge edge, dramatic sky background with both golden light and dark storm clouds, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-2a",
+      "filename": "scene-2a.png",
+      "type": "background",
+      "scene": "scene-2a",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, standing alone at the base of an ancient Thunder Spire tower that stretches into dark storm clouds. Lightning crackles around the mysterious tower. An invisible cloud staircase hints at its presence with faint wisps. Dramatic stormy atmosphere, dark clouds swirling, lightning illuminating the scene. The child looks up with determination. Feet visible on cloud platform, atmospheric Zelda-style mood, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-2b",
+      "filename": "scene-2b.png",
+      "type": "background",
+      "scene": "scene-2b",
+      "prompt": "Generate a 16:9 landscape image. Two young heroes each separately in a beautiful golden cloud meadow with soft fluffy clouds and warm sunshine breaking through.\n\nLeft side of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, kneeling near a small cage made of blue storm-ice with a tiny cute baby dragon inside looking hopeful.\n\nRight side of image: A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, reaching toward a beautiful white pegasus with a rainbow-colored mane tangled in dark vines.\n\nThe two children are spread apart with clear space between them, NOT overlapping, NOT touching, feet visible on soft cloud ground, golden sunlight, magical atmosphere, cute creatures need help, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-3a",
+      "filename": "scene-3a.png",
+      "type": "background",
+      "scene": "scene-3a",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, holding a glowing Lightning Bow crackling with electric blue energy, standing before three ancient stone beacon pillars on floating cloud platforms. Storm winds blow around them. Two beacons are dark, one needs to be lit. Dramatic storm clouds in background, lightning flashing, epic atmosphere. The child aims the bow with skill and confidence. Feet visible on cloud platform, Zelda-style adventurous mood, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-3b",
+      "filename": "scene-3b.png",
+      "type": "background",
+      "scene": "scene-3b",
+      "prompt": "Generate a 16:9 landscape image. Two young heroes flying through a sky maze of floating rocks and storm clouds.\n\nLeft side of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, riding on a medium-sized ORANGE baby dragon with small wings, both looking excited and determined.\n\nRight side of image: A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, riding on a beautiful WHITE pegasus with RAINBOW-colored flowing mane, looking joyful.\n\nThe two pairs are spread apart with clear space between them, NOT overlapping, storm clouds ahead, golden sunlight behind them, sense of speed and adventure, flying through the sky, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-4",
+      "filename": "scene-4.png",
+      "type": "background",
+      "scene": "scene-4",
+      "prompt": "Generate a 16:9 landscape image. Three young heroes each separately facing a MASSIVE Storm Giant made of swirling BLACK storm clouds with glowing RED eyes and crackling red lightning, towering over the Cloud Palace.\n\nLeft side of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, riding an ORANGE dragon, ready to attack.\n\nCenter of image: A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, drawing a glowing Lightning Bow with electric blue arrow.\n\nRight side of image: A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, riding a WHITE pegasus with RAINBOW mane, brave expression.\n\nThe three heroes are spread apart with clear space between each of them, NOT overlapping, NOT touching, epic boss battle atmosphere, dark dramatic sky, Storm Giant looming huge and intimidating, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-5",
+      "filename": "scene-5.png",
+      "type": "background",
+      "scene": "scene-5",
+      "prompt": "Generate a 16:9 landscape image. Three young heroes each separately celebrating as a magnificent Rainbow Bridge rebuilds itself in the sky, colorful pieces swirling magically together. A gentle gray Cloud Guardian (NOT scary) smiles kindly. Cloud Palace gates open with tiny cute cloud sprites cheering.\n\nLeft side of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, hugging an ORANGE dragon, both happy.\n\nCenter of image: A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, Lightning Bow on back, looking proud.\n\nRight side of image: A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, sitting on a WHITE pegasus with RAINBOW mane, braiding flowers into its mane.\n\nThe three children are spread apart with clear space between each of them, NOT overlapping, NOT touching, joyful celebration, golden sunlight, rainbow colors everywhere, happy ending, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-action-success",
+      "filename": "scene1-action-success.png",
+      "type": "cutscene",
+      "scene": "scene-1",
+      "character": "action",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, rocketing across a gap between broken rainbow bridge pieces with fire blasting from his hands like a jet, trailing orange flames behind, excited triumphant expression, clouds and rainbow chunks in background, dynamic action pose mid-flight, feet not touching ground, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-action-fail",
+      "filename": "scene1-action-fail.png",
+      "type": "cutscene",
+      "scene": "scene-1",
+      "character": "action",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, spinning through the air in a silly dizzy spiral with fire sparking around him, landing safely but looking hilariously dizzy with spiral eyes, fluffy clouds below, rainbow bridge pieces around, funny not scary, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-heart-success",
+      "filename": "scene1-heart-success.png",
+      "type": "cutscene",
+      "scene": "scene-1",
+      "character": "heart",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, gracefully dancing across fluffy white clouds, cape flowing like ribbons in the wind, sweet joyful expression, stepping lightly from cloud to cloud, golden sunlight, magical atmosphere, feet visible touching soft clouds, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-heart-fail",
+      "filename": "scene1-heart-fail.png",
+      "type": "cutscene",
+      "scene": "scene-1",
+      "character": "heart",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, bouncing on clouds like trampolines, giggling with poofy windblown hair, going BOING higher and higher, fluffy clouds bouncing her up, silly fun expression, pink sparkles, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-leader-success",
+      "filename": "scene1-leader-success.png",
+      "type": "cutscene",
+      "scene": "scene-1",
+      "character": "leader",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, standing heroically as he spots a mysterious Thunder Spire tower in the distance through swirling storm clouds, lightning illuminating the scene, eyes focused and determined, dramatic discovery moment, feet visible on cloud platform, stormy atmosphere, Zelda-style mood, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-leader-fail",
+      "filename": "scene1-leader-fail.png",
+      "type": "cutscene",
+      "scene": "scene-1",
+      "character": "leader",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, shielding eyes from a bright lightning flash, then seeing a mysterious tower revealed in the distance, moment of surprise turning to determination, stormy clouds parting briefly, feet visible on cloud platform, dramatic atmosphere, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2a-leader-success",
+      "filename": "scene2a-leader-success.png",
+      "type": "cutscene",
+      "scene": "scene-2a",
+      "character": "leader",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, bravely stepping onto invisible cloud stairs that SOLIDIFY under his feet with magical sparkles, climbing upward through the storm toward the Thunder Spire top, clouds forming with each step, courageous determined expression, lightning crackling around but not hitting him, epic Zelda leap-of-faith moment, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2a-leader-fail",
+      "filename": "scene2a-leader-fail.png",
+      "type": "cutscene",
+      "scene": "scene-2a",
+      "character": "leader",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, being bounced upward by fluffy clouds like trampolines toward the top of Thunder Spire, eyes squeezed shut but brave, clouds catching and bouncing him UP UP UP, slightly silly but still heroic, lightning in background, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2a-claim-success",
+      "filename": "scene2a-claim-success.png",
+      "type": "cutscene",
+      "scene": "scene-2a",
+      "character": "leader",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, triumphantly holding a glowing Lightning Bow crackling with electric blue energy above his head, lightning dancing harmlessly across his arms, powerful heroic moment at the top of Thunder Spire, dark storm clouds behind, the bow glowing brilliantly, mastery and worthiness achieved, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2a-claim-fail",
+      "filename": "scene2a-claim-fail.png",
+      "type": "cutscene",
+      "scene": "scene-2a",
+      "character": "leader",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, holding the glowing Lightning Bow triumphantly but with hair standing COMPLETELY straight up from static electricity, silly spiky hair, proud expression despite the funny hair, lightning bow crackling in hands, humorous but still victorious, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2b-action-success",
+      "filename": "scene2b-action-success.png",
+      "type": "cutscene",
+      "scene": "scene-2b",
+      "character": "action",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, with a cute small ORANGE baby dragon leaping into his arms and nuzzling with smoky purrs, melted storm-ice cage behind them, golden meadow clouds around, both looking incredibly happy and bonded, love at first sight between child and dragon, warm golden lighting, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2b-action-fail",
+      "filename": "scene2b-action-fail.png",
+      "type": "cutscene",
+      "scene": "scene-2b",
+      "character": "action",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, getting splashed by water from a melted ice cage while a cute wet ORANGE baby dragon shakes off water like a puppy and sneezes a smoke ring at his face, both laughing, silly fun moment, instant friendship, golden cloud meadow, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2b-heart-success",
+      "filename": "scene2b-heart-success.png",
+      "type": "cutscene",
+      "scene": "scene-2b",
+      "character": "heart",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, sitting proudly on a beautiful WHITE pegasus with RAINBOW-colored flowing mane, the pegasus nuzzling her cheek lovingly, storm-vines fallen away on the ground, golden sunlight, magical sparkles, pure joy and friendship, beautiful cloud meadow, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2b-heart-fail",
+      "filename": "scene2b-heart-fail.png",
+      "type": "cutscene",
+      "scene": "scene-2b",
+      "character": "heart",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, getting a big slobbery pegasus kiss from a giggling WHITE pegasus with RAINBOW mane, both laughing, the pegasus tickled and silly, vines scattered everywhere, adorable funny moment, golden cloud meadow, sparkles, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3a-beacon1-success",
+      "filename": "scene3a-beacon1-success.png",
+      "type": "cutscene",
+      "scene": "scene-3a",
+      "character": "leader",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, releasing a crackling lightning arrow from a glowing Lightning Bow, the arrow streaking toward an ancient stone beacon which BLAZES to life with brilliant blue-white light, dramatic action shot, perfect aim, storm clouds behind, one beacon lit and glowing powerfully, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3a-beacon1-fail",
+      "filename": "scene3a-beacon1-fail.png",
+      "type": "cutscene",
+      "scene": "scene-3a",
+      "character": "leader",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, watching in surprise as his lightning arrow bounces off three clouds in zigzag paths before hitting the beacon perfectly, beacon blazing with light, accidental trick shot, impressed expression, storm clouds, looks cool even though it was luck, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3a-beacon2-success",
+      "filename": "scene3a-beacon2-success.png",
+      "type": "cutscene",
+      "scene": "scene-3a",
+      "character": "leader",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, firing TWO lightning arrows simultaneously that arc through the storm wind and strike two ancient beacons, ALL THREE beacons now blazing with brilliant blue-white light, triumphant powerful moment, mastery of the Lightning Bow, storm clouds parting, epic victory pose, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3a-beacon2-fail",
+      "filename": "scene3a-beacon2-fail.png",
+      "type": "cutscene",
+      "scene": "scene-3a",
+      "character": "leader",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, crashed into a soft cloud pile giving a thumbs up and big grin while three beacons blaze with light behind him, arrows hit even while sliding backwards, messy victory, funny but successful, pumping fist, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3b-action-success",
+      "filename": "scene3b-action-success.png",
+      "type": "cutscene",
+      "scene": "scene-3b",
+      "character": "action",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, riding on a now BIGGER ORANGE dragon (size of a large dog) as the dragon breathes a HUGE stream of orange fire that parts storm clouds like curtains, triumphant flight, child cheering, tunnel of clear sky behind them, dynamic action, flying fast, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3b-action-fail",
+      "filename": "scene3b-action-fail.png",
+      "type": "cutscene",
+      "scene": "scene-3b",
+      "character": "action",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, riding an ORANGE dragon that has just burped a big puff of smoke, child's hair slightly singed and sticking up funny, dragon looking embarrassed, storm clouds moving aside from the smoke anyway, silly funny moment but still flying forward, both laughing, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3b-heart-success",
+      "filename": "scene3b-heart-success.png",
+      "type": "cutscene",
+      "scene": "scene-3b",
+      "character": "heart",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, soaring through the sky on a WHITE pegasus with brilliantly glowing RAINBOW mane leaving a beautiful rainbow trail across the clouds, arms raised in joy, magical signal lighting up the sky, pure wonder and happiness, rainbow colors streaming behind, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3b-heart-fail",
+      "filename": "scene3b-heart-fail.png",
+      "type": "cutscene",
+      "scene": "scene-3b",
+      "character": "heart",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, on a WHITE pegasus that just did a loop-de-loop, rainbow trail forming a GIANT SMILEY FACE in the sky, child giggling at the silly signal, playful funny moment, rainbow smile visible across the clouds, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene4-action",
+      "filename": "scene4-action.png",
+      "type": "cutscene",
+      "scene": "scene-4",
+      "character": "action",
+      "variant": "climax",
+      "prompt": "Generate a 16:9 landscape image. EPIC CLIMAX ACTION! A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing ORANGE armor with GOLD accents, riding a powerful ORANGE dragon, BOTH breathing MASSIVE FIRE together at a towering Storm Giant, BOOOOOM text effect, flames EXPLODING through the giant's storm-armor chest creating a huge glowing hole, dramatic impact, sparks and fire everywhere, Storm Giant staggering back, triumphant attack moment, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene4-heart",
+      "filename": "scene4-heart.png",
+      "type": "cutscene",
+      "scene": "scene-4",
+      "character": "heart",
+      "variant": "climax",
+      "prompt": "Generate a 16:9 landscape image. EPIC CLIMAX ACTION! A 3-year-old girl with brown hair just past shoulders, big brown eyes, very rosy cheeks, wearing a PINK dress with flowing WHITE cape, charging on a WHITE pegasus with RAINBOW mane blazing with brilliant light, CRAAAASH text effect, rainbow light SHATTERING the Storm Giant's shield into a MILLION sparkling pieces, Storm Giant throwing arms up defenseless, triumphant courageous charge, sparkles and rainbow shards exploding everywhere, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene4-leader",
+      "filename": "scene4-leader.png",
+      "type": "cutscene",
+      "scene": "scene-4",
+      "character": "leader",
+      "variant": "climax",
+      "prompt": "Generate a 16:9 landscape image. EPIC CLIMAX ACTION! A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing DARK BLUE armor with SILVER trim, releasing a BLAZING lightning arrow from the Lightning Bow at the Storm Giant's heart, SHAAAATTER text effect, the giant's dark clouds EXPLODING apart in a massive burst of light, revealing a gentle friendly Cloud Guardian waking up inside, dramatic final strike, lightning and light bursting everywhere, ultimate victory moment, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    }
+  ]
+}
