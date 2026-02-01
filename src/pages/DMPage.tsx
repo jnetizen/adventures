@@ -747,29 +747,33 @@ export default function DMPage() {
   const handleDismissCutscene = async () => {
     if (!session || !adventure) return;
     setError(null);
-    // Optimistically clear cutscene from local state immediately
-    setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
-    const { error: dismissError } = await dismissCutscene(session.id);
-    if (dismissError) {
-      setError(formatError(dismissError));
-      // If dismiss failed, the subscription will restore the cutscene state
-      return;
-    }
 
-    // For solo players (1 player), auto-advance to next scene after cutscene
-    // This makes the flow smoother since there's no one else to wait for
+    // For solo players (1 player), check if we should auto-advance
     const sessionPlayers = session.players || [];
-    if (sessionPlayers.length === 1 && currentScene) {
+    const isSoloPlayer = sessionPlayers.length === 1;
+    let shouldAutoAdvance = false;
+
+    if (isSoloPlayer && currentScene) {
       const scene = currentScene;
       const activeTurns = getActiveCharacterTurns(scene, sessionPlayers);
       const turnIndex = session.current_character_turn_index || 0;
       const allCharactersActed = turnIndex >= activeTurns.length;
+      shouldAutoAdvance = allCharactersActed && !!scene.outcome?.nextSceneId;
+    }
 
-      if (allCharactersActed && scene.outcome?.nextSceneId) {
-        // Small delay to let the cutscene dismiss animation complete
-        setTimeout(() => {
-          handleNextScene();
-        }, 300);
+    if (shouldAutoAdvance) {
+      // Keep cutscene visible while advancing scene to prevent flash
+      // handleNextScene will dismiss the cutscene after scene is updated
+      await handleNextScene();
+      // Now dismiss the cutscene after scene has advanced
+      setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
+      await dismissCutscene(session.id);
+    } else {
+      // Normal flow - just dismiss the cutscene
+      setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
+      const { error: dismissError } = await dismissCutscene(session.id);
+      if (dismissError) {
+        setError(formatError(dismissError));
       }
     }
   };
