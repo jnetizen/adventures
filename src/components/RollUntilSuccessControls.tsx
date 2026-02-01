@@ -112,12 +112,40 @@ export default function RollUntilSuccessControls({
         // Ready for next roll
         <div className="space-y-4">
           <div className="bg-white border-2 border-red-300 p-4 rounded-lg">
-            <p className="text-center text-gray-700 mb-4">
+            <p className="text-center text-gray-700 mb-3">
               {rollCount === 0
                 ? `Have ${kidName} roll the d${diceType}!`
                 : `Roll again! Need a ${maxRoll} to win!`
               }
             </p>
+
+            {/* Manual roll input - tap what the kid rolled */}
+            <div className="mb-4">
+              <p className="text-xs text-gray-500 text-center mb-2">Tap what they rolled:</p>
+              <div className="flex justify-center gap-2">
+                {Array.from({ length: diceType }, (_, i) => i + 1).map((num) => (
+                  <button
+                    key={num}
+                    onClick={() => handleRoll(num)}
+                    disabled={disabled}
+                    className={`w-12 h-12 rounded-lg font-bold text-xl transition-all ${
+                      num === maxRoll
+                        ? 'bg-green-500 hover:bg-green-600 text-white ring-2 ring-green-300'
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                    } disabled:opacity-50`}
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-2 my-3">
+              <div className="flex-1 border-t border-gray-200"></div>
+              <span className="text-xs text-gray-400">or use digital dice</span>
+              <div className="flex-1 border-t border-gray-200"></div>
+            </div>
 
             <DiceRoller
               onRoll={handleRoll}
