@@ -584,7 +584,9 @@ export default function PlayPage() {
           )}
           
           {/* Cutscene Overlay - shown when DM triggers a cutscene (after dice animation) */}
-          {!pendingDiceRoll && session.active_cutscene && (
+          {!pendingDiceRoll && session.active_cutscene && !(
+            currentScene && isPuzzleScene(currentScene) && session.puzzle_started && !session.puzzle_completed
+          ) && (
             <CutsceneOverlay
               imageUrl={session.active_cutscene.imageUrl}
               outcomeText={session.active_cutscene.outcomeText}
