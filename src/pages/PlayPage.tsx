@@ -351,7 +351,8 @@ export default function PlayPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {session && (
-        <div className="fixed top-2 left-2 z-[100] bg-black/75 text-white text-xs font-mono px-3 py-2 rounded-md space-y-0.5">
+        <div className="fixed top-2 left-2 z-[100] bg-red-600 text-white text-xs font-mono px-3 py-2 rounded-md space-y-0.5 shadow-lg">
+          <div className="font-bold">DEBUG SESSION</div>
           <div>scene_id: {session.current_scene_id ?? 'null'}</div>
           <div>scene_num: {session.current_scene ?? 'null'}</div>
           <div>puzzle_started: {String(!!session.puzzle_started)}</div>
