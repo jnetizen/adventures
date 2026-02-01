@@ -879,7 +879,7 @@ export default function DMPage() {
     }
 
     // Update local state
-    setSession((prev) => prev ? { ...prev, puzzle_started: true } : null);
+    setSession((prev) => prev ? { ...prev, puzzle_started: true, active_cutscene: null } : null);
     setSubmitting(false);
   };
 

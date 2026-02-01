@@ -871,6 +871,7 @@ export async function startPuzzle(sessionId: string): Promise<{ error: Error | n
       .from('sessions')
       .update({
         puzzle_started: true,
+        active_cutscene: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);
