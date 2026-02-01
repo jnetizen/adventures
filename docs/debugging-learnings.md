@@ -1340,3 +1340,189 @@ For adventure data, set empty string instead of broken URL:
 - `src/components/CutsceneOverlay.tsx`
 - `src/pages/EndingPage.tsx`
 - Adventure JSON files
+
+---
+
+## 37. Git LFS Images Not Deploying to Vercel (from GitLab)
+
+### Problem
+All images showed as broken/placeholders on Vercel, even though they existed locally and `curl` returned HTTP 200. Images were only 132 bytes instead of actual file sizes.
+
+### Root Cause
+Images were stored in Git LFS. Vercel's auto-deploy from GitLab does NOT support Git LFS - it only deploys the pointer files (small text files containing LFS metadata), not the actual images.
+
+The pointer files look like:
+```
+version https://git-lfs.github.com/spec/v1
+oid sha256:1d8da35fcc6b041fecfb4cea5d9e5f44061ba61300604d83841406da3ac6000d
+size 1384441
+```
+
+### Solution
+**Migrate images OUT of Git LFS entirely:**
+
+```bash
+# Fetch all LFS files locally first
+git lfs fetch --all
+
+# Migrate all image types out of LFS (rewrites history)
+git lfs migrate export --include="*.png,*.jpg,*.jpeg,*.webp" --everything
+
+# Clean up .gitattributes (remove LFS rules)
+echo "* text=auto" > .gitattributes
+
+# Commit the cleanup
+git add .gitattributes
+git commit -m "chore: remove Git LFS, serve images directly"
+
+# Force push (requires temporarily unprotecting branch in GitLab)
+git push --force origin main
+```
+
+### Key Insight
+- Vercel CLI (`vercel --prod --force`) uploads local files directly - this WOULD work with LFS if files are pulled locally
+- But GitLab auto-deploy does NOT pull LFS files
+- Simplest solution: Don't use LFS for a Vercel-deployed project
+
+### Verification
+Check if an image is real or a pointer:
+```bash
+curl -sI "https://your-site.vercel.app/images/some-image.png" | grep content-length
+# Real image: content-length: 1384441 (large)
+# LFS pointer: content-length: 132 (tiny)
+```
+
+### Key Files
+- `.gitattributes` - LFS tracking rules (removed)
+
+---
+
+## 38. Dice Animation Restarting in Infinite Loop
+
+### Problem
+Dice animation kept showing "5 Nice roll!" repeatedly instead of completing and showing the cutscene.
+
+### Root Cause
+The `DiceRollAnimation` component's useEffect had `onComplete` in its dependency array:
+
+```tsx
+// WRONG - effect restarts when onComplete reference changes
+useEffect(() => {
+  const timers = [...];
+  timers.push(setTimeout(() => onComplete(), 2000));
+  return () => timers.forEach(clearTimeout);
+}, [onComplete]); // ← onComplete changes on every parent render
+```
+
+In PlayPage, `onComplete` was an inline arrow function:
+```tsx
+<DiceRollAnimation
+  onComplete={() => {
+    setProcessedRollCount(prev => prev + 1);
+    setPendingDiceRoll(null);
+  }}
+/>
+```
+
+PlayPage polls every 1 second, causing re-renders. Each re-render created a new `onComplete` function reference, which triggered the useEffect to restart, clearing all timers and starting the animation over.
+
+### Solution
+Use a ref to store the callback so the effect only runs once:
+
+```tsx
+export default function DiceRollAnimation({ onComplete, ... }) {
+  // Store callback in ref - doesn't trigger effect reruns
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
+  useEffect(() => {
+    const timers = [...];
+    timers.push(setTimeout(() => onCompleteRef.current(), 2000));
+    return () => timers.forEach(clearTimeout);
+  }, []); // ← Empty deps - runs once on mount
+}
+```
+
+### Key Insight
+When passing callbacks to components with timer-based effects, either:
+1. Wrap the callback in `useCallback` in the parent
+2. Use a ref in the child to avoid effect dependency
+
+### Key Files
+- `src/components/DiceRollAnimation.tsx`
+
+---
+
+## 39. Solo Adventure Cutscene Requiring Two Taps to Advance
+
+### Problem
+After a dice roll and cutscene, the DM had to tap "Next Scene" twice:
+1. First tap (purple button) - only dismissed the cutscene
+2. Second tap (green button) - actually advanced to next scene
+
+### Root Cause
+The purple "Next Scene" button called `handleDismissCutscene()` which only dismissed the cutscene:
+
+```tsx
+const handleDismissCutscene = async () => {
+  setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
+  await dismissCutscene(session.id);
+  // Stopped here - didn't advance scene
+};
+```
+
+For solo adventures, the button text said "Next Scene" (implying it would advance), but it only dismissed.
+
+### Solution
+For solo adventures, also advance to the next scene after dismissing:
+
+```tsx
+const handleDismissCutscene = async () => {
+  // Dismiss the cutscene
+  setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
+  await dismissCutscene(session.id);
+
+  // For solo adventures, also advance to next scene automatically
+  const isSoloAdventure = players.length === 1;
+  if (isSoloAdventure && allActed && currentScene && !currentScene.isClimax) {
+    await handleNextScene();
+  }
+};
+```
+
+### Key Insight
+Button labels should match behavior. If it says "Next Scene", it should advance the scene, not just dismiss a modal.
+
+### Key Files
+- `src/pages/DMPage.tsx` - `handleDismissCutscene()`
+
+---
+
+## 40. Debug UI Left in Production
+
+### Problem
+Red debug boxes showing session state (scene_id, puzzle_started, etc.) were visible on both DM and Player screens in production.
+
+### Root Cause
+Debug UI was added during development and not removed:
+
+```tsx
+<div className="fixed top-2 left-2 z-[100] bg-red-600 text-white text-xs font-mono px-3 py-2 rounded-md">
+  <div className="font-bold">DEBUG SESSION</div>
+  <div>scene_id: {session.current_scene_id ?? 'null'}</div>
+  ...
+</div>
+```
+
+### Solution
+Remove the debug boxes from both pages before deploying to production.
+
+### Key Insight
+Before any release:
+1. Search for "DEBUG" in the codebase
+2. Search for `bg-red-` styled fixed elements
+3. Check both DM and Player screens visually
+
+### Key Files
+- `src/pages/DMPage.tsx`
+- `src/pages/PlayPage.tsx`
