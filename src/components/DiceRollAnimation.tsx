@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface DiceRollAnimationProps {
   /** The child's name to display */
@@ -61,10 +61,15 @@ export default function DiceRollAnimation({
 }: DiceRollAnimationProps) {
   const [phase, setPhase] = useState<AnimationPhase>('rolling');
 
+  // Use a ref to store onComplete so the effect doesn't restart when the callback changes
+  // This prevents the animation from restarting on every parent re-render (e.g., from polling)
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
   // Success threshold: roll >= half of max dice value
   const isSuccess = roll >= Math.ceil(diceMax / 2);
 
-  // Animation timeline
+  // Animation timeline - runs once on mount, uses ref for callback
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
 
@@ -95,14 +100,14 @@ export default function DiceRollAnimation({
     // Call onComplete after fade out (2000ms)
     timers.push(
       setTimeout(() => {
-        onComplete();
+        onCompleteRef.current();
       }, 2000)
     );
 
     return () => {
       timers.forEach(clearTimeout);
     };
-  }, [onComplete]);
+  }, []); // Empty deps - animation runs once on mount
 
   return (
     <div
