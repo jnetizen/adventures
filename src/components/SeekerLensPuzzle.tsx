@@ -145,6 +145,14 @@ export default function SeekerLensPuzzle({
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         console.log('[SeekerLens] Stream attached to video element');
+
+        // iOS Safari needs explicit play() call
+        try {
+          await videoRef.current.play();
+          console.log('[SeekerLens] Video playing');
+        } catch (playErr) {
+          console.warn('[SeekerLens] Video play() failed, may autoplay anyway:', playErr);
+        }
       }
       console.log('[SeekerLens] === All permissions granted! ===');
       setPermissionStatus('granted');
