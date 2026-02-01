@@ -5,6 +5,7 @@ import PlayPage from './pages/PlayPage';
 import StoryDMPage from './pages/StoryDMPage';
 import StoryPlayerPage from './pages/StoryPlayerPage';
 import ErrorBoundary from './components/ErrorBoundary';
+import DebugOverlay from './components/DebugOverlay';
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
           <Route path="/story/play" element={<StoryPlayerPage />} />
         </Routes>
       </BrowserRouter>
+      {/* Triple-tap anywhere to show debug logs */}
+      <DebugOverlay />
     </ErrorBoundary>
   );
 }

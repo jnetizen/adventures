@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { findSessionByCode, selectAdventure } from '../lib/gameState';
 import { formatError } from '../lib/errorRecovery';
+import { setSessionId } from '../lib/remoteLogger';
 import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions } from '../lib/adventures';
 import { completePuzzle } from '../lib/gameState';
 import { debugLog } from '../lib/debugLog';
@@ -172,6 +173,7 @@ export default function PlayPage() {
     }
 
     setSession(data);
+    setSessionId(data.id);  // Track session for remote logging
   };
 
   const handleRecoverSession = async () => {
@@ -185,6 +187,7 @@ export default function PlayPage() {
     }
     if (recoveredSession) {
       setSession(recoveredSession);
+      setSessionId(recoveredSession.id);  // Track session for remote logging
     }
   };
 

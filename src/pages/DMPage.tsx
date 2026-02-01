@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
 import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState } from '../lib/gameState';
 import { formatError } from '../lib/errorRecovery';
+import { setSessionId } from '../lib/remoteLogger';
 import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, isRollUntilSuccessClimax } from '../lib/adventures';
 import {
   computeIsSplit,
@@ -302,6 +303,7 @@ export default function DMPage() {
     }
 
     setSession(data);
+    setSessionId(data.id);  // Track session for remote logging
   };
 
   const persistAdventureSelection = async (adventureId: string) => {
