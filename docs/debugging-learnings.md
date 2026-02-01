@@ -875,7 +875,142 @@ useWakeLock();  // Just call the hook - no return value needed
 
 ---
 
-## 22. Testing Checklist
+## 23. Vercel Deployment with Git LFS
+
+### Problem
+Images show as broken/placeholder on Vercel deployment, even though they work locally.
+
+### Root Cause
+Vercel's auto-deploy from Git does NOT pull Git LFS files. It only gets the pointer files, not the actual images.
+
+### Solution
+Always deploy using the Vercel CLI from your local machine:
+
+```bash
+vercel --prod --yes
+```
+
+The CLI uploads your local files directly (with LFS expanded), bypassing Git entirely.
+
+**Do NOT rely on:**
+- Auto-deploy from Git pushes
+- Adding `git lfs pull` to build commands (Vercel build env has no Git repo)
+
+### Workflow
+1. Make changes locally
+2. Commit and push to Git (for version control)
+3. Deploy with `vercel --prod --yes` (for actual deployment)
+
+### Key Files
+- `vercel.json` - Vercel configuration
+- `.gitattributes` - Git LFS tracking rules
+
+---
+
+## 24. Vercel SPA Routing (404 on Direct URLs)
+
+### Problem
+Navigating directly to `/dm` or `/play` shows "404: NOT_FOUND" on Vercel.
+
+### Root Cause
+Vercel looks for a file at that path instead of serving the React app.
+
+### Solution
+Add rewrites to `vercel.json`:
+
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}
+```
+
+This tells Vercel to serve `index.html` for all routes, letting React Router handle them.
+
+### Key Files
+- `vercel.json`
+
+---
+
+## 25. iOS Safari Black Camera Screen
+
+### Problem
+Camera permissions granted, but video feed shows black screen.
+
+### Root Cause
+iOS Safari doesn't always honor the `autoPlay` attribute on video elements.
+
+### Solution
+Explicitly call `play()` after attaching the stream:
+
+```tsx
+videoRef.current.srcObject = stream;
+
+// iOS Safari needs explicit play() call
+try {
+  await videoRef.current.play();
+  console.log('Video playing');
+} catch (playErr) {
+  console.warn('Video play() failed:', playErr);
+}
+```
+
+### Key Files
+- `src/components/SeekerLensPuzzle.tsx`
+
+---
+
+## 26. HTTPS Required for Camera/Motion on iOS
+
+### Problem
+Camera and motion sensor permissions immediately denied on iOS, no prompt shown.
+
+### Root Cause
+iOS requires a "secure context" (HTTPS) for sensitive APIs. Local development over HTTP (like `http://192.168.x.x`) is not secure.
+
+### Solution
+Test on HTTPS:
+- Deploy to Vercel and test on the `.vercel.app` URL
+- Or use `ngrok` for local HTTPS tunneling
+
+### Debug Log to Look For
+```
+Call to requestPermission() failed, reason: Browsing context is not secure.
+```
+
+### Key Files
+- `src/components/SeekerLensPuzzle.tsx`
+
+---
+
+## 27. Supabase Error "cannot coerce to single json object"
+
+### Problem
+User sees confusing error: "cannot coerce the result to a single json object"
+
+### Root Cause
+Using `.single()` on a Supabase query that returns 0 rows (e.g., invalid room code).
+
+### Solution
+Handle the specific error code and return user-friendly message:
+
+```tsx
+if (error) {
+  // PGRST116 = no rows returned
+  if (error.code === 'PGRST116') {
+    return { error: new Error('Room not found. Check the code and try again.') };
+  }
+  return { error: new Error(error.message || 'Something went wrong') };
+}
+```
+
+### Key Files
+- `src/lib/gameState.ts` - findSessionByCode function
+
+---
+
+## 28. Testing Checklist
 
 Before playtesting a new adventure:
 
@@ -899,3 +1034,9 @@ For iOS/iPad testing:
 - [ ] Screen stays awake during gameplay (wake lock active)
 - [ ] Cutscenes sync properly between DM and player screens
 - [ ] Session recovers after screen lock/unlock
+- [ ] Test on HTTPS (Vercel URL), not localhost
+
+For Vercel deployment:
+- [ ] Deploy using `vercel --prod --yes` (not auto-deploy from Git)
+- [ ] Verify images load on deployed site
+- [ ] Test direct URL navigation (e.g., /dm, /play)
