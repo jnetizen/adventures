@@ -64,6 +64,19 @@ export default function PlayPage() {
   const handleSessionUpdate = useCallback((newSession: GameSession) => {
     setSession((prev) => {
       if (!prev) return newSession;
+      // If a puzzle is active, never allow cutscene overlay to reappear mid-puzzle.
+      if (newSession.puzzle_started && !newSession.puzzle_completed && newSession.active_cutscene) {
+        newSession = { ...newSession, active_cutscene: null };
+      }
+      // Prevent puzzle_started from being cleared by stray updates while still on the same scene.
+      if (prev.puzzle_started && !prev.puzzle_completed && !newSession.puzzle_started) {
+        const sameScene =
+          prev.current_scene_id === newSession.current_scene_id &&
+          prev.current_scene === newSession.current_scene;
+        if (sameScene) {
+          newSession = { ...newSession, puzzle_started: prev.puzzle_started };
+        }
+      }
       if (!prev.updated_at || !newSession.updated_at) return newSession;
       const prevUpdatedAt = Date.parse(prev.updated_at);
       const nextUpdatedAt = Date.parse(newSession.updated_at);
