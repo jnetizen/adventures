@@ -939,22 +939,36 @@ This tells Vercel to serve `index.html` for all routes, letting React Router han
 Camera permissions granted, but video feed shows black screen.
 
 ### Root Cause
-iOS Safari doesn't always honor the `autoPlay` attribute on video elements.
+Two issues combined:
+1. iOS Safari doesn't always honor the `autoPlay` attribute
+2. **React rendering order**: The video element only exists when `permissionStatus === 'granted'`, but we were trying to attach the stream BEFORE setting that state
 
 ### Solution
-Explicitly call `play()` after attaching the stream:
+Set permission state FIRST, wait for React to render the video element, THEN attach stream:
 
 ```tsx
-videoRef.current.srcObject = stream;
+// 1. Set state FIRST so video element renders
+setPermissionStatus('granted');
 
-// iOS Safari needs explicit play() call
-try {
+// 2. Wait for React to render the video element
+await new Promise(resolve => setTimeout(resolve, 100));
+
+// 3. NOW attach stream and play
+if (videoRef.current) {
+  videoRef.current.srcObject = stream;
   await videoRef.current.play();
-  console.log('Video playing');
-} catch (playErr) {
-  console.warn('Video play() failed:', playErr);
 }
 ```
+
+**Wrong order (causes black screen):**
+```tsx
+// Video element doesn't exist yet!
+videoRef.current.srcObject = stream;  // videoRef.current is null
+setPermissionStatus('granted');        // NOW video renders, but stream not attached
+```
+
+### Key Insight
+When a React ref points to a conditionally-rendered element, you must ensure the element is rendered BEFORE accessing the ref.
 
 ### Key Files
 - `src/components/SeekerLensPuzzle.tsx`

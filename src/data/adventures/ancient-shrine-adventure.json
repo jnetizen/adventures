@@ -83,7 +83,7 @@
           "animation": "pulse"
         },
         "triggerDirection": "up",
-        "directionToleranceDegrees": 35,
+        "directionToleranceDegrees": 15,
         "hints": [
           { "delaySeconds": 15, "text": "Ancient magic often hides above..." },
           { "delaySeconds": 30, "text": "Try pointing your iPad toward the ceiling!" }

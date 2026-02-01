@@ -142,20 +142,34 @@ export default function SeekerLensPuzzle({
       console.log('[SeekerLens] Video tracks:', stream.getVideoTracks().length);
 
       streamRef.current = stream;
+      console.log('[SeekerLens] Stream ready, videoRef.current exists:', !!videoRef.current);
+
+      // Set permission status FIRST so the video element renders
+      setPermissionStatus('granted');
+
+      // Wait a tick for React to render the video element
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      console.log('[SeekerLens] After render, videoRef.current exists:', !!videoRef.current);
+
       if (videoRef.current) {
+        console.log('[SeekerLens] Attaching stream to video element...');
         videoRef.current.srcObject = stream;
-        console.log('[SeekerLens] Stream attached to video element');
+        console.log('[SeekerLens] Stream attached, srcObject set');
+        console.log('[SeekerLens] Video element readyState:', videoRef.current.readyState);
 
         // iOS Safari needs explicit play() call
         try {
+          console.log('[SeekerLens] Calling play()...');
           await videoRef.current.play();
-          console.log('[SeekerLens] Video playing');
+          console.log('[SeekerLens] Video play() succeeded');
         } catch (playErr) {
-          console.warn('[SeekerLens] Video play() failed, may autoplay anyway:', playErr);
+          console.error('[SeekerLens] Video play() failed:', playErr);
         }
+      } else {
+        console.error('[SeekerLens] videoRef.current is null after render!');
       }
-      console.log('[SeekerLens] === All permissions granted! ===');
-      setPermissionStatus('granted');
+      console.log('[SeekerLens] === Setup complete ===');
     } catch (err) {
       console.error('[SeekerLens] Camera error:', err);
       console.error('[SeekerLens] Error name:', (err as Error)?.name);
