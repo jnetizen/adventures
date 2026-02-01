@@ -1,7 +1,5 @@
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
-  ],
-  "buildCommand": "git lfs pull && npm run build",
-  "installCommand": "git lfs install && npm install"
+  ]
 }
