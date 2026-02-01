@@ -753,12 +753,19 @@ export default function DMPage() {
     const isSoloPlayer = sessionPlayers.length === 1;
     let shouldAutoAdvance = false;
 
-    if (isSoloPlayer && currentScene) {
+    if (isSoloPlayer && currentScene && adventure) {
       const scene = currentScene;
       const activeTurns = getActiveCharacterTurns(scene, sessionPlayers);
       const turnIndex = session.current_character_turn_index || 0;
       const allCharactersActed = turnIndex >= activeTurns.length;
-      shouldAutoAdvance = allCharactersActed && !!scene.outcome?.nextSceneId;
+
+      // Check if next scene is a puzzle - don't auto-advance into puzzle scenes
+      const nextSceneId = scene.outcome?.nextSceneId;
+      const nextScene = nextSceneId ? getSceneById(adventure, nextSceneId as string) : null;
+      const nextSceneIsPuzzle = nextScene ? isPuzzleScene(nextScene) : false;
+
+      // Only auto-advance if all acted AND next scene is NOT a puzzle
+      shouldAutoAdvance = allCharactersActed && !!nextSceneId && !nextSceneIsPuzzle;
     }
 
     if (shouldAutoAdvance) {
