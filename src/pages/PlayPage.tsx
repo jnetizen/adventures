@@ -64,6 +64,12 @@ export default function PlayPage() {
   const handleSessionUpdate = useCallback((newSession: GameSession) => {
     setSession((prev) => {
       if (!prev) return newSession;
+      const sceneChanged =
+        prev.current_scene_id !== newSession.current_scene_id ||
+        prev.current_scene !== newSession.current_scene;
+      if (sceneChanged && newSession.active_cutscene) {
+        newSession = { ...newSession, active_cutscene: null };
+      }
       // If we're mid-puzzle, don't allow scene regression or cutscene overlays to interrupt.
       if (prev.puzzle_started && !prev.puzzle_completed) {
         const sceneChanged =

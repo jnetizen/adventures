@@ -200,6 +200,14 @@ export default function DMPage() {
   // Merge active_cutscene to preserve optimistic updates during race conditions
   const handleSessionUpdate = useCallback((newSession: GameSession) => {
     setSession((prev) => {
+      if (prev) {
+        const sceneChanged =
+          prev.current_scene_id !== newSession.current_scene_id ||
+          prev.current_scene !== newSession.current_scene;
+        if (sceneChanged && newSession.active_cutscene) {
+          newSession = { ...newSession, active_cutscene: null };
+        }
+      }
       // If we have an active_cutscene locally but the incoming update doesn't,
       // preserve our local value (it might be an optimistic update not yet confirmed)
       if (prev?.active_cutscene && !newSession.active_cutscene) {
