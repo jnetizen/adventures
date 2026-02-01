@@ -312,12 +312,25 @@ export default function SeekerLensPuzzle({
         autoPlay
         playsInline
         muted
+        webkit-playsinline="true"
         className="absolute inset-0 w-full h-full object-cover z-10"
-        style={{ backgroundColor: 'transparent' }}
+        style={{
+          backgroundColor: 'transparent',
+          minWidth: '100%',
+          minHeight: '100%',
+        }}
         onLoadedMetadata={() => {
           console.log('[SeekerLens] Video metadata loaded');
           if (videoRef.current) {
             console.log('[SeekerLens] Video dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+            // Force a re-render by triggering play again
+            videoRef.current.play().catch(e => console.warn('[SeekerLens] Re-play failed:', e));
+          }
+        }}
+        onCanPlay={() => {
+          console.log('[SeekerLens] Video canPlay event');
+          if (videoRef.current) {
+            videoRef.current.play().catch(e => console.warn('[SeekerLens] Play on canPlay failed:', e));
           }
         }}
         onPlay={() => console.log('[SeekerLens] Video onPlay fired')}
