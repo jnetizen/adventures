@@ -770,11 +770,19 @@ export default function DMPage() {
     if (!session || !adventure) return;
     setError(null);
 
-    // Simple flow - just dismiss the cutscene, DM will click Next Scene manually
+    // Dismiss the cutscene
     setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
     const { error: dismissError } = await dismissCutscene(session.id);
     if (dismissError) {
       setError(formatError(dismissError));
+      return;
+    }
+
+    // For solo adventures, also advance to next scene automatically
+    // This makes the purple "Next Scene" button work as expected
+    const isSoloAdventure = players.length === 1;
+    if (isSoloAdventure && allActed && currentScene && !currentScene.isClimax) {
+      await handleNextScene();
     }
   };
 
