@@ -67,8 +67,16 @@ export function clearSessionFromStorage(): void {
  */
 export function formatError(err: unknown): string {
   if (!err) return 'An unknown error occurred';
-  if (err instanceof Error) {
-    const m = err.message.toLowerCase();
+
+  // Get message from Error instance or object with message property (e.g., Supabase PostgrestError)
+  const message = err instanceof Error
+    ? err.message
+    : (typeof err === 'object' && err !== null && 'message' in err && typeof (err as { message: unknown }).message === 'string')
+      ? (err as { message: string }).message
+      : null;
+
+  if (message) {
+    const m = message.toLowerCase();
     if (m.includes('network') || m.includes('fetch') || m.includes('connection')) {
       return 'Connection issue. Please check your internet and try again.';
     }
@@ -81,7 +89,7 @@ export function formatError(err: unknown): string {
     if (m.includes('timeout')) {
       return 'Request timed out. Please try again.';
     }
-    return err.message || 'Something went wrong. Please try again.';
+    return message || 'Something went wrong. Please try again.';
   }
   return String(err) || 'An unknown error occurred';
 }

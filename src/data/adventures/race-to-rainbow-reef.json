@@ -14,6 +14,7 @@
     }
   },
   "prologue": {
+    "prologueImageUrl": "/images/scenes/race-to-rainbow-reef/scene-0-bubble-geyser-field.png",
     "worldIntro": "Welcome to the Mer-Kingdom! Every year, the kingdom holds its most exciting event - the Great Race to Rainbow Reef! Whoever touches the magical treasure chest first becomes the new RULERS of the entire kingdom! Today, three brave racers will compete against the Crabby Brothers (three crabs who argue about EVERYTHING) and the Showoff Dolphins (super fast but can't stop looking at their own reflections).",
     "characterIntros": [
       {

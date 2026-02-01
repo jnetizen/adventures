@@ -59,6 +59,48 @@ This document captures ideas for future features, enhancements, and research que
 - Hidden rewards or easter eggs
 - Age-appropriate mini-games during waiting periods
 
+### Physical Item Search Puzzle (Real World)
+**Status**: Backlog | **Priority**: Medium
+**Description**:
+A puzzle type where players must find and interact with real objects in their physical environment. Great for multi-player adventures where kids work together.
+
+**Example Scene JSON** (Balance Chamber from Ancient Shrine):
+```json
+{
+  "id": "scene-balance",
+  "sceneType": "puzzle-physical",
+  "title": "The Balance Chamber",
+  "narrationText": "In the center sits an ancient stone scale - perfectly balanced, with empty plates on each side. Words glow: 'BALANCE THREE TREASURES FROM YOUR WORLD TO PROVE YOUR WORTH'",
+  "sceneImageUrl": "/images/scenes/adventure/balance-chamber.png",
+  "puzzleInstructions": {
+    "type": "physical-world",
+    "challenge": "Find 3 objects in the room and stack them on top of each other. They must stay balanced for 5 seconds!",
+    "dmPrompt": "Have the players find 3 real objects nearby and stack them. Count to 5. If they stay stacked, the puzzle is solved!",
+    "successTrigger": "dm-confirms",
+    "hints": [
+      "Look around! What could you stack?",
+      "Try different sizes - bigger on bottom might help!",
+      "Flat objects are easier to balance!"
+    ],
+    "successNarration": "The objects balance perfectly! The ancient scale glows bright blue - it ACCEPTS your offering! The wall rumbles and slides open...",
+    "failNarration": "The stack wobbles... and falls! But the scale glows anyway. The ancient magic senses your EFFORT. 'Determination accepted,' the words change."
+  }
+}
+```
+
+**Why**:
+- Gets kids moving and working together
+- Bridges digital and physical play
+- Works great for 3-player adventures
+- Simple to implement (DM confirms success/fail)
+
+**Variations**:
+- Find objects by color ("Find 3 red things!")
+- Find objects by shape ("Find something round!")
+- Scavenger hunt (list of items to find)
+- Build a tower (stack objects)
+- Sort objects (by size, color, type)
+
 ---
 
 ## DM Experience (Parent Screen)

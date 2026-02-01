@@ -195,6 +195,16 @@ Right: A 3-year-old girl knight... wearing silver armor with a GREEN cape.
 
 This section covers our findings from building the automated image generation CLI tool that uses Google's APIs.
 
+### ⚠️ CRITICAL: Free Tier API Does NOT Work (Jan 2026)
+
+**Despite Google's pricing page claims, free tier API image generation returns `quota limit: 0` for ALL image models.**
+
+- Web UI (aistudio.google.com): Free image generation works manually
+- API: Quota is 0 for all image models on free tier projects
+- **You MUST have billing enabled for API-based image generation**
+
+We tested multiple projects, keys, models, and SDKs - all return `limit: 0` on free tier.
+
 ### API Models Tested
 
 #### Vertex AI Imagen 3 — BLOCKED
@@ -250,7 +260,7 @@ This section covers our findings from building the automated image generation CL
 
 ---
 
-#### Gemini 2.5 Flash Image — RECOMMENDED
+#### Gemini 2.5 Flash Image — ⚠️ PAID TIER ONLY
 
 | Attribute | Value |
 |-----------|-------|
@@ -259,26 +269,36 @@ This section covers our findings from building the automated image generation CL
 | Auth | `GOOGLE_API_KEY` |
 | Result | **SUCCESS** |
 | Quality | Best balance of quality and speed |
-| Cost | Very low |
+| Cost | **PAID TIER ONLY** - NOT available on free tier |
+
+**⚠️ WARNING:** Despite working with API key auth, this model is **NOT included in the free tier**. Verified via Google AI Studio web interface (January 2026).
 
 **Notes:**
-- Best overall results for our use case
+- Higher quality than 2.0 Flash
 - Good character consistency
-- Handles positioning instructions well ("NOT overlapping, NOT touching")
-- Fast generation time
-- **This is what we use in production**
+- **DO NOT USE for free-tier image generation**
+- Use `gemini-2.0-flash-exp-image-generation` instead for free usage
 
 ---
 
 ### API Comparison Table
 
-| Model | Package | Auth Method | Children OK | Quality | Cost |
-|-------|---------|-------------|-------------|---------|------|
+| Model | Package | Auth Method | Children OK | Quality | API Cost |
+|-------|---------|-------------|-------------|---------|----------|
 | Imagen 3 | @google-cloud/aiplatform | Service Account | ❌ NO | N/A | $0.04/img |
 | Imagen 3 Fast | @google-cloud/aiplatform | Service Account | ❌ NO | N/A | $0.02/img |
-| Gemini 2.0 Flash Image | @google/generative-ai | API Key | ✅ YES | Good | ~$0.001/img |
-| Gemini 3 Pro Preview | @google/generative-ai | API Key | ✅ YES | Better | ~$0.001/img |
-| Gemini 2.5 Flash Image | @google/generative-ai | API Key | ✅ YES | Best | ~$0.001/img |
+| Gemini 2.0 Flash Image | @google/generative-ai | API Key | ✅ YES | Good | ~$0.039/img |
+| Gemini 3 Pro Preview | @google/generative-ai | API Key | ✅ YES | Better | ~$0.13/img |
+| Gemini 2.5 Flash Image | @google/generative-ai | API Key | ✅ YES | Best | ~$0.039/img |
+
+**⚠️ FREE TIER API STATUS (Verified January 2026):**
+
+ALL image generation models return `quota limit: 0` on free tier API projects:
+- `gemini-2.0-flash-exp-image-generation` — ❌ limit: 0 via API
+- `gemini-2.5-flash-image` — ❌ limit: 0 via API
+- All Imagen models — ❌ limit: 0 via API
+
+**Free image generation ONLY works through the AI Studio web UI, NOT the API.**
 
 ---
 
@@ -675,6 +695,87 @@ When writing sprite prompts (Gemini):
 
 ---
 
-*Last updated: January 30, 2026*
+---
+
+## Reward/Item Icon Generation
+
+### Overview
+Reward icons are small item images shown when players earn treasures during gameplay. These need to work at small sizes (64x64 to 128x128 display) but should be generated larger for quality.
+
+### Working Model & Settings
+
+```typescript
+model: 'gemini-2.0-flash-exp-image-generation'  // Requires PAID tier (billing enabled)
+```
+
+**Important:** ALL API-based image generation requires billing to be enabled. Free tier API quota is 0 for all image models. Use the paid key from `.env` for image generation.
+
+### Prompt Template for Reward Icons
+
+```
+[Item description with visual details]. Fantasy RPG item art style, vibrant colors.
+
+Generate this as a single high-quality illustration with simple or transparent background, suitable for a game reward/item icon. Square aspect ratio preferred.
+```
+
+### Prompt Examples by Category
+
+**Weapons:**
+```
+A glowing magical sword made of living wood and vines, with green leaves growing from the hilt. The blade shimmers with nature magic and has ancient runes carved into it. Fantasy RPG item art style, vibrant colors.
+```
+
+**Companions:**
+```
+A cute magical unicorn with a shimmering rainbow mane and silver horn. Sparkles and stars surround it. Friendly and whimsical fantasy art style, suitable for children. The unicorn looks gentle and kind.
+```
+
+**Badges/Medals:**
+```
+An ornate golden badge with a dragon and knight shield design, encrusted with gems. Prestigious and legendary looking. Fantasy achievement badge style.
+```
+
+**Equipment:**
+```
+Magical boots with small wings on the ankles, glowing with blue speed lines. Adventurous and fast-looking. Fantasy item icon, vibrant colors.
+```
+
+**Candy/Whimsical Items:**
+```
+A magical golden lollipop swirl on a sparkly stick, glowing with warm light. Whimsical and candy-themed. Fantasy candy item icon.
+```
+
+### Key Learnings
+
+1. **"Fantasy RPG item art style"** — Produces consistent game-like icons
+2. **"vibrant colors"** — Ensures icons pop and are visible at small sizes
+3. **"suitable for children"** — For cute/friendly items, adds this for age-appropriate results
+4. **Describe the glow/magic** — Items look more magical with "glowing", "shimmering", "sparkles"
+5. **Include the emotion** — "friendly", "heroic", "powerful" affects the feel
+
+### Batch Generation Script
+
+Location: `scripts/generateMissingRewards.ts`
+
+```bash
+npx tsx scripts/generateMissingRewards.ts
+```
+
+Features:
+- Generates all missing reward images
+- 3-second delay between requests (rate limit safe)
+- Skips existing files
+- Reports success/failure for each
+
+### Rate Limiting
+
+Free tier allows ~15 requests/minute. With 3-second delay:
+- 31 images ≈ 2-3 minutes generation time
+- No rate limit errors encountered
+
+---
+
+*Last updated: January 31, 2026*
 *Based on manual testing with Dragon Knight Rescue and Fire Gem Quest stories*
 *API testing with Shadow Knight adventure*
+*Reward icon generation for all adventures*

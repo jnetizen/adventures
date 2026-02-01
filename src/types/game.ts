@@ -87,6 +87,20 @@ export interface GameSession {
   character_scenes?: CharacterSceneState[] | null;
   /** True when party is split across parallel scenes */
   is_split?: boolean | null;
+
+  // Puzzle scene state
+  /** True when DM has started the puzzle (after reading narration). */
+  puzzle_started?: boolean | null;
+  /** True when current puzzle scene has been completed. */
+  puzzle_completed?: boolean | null;
+  /** Outcome of the puzzle ('success' or 'fail'). */
+  puzzle_outcome?: 'success' | 'fail' | null;
+
+  // Roll-until-success climax state
+  /** Number of rolls in the current climax sequence. */
+  climax_roll_count?: number | null;
+  /** Index into failNarrations array (which dodge narration to show). */
+  climax_fail_index?: number | null;
 }
 
 export interface GameState {

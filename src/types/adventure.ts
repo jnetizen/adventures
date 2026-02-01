@@ -3,6 +3,115 @@ export interface ChoiceOutcome {
   animationKey?: string;
 }
 
+// ============================================
+// Scene Types (for puzzle and special scenes)
+// ============================================
+
+/** Scene type determines the UI and interaction model for a scene. */
+export type SceneType = 'standard' | 'puzzle-physical' | 'puzzle-ingame' | 'puzzle-seeker-lens';
+
+/** A symbol/element used in drag puzzles. */
+export interface PuzzleSymbol {
+  id: string;
+  name: string;
+  /** Can be an image URL or emoji string. */
+  imageUrl: string;
+}
+
+/** Instructions for physical world puzzles (player does something in real life). */
+export interface PhysicalPuzzleInstructions {
+  type: 'physical-world';
+  /** Challenge text displayed to the player. */
+  challenge: string;
+  /** Instructions for the DM (what to watch for). */
+  dmPrompt: string;
+  /** Hints the DM can read aloud if player is stuck. */
+  hints: string[];
+  /** How success is determined. */
+  successTrigger: 'dm-confirms';
+  /** Narration shown on success. */
+  successNarration?: string;
+  /** Narration shown on "nice try" (fail). */
+  failNarration?: string;
+}
+
+/** Instructions for in-game drag puzzles (player interacts with screen). */
+export interface DragPuzzleInstructions {
+  type: 'in-game-drag';
+  /** Prompt/question to display above the puzzle. */
+  prompt?: string;
+  /** Symbols available for the puzzle. */
+  symbols: PuzzleSymbol[];
+  /** The correct order of symbol IDs. */
+  correctOrder: string[];
+  /** Hints the DM can read aloud if player is stuck. */
+  hints: string[];
+  /** Narration shown on success. */
+  successNarration?: string;
+}
+
+/** Direction the player must point the iPad to reveal the hidden object. */
+export type SeekerDirection = 'up' | 'down' | 'left' | 'right' | 'flat-face-up' | 'flat-face-down';
+
+/** Hidden object revealed during Seeker's Lens puzzle. */
+export interface SeekerHiddenObject {
+  id: string;
+  name: string;
+  /** Image URL for the hidden object (2D sprite). */
+  imageUrl: string;
+  /** Width in pixels. */
+  width?: number;
+  /** Height in pixels. */
+  height?: number;
+  /** Animation style when object appears. */
+  animation?: 'float-bounce' | 'sparkle' | 'pulse';
+}
+
+/** Progressive hint with delay for Seeker's Lens puzzle. */
+export interface SeekerHint {
+  /** Delay in seconds before this hint is available. */
+  delaySeconds: number;
+  /** Hint text for DM to read aloud. */
+  text: string;
+}
+
+/** Instructions for Seeker's Lens puzzle (AR-like camera + gyroscope). */
+export interface SeekerLensInstructions {
+  type: 'seeker-lens';
+  /** Setup narration explaining how to use the Seeker's Lens. */
+  setupNarration: string;
+  /** The hidden object to find. */
+  hiddenObject: SeekerHiddenObject;
+  /** Direction the iPad must be pointed to reveal the object. */
+  triggerDirection: SeekerDirection;
+  /** Tolerance in degrees for direction matching (default 35). */
+  directionToleranceDegrees?: number;
+  /** Progressive hints for DM to read aloud. */
+  hints: SeekerHint[];
+  /** Narration shown when the object is revealed. */
+  revealNarration: string;
+  /** Prompt text shown when object is visible (e.g., "Tap Spark!"). */
+  tapPrompt: string;
+  /** Narration shown after player taps the object. */
+  successNarration: string;
+  /** Optional reward for finding the object. */
+  successReward?: Reward;
+}
+
+/** Union type for all puzzle instruction types. */
+export type PuzzleInstructions = PhysicalPuzzleInstructions | DragPuzzleInstructions | SeekerLensInstructions;
+
+/** Instructions for roll-until-success climax (solo boss fight). */
+export interface RollUntilSuccessInstructions {
+  type: 'roll-until-highest';
+  /** Narrations shown on each non-max roll (player dodges/survives). */
+  failNarrations: string[];
+  /** How success is determined. */
+  successTrigger: 'roll-highest-number';
+  /** Narration shown when player finally succeeds. */
+  successNarration?: string;
+}
+
 /** Extended outcome with cutscene image and reward (for per-turn outcomes). */
 export interface TurnOutcome {
   text: string;
@@ -88,10 +197,18 @@ export interface Scene {
   activeCharacters?: string[];
   /** True if this is a climax scene (dramatic finale). */
   isClimax?: boolean;
-  /** Climax mode: 'rapid-fire' means quick succession of character moments. */
-  climaxMode?: 'rapid-fire';
+  /** Climax mode: 'rapid-fire' = quick succession, 'roll-until-success' = solo boss fight. */
+  climaxMode?: 'rapid-fire' | 'roll-until-success';
   /** Optional video URL for climax scene (alternative to individual cutscenes). */
   climaxVideoUrl?: string;
+  /** Instructions for roll-until-success climax mode. */
+  climaxInstructions?: RollUntilSuccessInstructions;
+
+  // Puzzle scene support
+  /** Scene type determines UI and interaction model. Defaults to 'standard'. */
+  sceneType?: SceneType;
+  /** Instructions for puzzle scenes (physical or in-game). */
+  puzzleInstructions?: PuzzleInstructions;
 }
 
 export interface Character {
@@ -134,6 +251,8 @@ export interface Prologue {
   missionBrief: string;
   /** Optional image showing the world/setting before characters appear */
   prologueImageUrl?: string;
+  /** Optional video showing the world/setting (takes precedence over image) */
+  prologueVideoUrl?: string;
 }
 
 export interface ScoringThreshold {

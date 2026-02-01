@@ -408,7 +408,15 @@ export async function showCutscene(
   sessionId: string,
   cutscene: ActiveCutscene
 ): Promise<{ error: Error | null }> {
+  console.log('[CUTSCENE DB] showCutscene called', {
+    sessionId,
+    characterId: cutscene.characterId,
+    imageUrl: cutscene.imageUrl,
+    isOnline: isOnline(),
+  });
+
   if (!isOnline()) {
+    console.log('[CUTSCENE DB] Offline - queueing operation');
     await saveOperationToQueue({
       id: generateOperationId(),
       type: OPERATION_TYPES.SHOW_CUTSCENE,
@@ -420,6 +428,7 @@ export async function showCutscene(
   }
 
   return retryWithBackoff(async () => {
+    console.log('[CUTSCENE DB] Updating session with cutscene');
     const { error } = await supabase
       .from('sessions')
       .update({
@@ -427,6 +436,12 @@ export async function showCutscene(
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);
+
+    if (error) {
+      console.error('[CUTSCENE DB] Failed to update session:', error);
+    } else {
+      console.log('[CUTSCENE DB] Cutscene saved successfully');
+    }
 
     return { error: error || null };
   });
@@ -781,4 +796,128 @@ export async function syncPendingOperations(): Promise<{ synced: number; errors:
   }
 
   return { synced, errors };
+}
+
+// ============================================
+// Puzzle Scene Functions
+// ============================================
+
+/**
+ * Marks a puzzle as completed with the given outcome.
+ * Called by player screen (for in-game puzzles) or DM (for physical puzzles).
+ */
+export async function completePuzzle(
+  sessionId: string,
+  outcome: 'success' | 'fail'
+): Promise<{ error: Error | null }> {
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        puzzle_completed: true,
+        puzzle_outcome: outcome,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Resets puzzle state for a new puzzle scene.
+ * Called when entering a puzzle scene.
+ */
+export async function resetPuzzleState(sessionId: string): Promise<{ error: Error | null }> {
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        puzzle_started: null,
+        puzzle_completed: null,
+        puzzle_outcome: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Starts a puzzle scene after DM has read the narration.
+ * Shows puzzle controls on both screens.
+ */
+export async function startPuzzle(sessionId: string): Promise<{ error: Error | null }> {
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        puzzle_started: true,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+// ============================================
+// Roll-Until-Success Climax Functions
+// ============================================
+
+/**
+ * Records a roll in the roll-until-success climax sequence.
+ * Updates the roll count and fail index.
+ */
+export async function recordClimaxRoll(
+  sessionId: string,
+  isMax: boolean
+): Promise<{ error: Error | null }> {
+  return retryWithBackoff(async () => {
+    // Get current climax state
+    const { data: session, error: fetchError } = await supabase
+      .from('sessions')
+      .select('climax_roll_count, climax_fail_index')
+      .eq('id', sessionId)
+      .single();
+
+    if (fetchError || !session) {
+      return { error: fetchError || new Error('Session not found') };
+    }
+
+    const currentCount = (session.climax_roll_count as number | null) ?? 0;
+    const currentFailIndex = (session.climax_fail_index as number | null) ?? 0;
+
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        climax_roll_count: currentCount + 1,
+        // Only increment fail index on non-max rolls
+        climax_fail_index: isMax ? currentFailIndex : currentFailIndex + 1,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Resets climax state for a new roll-until-success sequence.
+ * Called when entering a roll-until-success climax scene.
+ */
+export async function resetClimaxState(sessionId: string): Promise<{ error: Error | null }> {
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        climax_roll_count: 0,
+        climax_fail_index: 0,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
 }

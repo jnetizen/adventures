@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
-import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure } from '../lib/gameState';
+import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState } from '../lib/gameState';
 import { formatError } from '../lib/errorRecovery';
-import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn } from '../lib/adventures';
+import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, isRollUntilSuccessClimax } from '../lib/adventures';
 import {
   computeIsSplit,
   computeActiveParallelCharacterId,
@@ -37,6 +37,10 @@ import EndingPage from './EndingPage';
 import FeedbackForm from '../components/FeedbackForm';
 import RewardCelebration from '../components/RewardCelebration';
 import DiceRoller from '../components/DiceRoller';
+import PhysicalPuzzleDMControls from '../components/PhysicalPuzzleDMControls';
+import DragPuzzleDMControls from '../components/DragPuzzleDMControls';
+import SeekerLensDMControls from '../components/SeekerLensDMControls';
+import RollUntilSuccessControls from '../components/RollUntilSuccessControls';
 
 const getCharactersInScene = (
   characterScenes: GameSession['character_scenes'] | null | undefined,
@@ -88,8 +92,20 @@ const showOutcomeCutscene = async (
   characterId: string,
   outcome: TurnOutcome
 ) => {
-  if (!outcome.cutsceneImageUrl) return;
+  console.log('[CUTSCENE DEBUG] showOutcomeCutscene called', {
+    sessionId,
+    characterId,
+    hasOutcome: !!outcome,
+    outcomeText: outcome?.text?.substring(0, 50),
+    cutsceneImageUrl: outcome?.cutsceneImageUrl,
+  });
 
+  if (!outcome.cutsceneImageUrl) {
+    console.log('[CUTSCENE DEBUG] No cutsceneImageUrl, skipping');
+    return;
+  }
+
+  console.log('[CUTSCENE DEBUG] Calling showCutscene with URL:', outcome.cutsceneImageUrl);
   const { error: cutsceneError } = await showCutscene(sessionId, {
     characterId,
     imageUrl: outcome.cutsceneImageUrl,
@@ -160,6 +176,7 @@ export default function DMPage() {
   const [playerAssignments, setPlayerAssignments] = useState<Array<{ kidName: string; characterId: string }>>([]);
   const [selectedDiceType, setSelectedDiceType] = useState<DiceType>(DEFAULT_DICE_TYPE);
   const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false); // Ref-based guard for immediate double-click prevention
   const [advancing, setAdvancing] = useState(false);
   const [celebratedSceneIds, setCelebratedSceneIds] = useState<string[]>([]);
   const [celebratedEnding, setCelebratedEnding] = useState(false);
@@ -170,6 +187,8 @@ export default function DMPage() {
   const [selectedParallelCharacterId, setSelectedParallelCharacterId] = useState<string | null>(null);
   // For climax scenes: whether to play video or show individual cutscenes
   const [climaxPlayMode, setClimaxPlayMode] = useState<'cutscenes' | 'video' | null>(null);
+  // Track which climax cutscene we're showing (for cutscenes mode)
+  const [climaxCutsceneIndex, setClimaxCutsceneIndex] = useState(0);
 
   // Custom hooks for extracted logic
   useSessionPersistence(session);
@@ -177,8 +196,22 @@ export default function DMPage() {
   const { adventure, loading: loadingAdventure } = useAdventureLoader(session?.adventure_id);
 
   // Memoized callbacks for session subscription
+  // Merge active_cutscene to preserve optimistic updates during race conditions
   const handleSessionUpdate = useCallback((newSession: GameSession) => {
-    setSession(newSession);
+    setSession((prev) => {
+      console.log('%c[SUBSCRIPTION] Update received', 'color: cyan; font-weight: bold', {
+        prevCutscene: prev?.active_cutscene?.characterId,
+        newCutscene: newSession.active_cutscene?.characterId,
+        newTurnIndex: newSession.current_character_turn_index,
+      });
+      // If we have an active_cutscene locally but the incoming update doesn't,
+      // preserve our local value (it might be an optimistic update not yet confirmed)
+      if (prev?.active_cutscene && !newSession.active_cutscene) {
+        console.log('%c[SUBSCRIPTION] Preserving local active_cutscene', 'color: yellow; font-weight: bold', prev.active_cutscene);
+        return { ...newSession, active_cutscene: prev.active_cutscene };
+      }
+      return newSession;
+    });
   }, []);
 
   const handleStatusChange = useCallback((status: ConnectionStatusType) => {
@@ -213,11 +246,12 @@ export default function DMPage() {
 
   // Debug logging for split state
   if (session?.phase === GAME_PHASES.PLAYING) {
-    debugLog('session', 'Split state update', {
+    console.log('[PARALLEL DEBUG] Split state', {
       is_split: session?.is_split,
-      character_scenes: session?.character_scenes,
       isSplit,
       current_scene_id: session?.current_scene_id,
+      character_scenes: session?.character_scenes?.map(cs => ({ char: cs.characterId, scene: cs.sceneId })),
+      selectedParallelCharacterId,
     });
   }
 
@@ -234,6 +268,14 @@ export default function DMPage() {
     session?.character_scenes,
     activeParallelCharacterId
   );
+
+  if (isSplit) {
+    console.log('[PARALLEL DEBUG] Active parallel state', {
+      activeParallelCharacterId,
+      activeCharacterSceneId: activeCharacterScene?.sceneId,
+      sessionCurrentSceneId: session?.current_scene_id,
+    });
+  }
 
   // Compute derived state (currentScene and currentCharacterTurn) from session and adventure
   // When split, use the active character's scene; otherwise use branching-aware lookup
@@ -429,6 +471,14 @@ export default function DMPage() {
   };
 
   const handleSubmitChoice = async () => {
+    // CRITICAL: Ref-based guard against double-click race conditions
+    // Refs update immediately, unlike state which batches updates
+    if (submittingRef.current) {
+      console.log('%c[SUBMIT] Blocked - already submitting (ref guard)', 'color: red; font-weight: bold');
+      return;
+    }
+    submittingRef.current = true;
+
     // Capture turn data at the start to avoid race conditions with subscription updates
     const turn = currentCharacterTurn;
     const choice = selectedChoice;
@@ -445,8 +495,18 @@ export default function DMPage() {
       hasFailOutcome: !!turn?.failOutcome,
     });
 
+    // Log detailed turn data for debugging cutscene issues
+    console.log('%c[SUBMIT] Turn data captured', 'color: cyan; font-weight: bold', {
+      characterId: turn?.characterId,
+      hasSuccessOutcome: !!turn?.successOutcome,
+      hasFailOutcome: !!turn?.failOutcome,
+      successCutsceneUrl: turn?.successOutcome?.cutsceneImageUrl,
+      failCutsceneUrl: turn?.failOutcome?.cutsceneImageUrl,
+    });
+
     if (!session || !turn || !choice || !diceRoll.trim()) {
       setError('Please select a choice and enter a dice roll');
+      submittingRef.current = false;
       return;
     }
 
@@ -454,6 +514,7 @@ export default function DMPage() {
     const maxRoll = session.dice_type ?? DEFAULT_DICE_TYPE;
     if (isNaN(roll) || roll < 1 || roll > maxRoll) {
       setError(`Dice roll must be between 1 and ${maxRoll}`);
+      submittingRef.current = false;
       return;
     }
 
@@ -472,6 +533,7 @@ export default function DMPage() {
 
     if (submitError) {
       setSubmitting(false);
+      submittingRef.current = false;
       setError(formatError(submitError));
       return;
     }
@@ -503,27 +565,57 @@ export default function DMPage() {
 
     // Check if this turn has cutscene outcomes (new format)
     // Use captured turn data to avoid race conditions
-    debugLog('session', 'Checking cutscene for turn', {
+    console.log('%c[CUTSCENE] Step 1: Checking turn for cutscene', 'color: blue; font-weight: bold', {
       characterId: turn.characterId,
+      turnIndex: session.current_character_turn_index,
       hasPerTurnOutcomes: hasPerTurnOutcomes(turn),
       successOutcome: turn.successOutcome,
       failOutcome: turn.failOutcome,
     });
+
     if (hasPerTurnOutcomes(turn)) {
       const turnOutcome = getTurnOutcome(turn, roll, maxRoll, choice);
-      debugLog('session', 'Turn outcome resolved', {
+      console.log('%c[CUTSCENE] Step 2: Outcome resolved', 'color: green; font-weight: bold', {
         roll,
         maxRoll,
-        outcome: turnOutcome,
+        threshold: turn.successThreshold,
+        isSuccess: turnOutcome === turn.successOutcome,
+        outcomeText: turnOutcome?.text,
         cutsceneImageUrl: turnOutcome?.cutsceneImageUrl,
+        hasOutcome: !!turnOutcome,
       });
 
       if (turnOutcome?.cutsceneImageUrl) {
+        console.log('%c[CUTSCENE] Step 3: Setting cutscene for ' + turn.characterId, 'color: orange; font-weight: bold');
+        // IMPORTANT: Set optimistic update BEFORE async call to prevent subscription race condition
+        const cutsceneData = {
+          characterId: turn.characterId,
+          imageUrl: turnOutcome.cutsceneImageUrl,
+          outcomeText: turnOutcome.text || '',
+          reward: turnOutcome.reward ? {
+            id: turnOutcome.reward.id,
+            name: turnOutcome.reward.name,
+            imageUrl: turnOutcome.reward.imageUrl,
+            type: turnOutcome.reward.type,
+          } : undefined,
+        };
+        console.log('%c[CUTSCENE] Step 3b: Cutscene data', 'color: orange', cutsceneData);
+        setSession((prev) => {
+          console.log('%c[CUTSCENE] Step 3c: setSession called, prev active_cutscene:', 'color: orange', prev?.active_cutscene);
+          return prev ? { ...prev, active_cutscene: cutsceneData } : null;
+        });
+        console.log('%c[CUTSCENE] Step 4: Calling showOutcomeCutscene', 'color: purple; font-weight: bold');
         await showOutcomeCutscene(session.id, turn.characterId, turnOutcome);
+        console.log('%c[CUTSCENE] Step 5: showOutcomeCutscene complete', 'color: purple; font-weight: bold');
+      } else {
+        console.log('%c[CUTSCENE] No cutsceneImageUrl in outcome', 'color: red', turnOutcome);
       }
+    } else {
+      console.log('%c[CUTSCENE] Turn does not have per-turn outcomes', 'color: red');
     }
 
     setSubmitting(false);
+    submittingRef.current = false;
 
     // Reset selection for next turn
     setSelectedChoice(null);
@@ -531,102 +623,329 @@ export default function DMPage() {
   };
 
   /**
-   * Handle submission for alwaysSucceed (climax) turns.
-   * No dice roll needed - just triggers the cutscene and advances.
+   * Handle the entire climax sequence at once.
+   * Shows either the video OR all cutscenes in sequence.
+   * All character choices are submitted together.
    */
-  const handleSubmitClimaxTurn = async () => {
-    const turn = currentCharacterTurn;
-    const turnIndex = isSplit && activeCharacterScene
-      ? activeCharacterScene.turnIndex || 0
-      : session?.current_character_turn_index || 0;
+  const handleSubmitClimaxAll = async () => {
+    if (!session || !currentScene || !adventure) {
+      setError('Invalid climax state');
+      return;
+    }
 
-    debugLog('session', 'Starting climax turn submission', {
-      turnCharacterId: turn?.characterId,
-      alwaysSucceed: turn?.alwaysSucceed,
-      hasOutcome: !!turn?.outcome,
-      climaxPlayMode,
-      turnIndex,
-    });
-
-    if (!session || !turn || !turn.alwaysSucceed) {
-      setError('Invalid climax turn state');
+    const climaxTurns = getActiveCharacterTurns(currentScene, players).filter(t => isAlwaysSucceedTurn(t));
+    if (climaxTurns.length === 0) {
+      setError('No climax turns found');
       return;
     }
 
     setError(null);
     setSubmitting(true);
 
-    // For alwaysSucceed turns, we still call submitCharacterChoice but with
-    // a dummy roll that always succeeds. We use the max dice value.
     const diceType = session.dice_type ?? DEFAULT_DICE_TYPE;
-    const { error: submitError } = await submitCharacterChoice(
-      session.id,
-      turn.characterId,
-      'climax-action', // Dummy choice ID for climax turns
-      diceType, // Always max roll = always success
-      1 // Threshold of 1 means any roll succeeds
-    );
 
-    if (submitError) {
-      setSubmitting(false);
-      setError(formatError(submitError));
-      return;
+    // Submit all character choices at once
+    for (const turn of climaxTurns) {
+      const { error: submitError } = await submitCharacterChoice(
+        session.id,
+        turn.characterId,
+        'climax-action',
+        diceType, // Always max roll = always success
+        1 // Threshold of 1 means any roll succeeds
+      );
+      if (submitError) {
+        console.error('Failed to submit climax choice for', turn.characterId, submitError);
+      }
     }
 
-    // Update character scene state if in split mode
-    if (isSplit && activeCharacterScene) {
-      const newTurnIndex = (activeCharacterScene.turnIndex || 0) + 1;
-      const currentSceneId = activeCharacterScene.sceneId;
+    console.log('%c[CLIMAX] All choices submitted, now showing cutscene/video', 'color: lime; font-size: 14px; font-weight: bold');
+    console.log('%c[CLIMAX] Mode:', 'color: lime', climaxPlayMode);
+    console.log('%c[CLIMAX] currentScene.climaxVideoUrl:', 'color: lime', currentScene.climaxVideoUrl);
+    console.log('%c[CLIMAX] currentScene:', 'color: lime', currentScene);
 
-      const charactersInSameScene = getCharactersInScene(session.character_scenes, currentSceneId);
-
-      for (const charScene of charactersInSameScene) {
-        await updateCharacterSceneState(session.id, charScene.characterId, {
-          turnIndex: newTurnIndex,
-        });
-      }
-
-      setSession((prev) => {
-        if (!prev?.character_scenes) return prev;
-        return {
-          ...prev,
-          character_scenes: updateSceneTurnIndex(prev.character_scenes, currentSceneId, newTurnIndex),
+    // Show video OR first cutscene
+    if (climaxPlayMode === 'video' && currentScene.climaxVideoUrl) {
+      console.log('%c[CLIMAX] ✓ Video mode - showing video!', 'color: lime; font-size: 16px; font-weight: bold', currentScene.climaxVideoUrl);
+      const videoCutsceneData = {
+        characterId: 'climax-video',
+        imageUrl: currentScene.climaxVideoUrl,
+        outcomeText: 'The heroes strike together!',
+      };
+      setSession((prev) => prev ? { ...prev, active_cutscene: videoCutsceneData } : null);
+      await showCutscene(session.id, videoCutsceneData);
+    } else {
+      // Cutscenes mode - show the first cutscene, DM will dismiss to see next
+      const firstTurn = climaxTurns[0];
+      if (firstTurn?.outcome?.cutsceneImageUrl) {
+        console.log('[CLIMAX] Showing first cutscene for', firstTurn.characterId);
+        const cutsceneData = {
+          characterId: firstTurn.characterId,
+          imageUrl: firstTurn.outcome.cutsceneImageUrl,
+          outcomeText: firstTurn.outcome.text || '',
         };
-      });
-    }
-
-    // Show cutscene/video for the outcome
-    // If video mode and first turn, show the video
-    // If video mode and not first turn, skip cutscene (video already showed everything)
-    // If cutscenes mode, show individual cutscene as normal
-    if (climaxPlayMode === 'video' && currentScene?.climaxVideoUrl) {
-      if (turnIndex === 0) {
-        // First turn in video mode - show the video
-        const { error: cutsceneError } = await showCutscene(session.id, {
-          characterId: 'climax-video',
-          imageUrl: currentScene.climaxVideoUrl,
-          outcomeText: 'The heroes strike together!',
-        });
-        if (cutsceneError) {
-          console.error('Failed to show climax video:', cutsceneError);
-        }
+        setSession((prev) => prev ? { ...prev, active_cutscene: cutsceneData } : null);
+        await showCutscene(session.id, cutsceneData);
       }
-      // For subsequent turns in video mode, don't show individual cutscenes
-    } else if (turn.outcome?.cutsceneImageUrl) {
-      // Cutscenes mode (or no video available) - show individual cutscene
-      await showOutcomeCutscene(session.id, turn.characterId, turn.outcome);
     }
 
     setSubmitting(false);
   };
 
+  /**
+   * Handle dismissing climax cutscene - shows next cutscene or clears
+   */
+  const handleDismissClimaxCutscene = async () => {
+    if (!session || !currentScene || !adventure) return;
+
+    const climaxTurns = getActiveCharacterTurns(currentScene, players).filter(t => isAlwaysSucceedTurn(t));
+    const nextIndex = climaxCutsceneIndex + 1;
+
+    // Helper to go directly to epilogue after climax
+    const goToEpilogue = async () => {
+      setClimaxCutsceneIndex(0);
+      setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
+      await dismissCutscene(session.id);
+
+      // Auto-advance to epilogue after climax cutscene
+      if (adventure.ending) {
+        setShowingEpilogue(true);
+        if (adventure.ending.endingImageUrl) {
+          await showCutscene(session.id, {
+            characterId: 'epilogue',
+            imageUrl: adventure.ending.endingImageUrl,
+            outcomeText: adventure.ending.title || 'The End',
+          });
+        }
+      }
+    };
+
+    // If video mode or we've shown all cutscenes, go to epilogue
+    if (climaxPlayMode === 'video' || nextIndex >= climaxTurns.length) {
+      await goToEpilogue();
+      return;
+    }
+
+    // Show next cutscene
+    const nextTurn = climaxTurns[nextIndex];
+    if (nextTurn?.outcome?.cutsceneImageUrl) {
+      const cutsceneData = {
+        characterId: nextTurn.characterId,
+        imageUrl: nextTurn.outcome.cutsceneImageUrl,
+        outcomeText: nextTurn.outcome.text || '',
+      };
+      setClimaxCutsceneIndex(nextIndex);
+      setSession((prev) => prev ? { ...prev, active_cutscene: cutsceneData } : null);
+      await showCutscene(session.id, cutsceneData);
+    } else {
+      // No more cutscenes, go to epilogue
+      await goToEpilogue();
+    }
+  };
+
   const handleDismissCutscene = async () => {
-    if (!session) return;
+    if (!session || !adventure) return;
     setError(null);
+    // Optimistically clear cutscene from local state immediately
+    setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
     const { error: dismissError } = await dismissCutscene(session.id);
     if (dismissError) {
       setError(formatError(dismissError));
+      // If dismiss failed, the subscription will restore the cutscene state
+      return;
     }
+
+    // For solo players (1 player), auto-advance to next scene after cutscene
+    // This makes the flow smoother since there's no one else to wait for
+    const sessionPlayers = session.players || [];
+    if (sessionPlayers.length === 1 && currentScene) {
+      const scene = currentScene;
+      const activeTurns = getActiveCharacterTurns(scene, sessionPlayers);
+      const turnIndex = session.current_character_turn_index || 0;
+      const allCharactersActed = turnIndex >= activeTurns.length;
+
+      if (allCharactersActed && scene.outcome?.nextSceneId) {
+        // Small delay to let the cutscene dismiss animation complete
+        setTimeout(() => {
+          handleNextScene();
+        }, 300);
+      }
+    }
+  };
+
+  // ============================================
+  // Puzzle Scene Handlers
+  // ============================================
+
+  /**
+   * Handle physical puzzle success - DM confirms player completed the challenge
+   */
+  const handlePuzzleSuccess = async () => {
+    if (!session || !currentScene || !adventure) return;
+
+    setError(null);
+    setSubmitting(true);
+
+    const { error: puzzleError } = await completePuzzle(session.id, 'success');
+    if (puzzleError) {
+      setError(formatError(puzzleError));
+      setSubmitting(false);
+      return;
+    }
+
+    // Show success narration as cutscene if available
+    const instructions = getPhysicalPuzzleInstructions(currentScene);
+    if (instructions?.successNarration) {
+      const character = adventure.characters[0];
+      const cutsceneData = {
+        characterId: character?.id ?? 'unknown',
+        imageUrl: currentScene.sceneImageUrl || '',
+        outcomeText: instructions.successNarration,
+      };
+      setSession((prev) => prev ? { ...prev, puzzle_completed: true, puzzle_outcome: 'success', active_cutscene: cutsceneData } : null);
+      await showCutscene(session.id, cutsceneData);
+    } else {
+      // Update local state without cutscene
+      setSession((prev) => prev ? { ...prev, puzzle_completed: true, puzzle_outcome: 'success' } : null);
+    }
+    setSubmitting(false);
+  };
+
+  /**
+   * Handle physical puzzle "nice try" - DM confirms player gave effort but didn't fully succeed
+   */
+  const handlePuzzleFail = async () => {
+    if (!session || !currentScene || !adventure) return;
+
+    setError(null);
+    setSubmitting(true);
+
+    const { error: puzzleError } = await completePuzzle(session.id, 'fail');
+    if (puzzleError) {
+      setError(formatError(puzzleError));
+      setSubmitting(false);
+      return;
+    }
+
+    // Show fail narration as cutscene if available
+    const instructions = getPhysicalPuzzleInstructions(currentScene);
+    if (instructions?.failNarration) {
+      const character = adventure.characters[0];
+      const cutsceneData = {
+        characterId: character?.id ?? 'unknown',
+        imageUrl: currentScene.sceneImageUrl || '',
+        outcomeText: instructions.failNarration,
+      };
+      setSession((prev) => prev ? { ...prev, puzzle_completed: true, puzzle_outcome: 'fail', active_cutscene: cutsceneData } : null);
+      await showCutscene(session.id, cutsceneData);
+    } else {
+      // Update local state without cutscene
+      setSession((prev) => prev ? { ...prev, puzzle_completed: true, puzzle_outcome: 'fail' } : null);
+    }
+    setSubmitting(false);
+  };
+
+  /**
+   * Handle drag puzzle override - DM manually marks puzzle as complete when player is stuck
+   */
+  const handlePuzzleOverride = async () => {
+    if (!session) return;
+
+    setError(null);
+    setSubmitting(true);
+
+    const { error: puzzleError } = await completePuzzle(session.id, 'fail');
+    if (puzzleError) {
+      setError(formatError(puzzleError));
+      setSubmitting(false);
+      return;
+    }
+
+    setSession((prev) => prev ? { ...prev, puzzle_completed: true, puzzle_outcome: 'fail' } : null);
+    setSubmitting(false);
+  };
+
+  /**
+   * Handle starting a puzzle after DM reads narration
+   */
+  const handleStartPuzzle = async () => {
+    if (!session) return;
+
+    setError(null);
+    setSubmitting(true);
+
+    const { error: puzzleError } = await startPuzzle(session.id);
+    if (puzzleError) {
+      setError(formatError(puzzleError));
+      setSubmitting(false);
+      return;
+    }
+
+    // Update local state
+    setSession((prev) => prev ? { ...prev, puzzle_started: true } : null);
+    setSubmitting(false);
+  };
+
+  // ============================================
+  // Roll-Until-Success Climax Handlers
+  // ============================================
+
+  /**
+   * Handle a roll in the roll-until-success climax sequence
+   */
+  const handleRollUntilSuccessRoll = async (_roll: number, isMax: boolean) => {
+    if (!session) return;
+
+    const { error: rollError } = await recordClimaxRoll(session.id, isMax);
+    if (rollError) {
+      setError(formatError(rollError));
+      return;
+    }
+
+    // Update local state
+    setSession((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        climax_roll_count: (prev.climax_roll_count ?? 0) + 1,
+        climax_fail_index: isMax ? (prev.climax_fail_index ?? 0) : (prev.climax_fail_index ?? 0) + 1,
+      };
+    });
+  };
+
+  /**
+   * Handle victory in roll-until-success climax
+   */
+  const handleRollUntilSuccessVictory = async () => {
+    if (!session || !currentScene) return;
+
+    setError(null);
+    setSubmitting(true);
+
+    // Show victory cutscene/video
+    if (currentScene.climaxVideoUrl) {
+      const cutsceneData = {
+        characterId: 'climax-victory',
+        imageUrl: currentScene.climaxVideoUrl,
+        outcomeText: currentScene.climaxInstructions?.successNarration || 'Victory!',
+      };
+      setSession((prev) => prev ? { ...prev, active_cutscene: cutsceneData } : null);
+      await showCutscene(session.id, cutsceneData);
+    }
+
+    // Submit the climax "turn" as complete
+    const climaxTurns = getActiveCharacterTurns(currentScene, players);
+    if (climaxTurns.length > 0) {
+      const turn = climaxTurns[0];
+      await submitCharacterChoice(
+        session.id,
+        turn.characterId,
+        'climax-victory',
+        session.dice_type ?? DEFAULT_DICE_TYPE,
+        1
+      );
+    }
+
+    setSubmitting(false);
   };
 
   const handleShowEpilogue = async () => {
@@ -758,6 +1077,9 @@ export default function DMPage() {
 
     // Use scene ID-based navigation if available, otherwise fall back to legacy
     if (nextSceneId && nextSceneNumber !== null) {
+      // Reset puzzle state when advancing to a new scene
+      await resetPuzzleState(session.id);
+
       const { error: advanceError } = await startSceneById(session.id, nextSceneId, nextSceneNumber);
       setAdvancing(false);
       if (advanceError) {
@@ -772,6 +1094,9 @@ export default function DMPage() {
         scene_choices: [],
         is_split: false,
         character_scenes: undefined,
+        puzzle_started: null,
+        puzzle_completed: null,
+        puzzle_outcome: null,
       } : null);
     } else {
       // End of adventure or legacy navigation
@@ -924,39 +1249,55 @@ export default function DMPage() {
 
             {assignmentStep === 'kids' ? (
               <div className="space-y-4">
-                <p className="text-sm text-gray-600">Enter kid names (1–3 players).</p>
-                {kidNames.map((name, i) => (
-                  <div key={i} className="flex gap-2">
+                {/* Solo adventures (1 character) only allow 1 player */}
+                {adventure.characters.length === 1 ? (
+                  <>
+                    <p className="text-sm text-gray-600">Enter player name.</p>
                     <input
                       type="text"
-                      value={name}
-                      onChange={(e) => {
-                        const next = [...kidNames];
-                        next[i] = e.target.value;
-                        setKidNames(next);
-                      }}
-                      placeholder={`Kid ${i + 1}`}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={kidNames[0] || ''}
+                      onChange={(e) => setKidNames([e.target.value])}
+                      placeholder="Player name"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    {kidNames.length > 1 && (
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-600">Enter kid names (1–{adventure.characters.length} players).</p>
+                    {kidNames.map((name, i) => (
+                      <div key={i} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => {
+                            const next = [...kidNames];
+                            next[i] = e.target.value;
+                            setKidNames(next);
+                          }}
+                          placeholder={`Kid ${i + 1}`}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {kidNames.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => setKidNames(kidNames.filter((_, j) => j !== i))}
+                            className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    {kidNames.length < adventure.characters.length && (
                       <button
                         type="button"
-                        onClick={() => setKidNames(kidNames.filter((_, j) => j !== i))}
-                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
+                        onClick={() => setKidNames([...kidNames, ''])}
+                        className="text-sm text-blue-600 hover:underline"
                       >
-                        Remove
+                        + Add kid
                       </button>
                     )}
-                  </div>
-                ))}
-                {kidNames.length < 3 && (
-                  <button
-                    type="button"
-                    onClick={() => setKidNames([...kidNames, ''])}
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    + Add kid
-                  </button>
+                  </>
                 )}
 
                 {/* Dice type selector */}
@@ -1362,29 +1703,62 @@ export default function DMPage() {
           )}
 
           {/* Cutscene Active Indicator - shown regardless of scene choices */}
-          {currentScene && session.active_cutscene && (
-            <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg space-y-3 mt-4">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
-                <p className="font-semibold text-purple-900">Cutscene showing on kids' screen</p>
+          {(() => {
+            if (session.active_cutscene) {
+              console.log('%c[DISMISS] Cutscene IS active - button should show', 'color: lime; font-weight: bold; font-size: 14px', {
+                currentSceneId: currentScene?.id,
+                cutsceneCharacter: session.active_cutscene.characterId,
+                imageUrl: session.active_cutscene.imageUrl,
+              });
+            } else {
+              console.log('[DISMISS] No active cutscene', { currentSceneId: currentScene?.id });
+            }
+            return null;
+          })()}
+          {currentScene && session.active_cutscene && (() => {
+            const isClimaxScene = currentScene.isClimax;
+            const allClimaxTurns = isClimaxScene ? getActiveCharacterTurns(currentScene, players).filter(t => isAlwaysSucceedTurn(t)) : [];
+            const isVideoMode = climaxPlayMode === 'video';
+            const showingClimaxCutscene = isClimaxScene && !isVideoMode && allClimaxTurns.length > 1;
+            const cutsceneNumber = showingClimaxCutscene ? climaxCutsceneIndex + 1 : 0;
+            const totalCutscenes = showingClimaxCutscene ? allClimaxTurns.length : 0;
+            const isSoloAdventure = players.length === 1;
+
+            // For solo adventures, button says "Next Scene" since it auto-advances
+            const buttonText = showingClimaxCutscene && cutsceneNumber < totalCutscenes
+              ? 'Next Cutscene'
+              : isSoloAdventure
+                ? 'Next Scene'
+                : 'Dismiss';
+
+            return (
+              <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg space-y-3 mt-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
+                  <p className="font-semibold text-purple-900">
+                    {isVideoMode ? 'Video playing on kids\' screen' : 'Cutscene showing on kids\' screen'}
+                    {showingClimaxCutscene && ` (${cutsceneNumber}/${totalCutscenes})`}
+                  </p>
+                </div>
+                <p className="text-sm text-purple-800">{session.active_cutscene.outcomeText}</p>
+                {session.active_cutscene.reward && (
+                  <p className="text-sm text-purple-700">
+                    Reward: <span className="font-medium">{session.active_cutscene.reward.name}</span>
+                  </p>
+                )}
+                <button
+                  onClick={isClimaxScene ? handleDismissClimaxCutscene : handleDismissCutscene}
+                  className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+                >
+                  {buttonText}
+                </button>
               </div>
-              <p className="text-sm text-purple-800">{session.active_cutscene.outcomeText}</p>
-              {session.active_cutscene.reward && (
-                <p className="text-sm text-purple-700">
-                  Reward: <span className="font-medium">{session.active_cutscene.reward.name}</span>
-                </p>
-              )}
-              <button
-                onClick={handleDismissCutscene}
-                className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
-              >
-                Dismiss Cutscene
-              </button>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Scene outcome + Next/End only when all have acted */}
-          {currentScene && allActed && !showingEpilogue && (
+          {/* For solo adventures, hide this when cutscene is showing (cutscene button handles advance) */}
+          {currentScene && allActed && !showingEpilogue && !(players.length === 1 && session.active_cutscene) && (
             <>
               {currentScene.outcome && renderSceneOutcome(currentScene.outcome)}
               {isLastScene ? (
@@ -1451,8 +1825,139 @@ export default function DMPage() {
             />
           )}
 
-          {/* Character Turn UI */}
-          {!allActed && currentCharacterTurn && currentScene && !session.active_cutscene && (
+          {/* Puzzle Scene UI - Start Button (shown before puzzle_started) */}
+          {currentScene && isPuzzleScene(currentScene) && (() => {
+            console.log('[PUZZLE DEBUG]', {
+              sceneType: currentScene.sceneType,
+              puzzle_started: session.puzzle_started,
+              puzzle_completed: session.puzzle_completed,
+              active_cutscene: session.active_cutscene?.characterId,
+            });
+            return null;
+          })()}
+          {currentScene && isPuzzleScene(currentScene) && !session.puzzle_started && !session.puzzle_completed && !session.active_cutscene && (
+            <div className="space-y-4">
+              <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg">
+                <p className="text-sm text-purple-600 mb-2">Read the narration above, then start the challenge:</p>
+                <button
+                  onClick={handleStartPuzzle}
+                  disabled={submitting}
+                  className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white py-4 px-4 rounded-lg font-bold text-lg transition-colors"
+                >
+                  {submitting ? 'Starting...' : 'Start Challenge'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Puzzle Scene UI - Physical (shown after puzzle_started) */}
+          {currentScene && isPuzzleScene(currentScene) && isPhysicalPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && !session.active_cutscene && (() => {
+            const instructions = getPhysicalPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+
+            // For solo adventures, get the first character; for multiplayer, get current turn character
+            const character = adventure.characters[0];
+            const kidName = players[0]?.kidName || character?.name || 'Player';
+
+            return (
+              <PhysicalPuzzleDMControls
+                instructions={instructions}
+                kidName={kidName}
+                characterName={character?.name || 'Unknown'}
+                onSuccess={handlePuzzleSuccess}
+                onFail={handlePuzzleFail}
+                disabled={submitting}
+              />
+            );
+          })()}
+
+          {/* Puzzle Scene UI - Drag (shown after puzzle_started) */}
+          {currentScene && isPuzzleScene(currentScene) && isDragPuzzle(currentScene) && session.puzzle_started && !session.active_cutscene && (() => {
+            const instructions = getDragPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+
+            const character = adventure.characters[0];
+            const kidName = players[0]?.kidName || character?.name || 'Player';
+
+            return (
+              <DragPuzzleDMControls
+                instructions={instructions}
+                kidName={kidName}
+                characterName={character?.name || 'Unknown'}
+                session={session}
+                onOverrideComplete={handlePuzzleOverride}
+                disabled={submitting}
+              />
+            );
+          })()}
+
+          {/* Puzzle Scene UI - Seeker's Lens (shown after puzzle_started) */}
+          {currentScene && isPuzzleScene(currentScene) && isSeekerLensPuzzle(currentScene) && session.puzzle_started && !session.active_cutscene && (() => {
+            const instructions = getSeekerLensInstructions(currentScene);
+            if (!instructions) return null;
+
+            const character = adventure.characters[0];
+            const kidName = players[0]?.kidName || character?.name || 'Player';
+
+            return (
+              <SeekerLensDMControls
+                instructions={instructions}
+                kidName={kidName}
+                characterName={character?.name || 'Unknown'}
+                session={session}
+                onOverrideComplete={handlePuzzleOverride}
+                disabled={submitting}
+              />
+            );
+          })()}
+
+          {/* Puzzle Scene - Next Scene button after completion */}
+          {currentScene && isPuzzleScene(currentScene) && session.puzzle_completed && !session.active_cutscene && (
+            <div className="space-y-4">
+              <div className={`p-4 rounded-lg ${session.puzzle_outcome === 'success' ? 'bg-green-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
+                <p className="font-semibold" style={{ color: session.puzzle_outcome === 'success' ? '#166534' : '#c2410c' }}>
+                  {session.puzzle_outcome === 'success' ? 'Challenge Complete!' : 'Nice effort!'}
+                </p>
+              </div>
+              <button
+                onClick={handleNextScene}
+                disabled={advancing}
+                className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {advancing ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                    Advancing...
+                  </span>
+                ) : (
+                  'Next Scene'
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Roll-Until-Success Climax UI */}
+          {currentScene && isRollUntilSuccessClimax(currentScene) && currentScene.climaxInstructions && !session.active_cutscene && (() => {
+            const character = adventure.characters[0];
+            const kidName = players[0]?.kidName || character?.name || 'Player';
+            const diceType = (session.dice_type ?? DEFAULT_DICE_TYPE) as DiceType;
+
+            return (
+              <RollUntilSuccessControls
+                instructions={currentScene.climaxInstructions}
+                kidName={kidName}
+                characterName={character?.name || 'Unknown'}
+                diceType={diceType}
+                session={session}
+                onRollSubmit={handleRollUntilSuccessRoll}
+                onVictory={handleRollUntilSuccessVictory}
+                disabled={submitting}
+              />
+            );
+          })()}
+
+          {/* Character Turn UI - Standard scenes only */}
+          {!allActed && currentCharacterTurn && currentScene && !session.active_cutscene && !isPuzzleScene(currentScene) && !isRollUntilSuccessClimax(currentScene) && (
             <div className="space-y-4">
               {(() => {
                 const character = adventure.characters.find(c => c.id === currentCharacterTurn.characterId);
@@ -1465,21 +1970,19 @@ export default function DMPage() {
                 const prompt = `${kidName} (${character?.name ?? 'Unknown'}), ${currentCharacterTurn.promptText}`;
                 const isClimaxTurn = isAlwaysSucceedTurn(currentCharacterTurn);
 
-                // For climax turns, show simplified UI with just a GO button
+                // For climax turns, show unified UI with all character prompts and single GO button
                 if (isClimaxTurn) {
-                  // If this is the first climax turn and scene has video option, show mode selector
-                  const isFirstClimaxTurn = turnIndex === 0;
-                  const hasVideoOption = currentScene.climaxVideoUrl;
+                  const hasVideoOption = !!currentScene.climaxVideoUrl;
+                  const allClimaxTurns = activeTurns.filter(t => isAlwaysSucceedTurn(t));
 
-                  if (isFirstClimaxTurn && hasVideoOption && climaxPlayMode === null) {
+                  // Mode selector - show first if we haven't chosen yet
+                  if (hasVideoOption && climaxPlayMode === null) {
                     return (
                       <>
-                        {/* Climax scene indicator */}
                         <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-3 rounded-lg text-center">
                           <p className="font-bold text-lg">⚡ CLIMAX ⚡</p>
                         </div>
 
-                        {/* Climax mode selector */}
                         <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-lg space-y-4">
                           <p className="text-lg font-bold text-amber-900 text-center">How do you want to show the finale?</p>
                           <div className="grid grid-cols-2 gap-3">
@@ -1505,22 +2008,38 @@ export default function DMPage() {
                     );
                   }
 
+                  // Unified climax UI - show all character prompts at once
                   return (
                     <>
-                      {/* Climax scene indicator */}
-                      {currentScene.isClimax && (
-                        <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-3 rounded-lg text-center">
-                          <p className="font-bold text-lg">⚡ CLIMAX ⚡</p>
-                        </div>
-                      )}
-
-                      <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-lg">
-                        <p className="text-sm text-amber-700 mb-1">Turn {turnIndex + 1} of {totalTurns}</p>
-                        <p className="text-lg font-bold text-amber-900 mt-2">{prompt}</p>
+                      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-3 rounded-lg text-center">
+                        <p className="font-bold text-lg">⚡ CLIMAX ⚡</p>
                       </div>
 
+                      {/* Instructions */}
+                      <div className="bg-purple-50 border border-purple-200 p-3 rounded-lg">
+                        <p className="text-sm text-purple-800 font-medium text-center">
+                          Have ALL players roll together! Wait for someone to roll a 6, then press GO!
+                        </p>
+                      </div>
+
+                      {/* All character prompts */}
+                      <div className="space-y-3">
+                        <p className="text-sm font-semibold text-gray-700">Read aloud to players:</p>
+                        {allClimaxTurns.map((climaxTurn) => {
+                          const char = adventure.characters.find(c => c.id === climaxTurn.characterId);
+                          const kid = getKidDisplayName(players, climaxTurn.characterId, char?.name);
+                          return (
+                            <div key={climaxTurn.characterId} className="bg-amber-50 border border-amber-200 p-3 rounded-lg">
+                              <p className="font-bold text-amber-900">{kid} ({char?.name}):</p>
+                              <p className="text-amber-800 mt-1">{climaxTurn.promptText}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Single GO button */}
                       <button
-                        onClick={handleSubmitClimaxTurn}
+                        onClick={handleSubmitClimaxAll}
                         disabled={submitting}
                         className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 px-4 rounded-lg font-bold text-xl hover:from-amber-600 hover:to-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                       >
@@ -1533,6 +2052,12 @@ export default function DMPage() {
                           '⚡ GO! ⚡'
                         )}
                       </button>
+
+                      {climaxPlayMode && (
+                        <p className="text-xs text-center text-gray-500">
+                          Mode: {climaxPlayMode === 'video' ? '🎬 Video' : '🖼️ Cutscenes'}
+                        </p>
+                      )}
                     </>
                   );
                 }
@@ -1544,6 +2069,16 @@ export default function DMPage() {
                 const { scaleThreshold, label: diceLabel, rollPrompt } = getDiceScaleHelpers(diceType);
                 const turnLevelThreshold = currentCharacterTurn.successThreshold;
                 const scaledTurnThreshold = turnLevelThreshold !== undefined ? scaleThreshold(turnLevelThreshold) : undefined;
+
+                // Debug logging for threshold display
+                console.log('[THRESHOLD DEBUG]', {
+                  turnLevelThreshold,
+                  scaledTurnThreshold,
+                  diceType,
+                  turnHasChoices: currentCharacterTurn.choices?.length,
+                  characterId: currentCharacterTurn.characterId,
+                  fullTurn: currentCharacterTurn,
+                });
 
                 return (
                   <>

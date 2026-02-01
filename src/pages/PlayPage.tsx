@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { findSessionByCode, selectAdventure } from '../lib/gameState';
 import { formatError } from '../lib/errorRecovery';
-import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById } from '../lib/adventures';
+import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions } from '../lib/adventures';
+import { completePuzzle } from '../lib/gameState';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
 import {
@@ -10,6 +11,7 @@ import {
   useAdventureLoader,
   useSessionSubscription,
   useSessionRecovery,
+  useWakeLock,
 } from '../hooks';
 import EndingPage from './EndingPage';
 import RewardCelebration from '../components/RewardCelebration';
@@ -17,6 +19,9 @@ import CutsceneOverlay from '../components/CutsceneOverlay';
 import DiceRollAnimation from '../components/DiceRollAnimation';
 import DiceRoller from '../components/DiceRoller';
 import PlaceholderImage from '../components/PlaceholderImage';
+import PhysicalPuzzleOverlay from '../components/PhysicalPuzzleOverlay';
+import SeekerLensPuzzle from '../components/SeekerLensPuzzle';
+import DragPuzzle from '../components/DragPuzzle';
 import AdventurePreviewGrid from '../components/AdventurePreviewGrid';
 import { deriveSceneLabel } from '../lib/deriveSceneLabel';
 import { getKidDisplayName } from '../lib/players';
@@ -33,6 +38,7 @@ export default function PlayPage() {
   const [celebratedEnding, setCelebratedEnding] = useState(false);
   const [sceneImageError, setSceneImageError] = useState(false);
   const [prologueImageError, setPrologueImageError] = useState(false);
+  const [prologueVideoError, setPrologueVideoError] = useState(false);
   const [selectingAdventure, setSelectingAdventure] = useState(false);
 
   // Dice roll animation state
@@ -45,10 +51,13 @@ export default function PlayPage() {
 
   // Custom hooks for extracted logic
   useSessionPersistence(session);
+  useWakeLock(); // Keep screen awake during gameplay
   const { isOffline, syncing, pendingOpsCount } = useOfflineSync(session);
   const { adventure, loading: loadingAdventure } = useAdventureLoader(session?.adventure_id);
 
   // Memoized callbacks for session subscription
+  // PlayPage always accepts the new session state from the database
+  // (unlike DMPage which has optimistic updates to preserve)
   const handleSessionUpdate = useCallback((newSession: GameSession) => {
     setSession(newSession);
   }, []);
@@ -102,6 +111,7 @@ export default function PlayPage() {
       setCelebratedSceneIds([]);
       setCelebratedEnding(false);
       setPrologueImageError(false);
+      setPrologueVideoError(false);
     }
   }, [session?.phase, session?.adventure_id]);
 
@@ -286,7 +296,18 @@ export default function PlayPage() {
       {/* Show full-screen prologue when adventure is selected but game hasn't started (SETUP or PROLOGUE phase) */}
       {session && adventure && (session.phase === GAME_PHASES.SETUP || session.phase === GAME_PHASES.PROLOGUE) ? (
         <div className="w-full h-[100dvh] fixed inset-0 bg-black">
-          {adventure.prologue?.prologueImageUrl && !prologueImageError ? (
+          {/* Try video first, then image, then fallback */}
+          {adventure.prologue?.prologueVideoUrl && !prologueVideoError ? (
+            <video
+              src={adventure.prologue.prologueVideoUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-contain"
+              onError={() => setPrologueVideoError(true)}
+            />
+          ) : adventure.prologue?.prologueImageUrl && !prologueImageError ? (
             <img
               src={adventure.prologue.prologueImageUrl}
               alt={`The world of ${adventure.title}`}
@@ -418,7 +439,60 @@ export default function PlayPage() {
               />
             )}
           </div>
-          
+
+          {/* Physical Puzzle Overlay - full screen challenge display (only after DM starts) */}
+          {isPuzzleScene(currentScene) && isPhysicalPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getPhysicalPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+            return (
+              <PhysicalPuzzleOverlay
+                challenge={instructions.challenge}
+                sceneImageUrl={currentScene.sceneImageUrl}
+                title={currentScene.title}
+              />
+            );
+          })()}
+
+          {/* Drag Puzzle - interactive puzzle on player screen (only after DM starts) */}
+          {isPuzzleScene(currentScene) && isDragPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getDragPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+            return (
+              <DragPuzzle
+                instructions={instructions}
+                sceneImageUrl={currentScene.sceneImageUrl}
+                onComplete={async (success) => {
+                  await completePuzzle(session.id, success ? 'success' : 'fail');
+                  setSession((prev) => prev ? {
+                    ...prev,
+                    puzzle_completed: true,
+                    puzzle_outcome: success ? 'success' : 'fail',
+                  } : null);
+                }}
+              />
+            );
+          })()}
+
+          {/* Seeker's Lens Puzzle - AR camera + gyroscope puzzle (only after DM starts) */}
+          {isPuzzleScene(currentScene) && isSeekerLensPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getSeekerLensInstructions(currentScene);
+            if (!instructions) return null;
+            return (
+              <SeekerLensPuzzle
+                instructions={instructions}
+                sceneImageUrl={currentScene.sceneImageUrl}
+                onComplete={async (success) => {
+                  await completePuzzle(session.id, success ? 'success' : 'fail');
+                  setSession((prev) => prev ? {
+                    ...prev,
+                    puzzle_completed: true,
+                    puzzle_outcome: success ? 'success' : 'fail',
+                  } : null);
+                }}
+              />
+            );
+          })()}
+
           {/* Dice Roll Animation - shows before cutscene */}
           {pendingDiceRoll && (
             <DiceRollAnimation

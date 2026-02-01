@@ -10,3 +10,4 @@ export { useOfflineSync } from './useOfflineSync';
 export { useAdventureLoader } from './useAdventureLoader';
 export { useSessionSubscription } from './useSessionSubscription';
 export { useSessionRecovery } from './useSessionRecovery';
+export { useWakeLock } from './useWakeLock';

@@ -1,0 +1,112 @@
+{
+  "adventureId": "ancient-shrine",
+  "totalImages": 13,
+  "generatedAt": "2025-01-31",
+  "notes": "Alexander solo dungeon crawler. Mix of roll scenes and puzzle scenes. Zelda-style shrine with ancient guardian boss. Character description in EVERY prompt.",
+  "characterDescription": {
+    "shrine-seeker": "a 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents"
+  },
+  "companionDescription": {
+    "lumen": "a small friendly floating orb made of soft blue-gold light with a cute simple face (two dots for eyes, small happy smile), glowing warmly"
+  },
+  "images": [
+    {
+      "id": "prologue",
+      "filename": "prologue.png",
+      "path": "/images/scenes/ancient-shrine/prologue.png",
+      "type": "scene",
+      "prompt": "Generate a 16:9 landscape image. An ancient stone door built into a mountainside, partially hidden behind a waterfall, cracked open just enough to see mysterious blue light glowing from within. Ancient symbols carved around the doorframe. Moss and vines growing on the stone. Dramatic lighting, sense of mystery and discovery, NO characters visible, epic adventure atmosphere, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-1",
+      "filename": "scene-1.png",
+      "path": "/images/scenes/ancient-shrine/scene-1.png",
+      "type": "scene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, standing at the edge of a crumbling stone bridge inside an ancient shrine. Torches burning along the walls. Deep chasm below with water rushing in darkness. Cracked stones forming a dangerous path across. Dramatic lighting, sense of danger and excitement, ancient temple interior, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-success",
+      "filename": "scene1-success.png",
+      "path": "/images/cutscenes/ancient-shrine/scene1-success.png",
+      "type": "cutscene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, diving and rolling onto solid ground as stone bridge crumbles behind him into darkness. Dynamic action pose, dust and debris flying, triumphant safe landing, torchlit ancient shrine interior, exciting close call moment, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-fail",
+      "filename": "scene1-fail.png",
+      "path": "/images/cutscenes/ancient-shrine/scene1-fail.png",
+      "type": "cutscene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, swinging on a hanging vine over a chasm, stones crumbling below him. Dynamic swinging motion, determined expression, torchlit ancient shrine, exciting narrow escape moment, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-2",
+      "filename": "scene-2.png",
+      "path": "/images/scenes/ancient-shrine/scene-2.png",
+      "type": "scene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, standing before a large ancient stone scale in a round chamber. Glowing symbols on the walls. Empty balance plates on each side of the scale. Mysterious blue light filling the room. Puzzle chamber atmosphere, ancient and magical, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2-success",
+      "filename": "scene2-success.png",
+      "path": "/images/cutscenes/ancient-shrine/scene2-success.png",
+      "type": "cutscene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, watching in amazement as an ancient stone scale glows bright blue and a hidden wall slides open behind it. Triumphant puzzle-solved moment, blue magical light streaming through, ancient chamber, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-3",
+      "filename": "scene-3.png",
+      "path": "/images/scenes/ancient-shrine/scene-3.png",
+      "type": "scene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, discovering a small friendly floating orb made of soft blue-gold light with a cute simple face, trapped inside a crystal cage. Two ancient stone statues with glowing red eyes on either side, starting to wake up. Dramatic lighting, tense moment, ancient shrine interior, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3-success",
+      "filename": "scene3-success.png",
+      "path": "/images/cutscenes/ancient-shrine/scene3-success.png",
+      "type": "cutscene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, with a small friendly floating orb made of soft blue-gold light with a cute simple face spiraling joyfully around him. Shattered crystal cage pieces on the ground, stone statues frozen in background. Joyful rescue moment, warm magical glow, new friendship forming, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-4",
+      "filename": "scene-4.png",
+      "path": "/images/scenes/ancient-shrine/scene-4.png",
+      "type": "scene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, standing before a massive stone door covered in four glowing symbols (sun, seed, flower, tree - scrambled order). A small friendly floating orb made of soft blue-gold light with a cute simple face hovers beside him, examining the symbols. Puzzle door, ancient shrine, mysterious atmosphere, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene4-success",
+      "filename": "scene4-success.png",
+      "path": "/images/cutscenes/ancient-shrine/scene4-success.png",
+      "type": "cutscene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, watching as massive stone doors swing open, symbols glowing golden in correct order. A small friendly floating orb made of soft blue-gold light with a cute simple face cheers beside him. Something huge and ominous visible in the darkness beyond the doors. Triumphant but tense moment, golden light, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-5",
+      "filename": "scene-5.png",
+      "path": "/images/scenes/ancient-shrine/scene-5.png",
+      "type": "scene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, facing a MASSIVE ancient guardian robot made of stone and metal with glowing blue energy lines, twice as tall as a house. A small friendly floating orb made of soft blue-gold light with a cute simple face hovers bravely beside the boy. Epic boss battle setup, dramatic scale difference, ancient shrine final chamber, blue energy glowing from guardian's chest core, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene5-victory",
+      "filename": "scene5-victory.png",
+      "path": "/images/cutscenes/ancient-shrine/scene5-victory.png",
+      "type": "cutscene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, leaping through the air with fist extended toward a massive ancient guardian robot's glowing chest core. A small friendly floating orb made of soft blue-gold light blazing like a comet beside him. EXPLOSION of brilliant light emanating from impact point. Epic victory moment, maximum drama, triumphant action pose, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "ending",
+      "filename": "ending.png",
+      "path": "/images/scenes/ancient-shrine/ending.png",
+      "type": "scene",
+      "prompt": "Generate a 16:9 landscape image. A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing adventure gear with DARK BLUE and GOLD accents, standing in a transformed beautiful shrine chamber with flowers blooming from ancient stone, sunlight streaming through cracks in ceiling. A small friendly floating orb made of soft blue-gold light with a cute simple face nuzzling affectionately against his cheek. Peaceful victory aftermath, warm golden light, friendship moment, sense of new beginnings, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    }
+  ],
+  "videoPrompt": {
+    "id": "guardian-defeat",
+    "filename": "guardian-defeat.mp4",
+    "path": "/videos/ancient-shrine/guardian-defeat.mp4",
+    "duration": "7 seconds",
+    "prompt": "Create a 7-second animated fantasy action sequence video. Reference attached images for character designs and style.\n\nSHOT 1 (0-2 seconds): A young hero in DARK BLUE and GOLD adventure gear with short messy brown hair LEAPS through the air toward a massive ancient stone guardian robot. A small glowing orb companion blazes beside him like a comet. Dramatic slow-motion jump.\n\nSHOT 2 (2-4 seconds): The hero's fist connects with the glowing blue core in the guardian's chest. \"CRAAAACK!\" effect. Cracks of light spread across the guardian's entire body.\n\nSHOT 3 (4-7 seconds): The guardian EXPLODES in brilliant blue-gold light! The hero lands heroically as the light fades, his orb companion spiraling around him in celebration. The ancient shrine transforms - flowers blooming, sunlight breaking through. VICTORY!\n\nStyle: Pixar-style 3D animation, ancient temple setting, epic boss defeat energy, dramatic lighting, triumphant music feeling."
+  }
+}

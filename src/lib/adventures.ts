@@ -1,4 +1,16 @@
-import type { Adventure, Scene, CharacterTurn, Choice, ChoiceOutcome, Ending, TurnOutcome, SingleEnding } from '../types/adventure';
+import type {
+  Adventure,
+  Scene,
+  CharacterTurn,
+  Choice,
+  ChoiceOutcome,
+  Ending,
+  TurnOutcome,
+  SingleEnding,
+  PhysicalPuzzleInstructions,
+  DragPuzzleInstructions,
+} from '../types/adventure';
+import type { DiceType } from '../types/game';
 import type { GameSession, Player, CharacterSceneState } from '../types/game';
 import { getCurrentScene, getSceneById, getCurrentSceneWithBranching } from './sceneLookup';
 
@@ -10,6 +22,7 @@ import raceToRainbowReef from '../data/adventures/race-to-rainbow-reef.json';
 import frozenVolcano from '../data/adventures/frozen-volcano-adventure-v2.json';
 import shadowKnight from '../data/adventures/shadow-knight-adventure.json';
 import rainbowBridge from '../data/adventures/rainbow-bridge-adventure.json';
+import ancientShrine from '../data/adventures/ancient-shrine-adventure.json';
 
 const adventures: Record<string, Adventure> = {
   'candy-volcano': candyVolcano as Adventure,
@@ -19,6 +32,7 @@ const adventures: Record<string, Adventure> = {
   'frozen-volcano': frozenVolcano as Adventure,
   'shadow-knight-lost-grove': shadowKnight as Adventure,
   'rainbow-bridge': rainbowBridge as Adventure,
+  'ancient-shrine': ancientShrine as Adventure,
 };
 
 /**
@@ -437,4 +451,110 @@ export function adventureHasBranching(adventure: Adventure): boolean {
   return adventure.scenes.some(scene =>
     isBranchingOutcome(scene.outcome) || isParallelScene(scene)
   );
+}
+
+// ============================================
+// Puzzle Scene Support
+// ============================================
+
+/**
+ * Check if a scene is a puzzle scene (physical, in-game, or seeker-lens).
+ */
+export function isPuzzleScene(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-physical' || scene.sceneType === 'puzzle-ingame' || scene.sceneType === 'puzzle-seeker-lens';
+}
+
+/**
+ * Check if a scene is a physical world puzzle.
+ */
+export function isPhysicalPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-physical';
+}
+
+/**
+ * Check if a scene is an in-game drag puzzle.
+ */
+export function isDragPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-ingame';
+}
+
+/**
+ * Check if a scene is a Seeker's Lens puzzle (AR-like camera + gyroscope).
+ */
+export function isSeekerLensPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-seeker-lens';
+}
+
+/**
+ * Get physical puzzle instructions (type guard).
+ */
+export function getPhysicalPuzzleInstructions(scene: Scene): PhysicalPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-physical' && scene.puzzleInstructions?.type === 'physical-world') {
+    return scene.puzzleInstructions as PhysicalPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Get drag puzzle instructions (type guard).
+ */
+export function getDragPuzzleInstructions(scene: Scene): DragPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-ingame' && scene.puzzleInstructions?.type === 'in-game-drag') {
+    return scene.puzzleInstructions as DragPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Get Seeker's Lens puzzle instructions (type guard).
+ */
+export function getSeekerLensInstructions(scene: Scene): import('../types/adventure').SeekerLensInstructions | null {
+  if (scene.sceneType === 'puzzle-seeker-lens' && scene.puzzleInstructions?.type === 'seeker-lens') {
+    return scene.puzzleInstructions as import('../types/adventure').SeekerLensInstructions;
+  }
+  return null;
+}
+
+// ============================================
+// Roll-Until-Success Climax Support
+// ============================================
+
+/**
+ * Check if a scene uses roll-until-success climax mode.
+ */
+export function isRollUntilSuccessClimax(scene: Scene): boolean {
+  return scene.isClimax === true && scene.climaxMode === 'roll-until-success';
+}
+
+/**
+ * Get the maximum value for a dice type.
+ */
+export function getMaxRoll(diceType: DiceType): number {
+  return diceType; // DiceType is 6, 10, 12, or 20 - the max is the same as the type
+}
+
+/**
+ * Check if a roll is the maximum for the current dice type.
+ */
+export function isMaxRoll(roll: number, diceType: DiceType): boolean {
+  return roll === getMaxRoll(diceType);
+}
+
+/**
+ * Get the fail narration for a roll-until-success climax.
+ * Returns the narration at the given index, or the last one if index exceeds array length.
+ */
+export function getClimaxFailNarration(scene: Scene, failIndex: number): string | null {
+  if (!isRollUntilSuccessClimax(scene) || !scene.climaxInstructions) {
+    return null;
+  }
+
+  const narrations = scene.climaxInstructions.failNarrations;
+  if (!narrations || narrations.length === 0) {
+    return null;
+  }
+
+  // Clamp to last narration (don't loop)
+  const index = Math.min(failIndex, narrations.length - 1);
+  return narrations[index];
 }

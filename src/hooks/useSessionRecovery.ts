@@ -34,8 +34,10 @@ export function useSessionRecovery({
 
   const recoverSession = useCallback(async (): Promise<{ session: GameSession | null; error: string | null }> => {
     const stored = getSessionFromStorage<GameSession>();
+    console.log('[RECOVERY] Attempting recovery, stored session:', stored?.room_code || 'none');
+
     if (!stored || !stored.room_code) {
-      return { session: null, error: 'No saved session found' };
+      return { session: null, error: 'No saved session found. Please create a new game.' };
     }
 
     setRecovering(true);
@@ -46,11 +48,18 @@ export function useSessionRecovery({
     setRecovering(false);
 
     if (recoverError || !data) {
-      clearSessionFromStorage();
+      console.warn('[RECOVERY] Failed to recover session:', recoverError);
+      // Only clear storage if the session truly doesn't exist (not just a network error)
+      const errorMsg = formatError(recoverError);
+      if (errorMsg.includes('not found')) {
+        console.log('[RECOVERY] Session not found in database, clearing storage');
+        clearSessionFromStorage();
+      }
       onStatusChange(CONNECTION_STATUS.ERROR);
-      return { session: null, error: formatError(recoverError) || 'Could not recover session' };
+      return { session: null, error: errorMsg || 'Could not recover session. Please try again.' };
     }
 
+    console.log('[RECOVERY] Session recovered successfully:', data.room_code);
     onStatusChange(CONNECTION_STATUS.CONNECTED);
     return { session: data, error: null };
   }, [onStatusChange]);

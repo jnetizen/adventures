@@ -233,8 +233,9 @@ Then reference these in every prompt to ensure consistency.
 
 - Decide on the model BEFORE generating any images
 - If quality is unsatisfactory, regenerate ALL images with the new model
-- Current recommended model: `gemini-2.5-flash-image` (better quality than 2.0-flash)
-- Do NOT mix 2.0-flash and 2.5-flash images in the same adventure
+- Current recommended model for FREE tier: `gemini-2.0-flash-exp-image-generation`
+- `gemini-2.5-flash-image` is PAID TIER ONLY (verified Jan 2026)
+- Do NOT mix models in the same adventure
 
 ### Generation Workflow
 1. Do a dry run first: `--dry-run`
@@ -316,7 +317,7 @@ onPlay={() => console.log('[VIDEO] Playing')}
 
 ## 10. Common Gotchas
 
-1. **Subscription overwrites optimistic updates** - Always preserve local state when appropriate
+1. **Subscription overwrites optimistic updates** - Only preserve local state in DMPage (initiator), not PlayPage (receiver)
 
 2. **Video autoplay blocked** - Must be muted for autoplay to work
 
@@ -332,9 +333,549 @@ onPlay={() => console.log('[VIDEO] Playing')}
 
 8. **Async timing in React** - State updates from `setSession` don't take effect immediately; use functional updates: `setSession((prev) => ...)`
 
+9. **JSON field names must match TypeScript types exactly** - If a type requires `narrationText`, using `text` in JSON will cause a build error. Always check `src/types/adventure.ts` for exact field names.
+
+10. **Reset state when advancing scenes** - Call `resetPuzzleState()` and any other state reset functions when moving to next scene
+
+11. **Use session?.id in useEffect deps, not session** - Objects trigger reruns on every change; IDs only when actually changed
+
+12. **iOS permissions need user gesture** - DeviceOrientationEvent.requestPermission() must be called from click/tap handler, not on mount
+
+13. **Camera facingMode matters** - Use 'environment' for back camera (room search), 'user' for front camera (selfie)
+
+14. **Format errors handle PostgrestError** - Supabase errors are `{ message: string }`, not `Error` instances
+
 ---
 
-## 11. Testing Checklist
+## 11. JSON Field Naming Must Match TypeScript Types
+
+### Problem
+Build fails with TypeScript error like:
+```
+error TS2352: Conversion of type '...' to type 'Adventure' may be a mistake
+Property 'narrationText' is missing in type '{ title: string; text: string; }' but required in type 'SingleEnding'.
+```
+
+### Root Cause
+Adventure JSON files are cast to TypeScript types (`as Adventure`). If the JSON uses a different field name than the type expects, the build fails.
+
+### Example
+```json
+// WRONG - uses 'text' but type requires 'narrationText'
+"ending": {
+  "title": "The End",
+  "text": "The heroes saved the day..."
+}
+
+// CORRECT - matches SingleEnding type
+"ending": {
+  "title": "The End",
+  "narrationText": "The heroes saved the day..."
+}
+```
+
+### How to Fix
+1. Check `src/types/adventure.ts` for the exact field names required
+2. Update the JSON to use the correct field name
+3. Run `npm run build` to verify
+
+### Key Files
+- `src/types/adventure.ts` - Type definitions (source of truth)
+- `src/data/adventures/*.json` - Adventure data files
+
+---
+
+## 12. Cutscene Not Triggering (Intermittent)
+
+### Problem
+Cutscenes sometimes don't appear after submitting a character choice, particularly on the second or third character's turn.
+
+### Potential Root Causes
+
+1. **Double-click race condition** - User clicks submit button twice quickly before React's batched state updates disable the button. The second click runs with the wrong turn data.
+
+2. **Subscription race condition** - After `submitCharacterChoice` updates the DB, the subscription might fire and update local state before the cutscene is set.
+
+3. **Stale turn data** - The `currentCharacterTurn` might be captured after a subscription update has already advanced the turn index.
+
+### Solution
+Added ref-based guard to prevent double submissions:
+```tsx
+const submittingRef = useRef(false);
+
+const handleSubmitChoice = async () => {
+  // Refs update immediately, unlike state which batches
+  if (submittingRef.current) {
+    console.log('[SUBMIT] Blocked - already submitting');
+    return;
+  }
+  submittingRef.current = true;
+
+  // ... rest of function ...
+
+  submittingRef.current = false; // Reset at all exit points
+};
+```
+
+### Debug Logging
+The code now logs detailed turn data on submit:
+- `[SUBMIT] Turn data captured` - Shows captured turn's characterId, outcome URLs
+- `[CUTSCENE] Step 1-5` - Traces the cutscene flow
+- `[SUBMIT] Blocked` - Indicates double-click was prevented
+
+### Status: FIXED
+The ref-based guard resolved the intermittent cutscene issue. The root cause was likely a double-click race condition.
+
+### If Bug Recurs
+Check browser console for:
+1. Is `[SUBMIT] Blocked` appearing? (double-click detected)
+2. Does `[SUBMIT] Turn data captured` show correct characterId?
+3. Are `successCutsceneUrl` and `failCutsceneUrl` populated?
+4. Does `[CUTSCENE] Turn does not have per-turn outcomes` appear?
+
+### Key Files
+- `src/pages/DMPage.tsx` - handleSubmitChoice function
+
+---
+
+## 13. Session Timeout / "No Saved Session Found"
+
+### Problem
+After leaving the game idle for a few minutes, the session "expires" and clicking "Recover Session" shows "No saved session found".
+
+### Root Causes
+
+1. **Aggressive localStorage clearing** - The `useSessionPersistence` hook was clearing localStorage whenever session state became null, even temporarily.
+
+2. **No heartbeat/keepalive** - Supabase realtime subscriptions can time out after inactivity, and the code wasn't proactively keeping the connection alive.
+
+3. **Missing channel status handlers** - The subscription wasn't handling `TIMED_OUT` or `CLOSED` channel statuses.
+
+### Solution
+
+1. **Don't clear localStorage when session is null** (`useSessionPersistence.ts`):
+   ```tsx
+   // Only SAVE, don't clear on null
+   if (session) {
+     saveSessionToStorage(session);
+   }
+   // Removed: clearSessionFromStorage() when session is null
+   ```
+
+2. **Add heartbeat to keep connection alive** (`useSessionSubscription.ts`):
+   ```tsx
+   const HEARTBEAT_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes
+
+   useEffect(() => {
+     const heartbeat = setInterval(() => {
+       refetchSession();
+     }, HEARTBEAT_INTERVAL_MS);
+     return () => clearInterval(heartbeat);
+   }, [session, refetchSession]);
+   ```
+
+3. **Handle all channel statuses**:
+   ```tsx
+   if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+     refetchSession();
+   } else if (status === 'CLOSED') {
+     refetchSession();
+   }
+   ```
+
+4. **Only clear localStorage on true "not found"** (`useSessionRecovery.ts`):
+   ```tsx
+   // Only clear if session truly doesn't exist, not on network errors
+   if (errorMsg.includes('not found')) {
+     clearSessionFromStorage();
+   }
+   ```
+
+### Debug Logging
+Console now logs:
+- `[SUBSCRIPTION] Heartbeat - checking connection`
+- `[SUBSCRIPTION] Channel status: <status>`
+- `[RECOVERY] Attempting recovery, stored session: <code>`
+- `[RECOVERY] Session recovered successfully`
+
+### Key Files
+- `src/hooks/useSessionPersistence.ts`
+- `src/hooks/useSessionSubscription.ts`
+- `src/hooks/useSessionRecovery.ts`
+
+---
+
+## 14. Google Gemini Free API for Image Generation
+
+### ⚠️ CRITICAL FINDING: Free Tier API Image Generation Does NOT Work (Jan 2026)
+
+Despite Google's pricing page claiming free tier availability, **API-based image generation returns `quota limit: 0` for ALL models on free tier projects**.
+
+**What we tested:**
+- Multiple free tier API keys from different projects
+- Models: `gemini-2.0-flash-exp-image-generation`, `gemini-2.5-flash-image`, `gemini-2.0-flash`
+- SDKs: `@google/generative-ai`, `@google/genai`
+- All returned: `Quota exceeded for metric: generate_content_free_tier_requests, limit: 0`
+
+**The confusion:**
+- Google AI Studio **web UI** allows free image generation (manual, one at a time)
+- Google AI Studio **API** has quota set to 0 for image generation on free tier
+- The pricing page is misleading - "free tier" for images only applies to web UI, not API
+
+### What Actually Works
+
+**For FREE image generation:**
+- Use Google AI Studio web UI manually: https://aistudio.google.com/
+- Not automated, but genuinely free
+
+**For API/automated image generation (PAID):**
+- Requires billing enabled on your Google Cloud project
+- Cheapest: Imagen 4 Fast at ~$0.02/image
+- We use: `gemini-2.0-flash-exp-image-generation` with paid key
+
+### Our Setup (Paid)
+
+**API Key:**
+- Paid key in `.env`: `GOOGLE_API_KEY=AIzaSyD4GRCw...`
+- Uses $300 Google Cloud credit (not truly "free" but no out-of-pocket cost)
+
+**Model:**
+```typescript
+model: 'gemini-2.0-flash-exp-image-generation'
+```
+
+**SDK Usage:**
+```typescript
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const model = genAI.getGenerativeModel({
+  model: 'gemini-2.0-flash-exp-image-generation',
+  generationConfig: {
+    responseModalities: ['image', 'text'],
+  } as Record<string, unknown>,
+});
+
+const response = await model.generateContent(prompt);
+// Extract image from response.response.candidates[0].content.parts
+```
+
+### API Keys We Have
+
+| Key Prefix | Project Name | Status |
+|------------|--------------|--------|
+| `AIzaSyD4GRCw...` | (paid tier) | ✅ Works - uses $300 credit |
+| `AIzaSyCaosfr...` | Quest-Family-Dev-Free | ❌ limit: 0 |
+| `AIzaSyCN1mRC...` | Image Gen Key | ❌ limit: 0 |
+
+### Rate Limiting (Paid Tier)
+```typescript
+const DELAY_BETWEEN_REQUESTS_MS = 3000; // 3 seconds between requests
+```
+
+### How to List Available Models
+```bash
+export $(grep -v '^#' .env | grep GOOGLE_API_KEY | xargs)
+curl -s "https://generativelanguage.googleapis.com/v1beta/models?key=$GOOGLE_API_KEY" | grep '"name"'
+```
+
+### Key Files
+- `scripts/imageGenerationService.ts` - Main generation service
+- `scripts/generateAdventureImages.ts` - Batch generation CLI
+- `scripts/generateMissingRewards.ts` - Reward image generation
+
+### Future TODO
+- Revisit free tier periodically - Google may enable it later
+- Consider alternative free image APIs (DALL-E free tier, Stability AI, etc.)
+
+---
+
+## 15. Puzzle State Not Resetting Between Scenes
+
+### Problem
+After completing a puzzle in Scene 2, moving to Scene 3 (which has a drag puzzle), the puzzle never appeared. The scene showed as already completed.
+
+### Root Cause
+`resetPuzzleState()` function existed in `gameState.ts` but was **never called** when advancing scenes. The puzzle state (`puzzle_started`, `puzzle_completed`, `puzzle_outcome`) persisted from the previous scene.
+
+### Solution
+Call `resetPuzzleState` when advancing to a new scene:
+
+```tsx
+// In handleNextScene or scene advancement logic
+await resetPuzzleState(session.id);
+
+// Also update local state to avoid waiting for subscription
+setSession((prev) => prev ? {
+  ...prev,
+  puzzle_started: null,
+  puzzle_completed: null,
+  puzzle_outcome: null,
+} : null);
+```
+
+### Key Files
+- `src/lib/gameState.ts` - Contains resetPuzzleState function
+- `src/pages/DMPage.tsx` - Must call it when advancing scenes
+
+### Lesson
+When adding new state that needs to be reset, search for all places that advance scenes and add the reset call.
+
+---
+
+## 16. PlayPage vs DMPage State Handling Differences
+
+### Problem
+Cutscenes were not dismissing on the player screen (PlayPage) even though they dismissed on the DM screen.
+
+### Root Cause
+PlayPage had **incorrect** cutscene preservation logic copied from DMPage:
+
+```tsx
+// WRONG for PlayPage - was preserving old cutscene state
+const handleSessionUpdate = useCallback((newSession: GameSession) => {
+  setSession((prev) => {
+    if (prev?.active_cutscene && !newSession.active_cutscene) {
+      return { ...newSession, active_cutscene: prev.active_cutscene };
+    }
+    return newSession;
+  });
+}, []);
+```
+
+DMPage needs to preserve cutscene state because it sets cutscenes optimistically before the database updates. PlayPage is a **passive receiver** and should always accept the database state.
+
+### Solution
+PlayPage should always accept incoming session state:
+
+```tsx
+// CORRECT for PlayPage - always accept database state
+const handleSessionUpdate = useCallback((newSession: GameSession) => {
+  setSession(newSession);
+}, []);
+```
+
+### Key Principle
+- **DMPage (initiator)**: May need to preserve optimistic state
+- **PlayPage (receiver)**: Always accept incoming state from database
+
+### Key Files
+- `src/pages/PlayPage.tsx` - Must NOT preserve optimistic state
+- `src/pages/DMPage.tsx` - May preserve optimistic state (cutscenes)
+
+---
+
+## 17. Subscription Dependency Array - Use session.id Not session
+
+### Problem
+Supabase realtime subscriptions were constantly recreating, causing repeated console logs and potential missed updates.
+
+### Root Cause
+Using `session` object in useEffect dependency array:
+
+```tsx
+// WRONG - recreates subscription on ANY session field change
+useEffect(() => {
+  if (!session?.id) return;
+  const channel = supabase.channel(`session:${session.id}`)...
+}, [session, ...]);  // ❌ session object changes on every update
+```
+
+### Solution
+Extract and use only `session?.id`:
+
+```tsx
+// CORRECT - only recreates when session ID actually changes
+const sessionId = session?.id;
+useEffect(() => {
+  if (!sessionId) return;
+  const channel = supabase.channel(`session:${sessionId}`)...
+}, [sessionId, ...]);  // ✅ stable reference
+```
+
+### Key Files
+- `src/hooks/useSessionSubscription.ts`
+
+### Lesson
+In React dependency arrays, always use the most specific value needed, not entire objects.
+
+---
+
+## 18. iOS Permission Requirements (Camera/Motion Sensors)
+
+### Problem
+On iOS, clicking "Activate the Lens!" immediately showed "Camera or motion sensors not available" without prompting for permissions.
+
+### Root Cause
+iOS 13+ requires `DeviceOrientationEvent.requestPermission()` to be called from within a **direct user gesture** (click/tap handler). The original code tried to request permissions on component mount.
+
+### Solution
+1. Start with a "waiting" state showing a button
+2. Only request permissions when user taps the button
+3. The tap is the "user gesture" that iOS requires
+
+```tsx
+// State starts as 'waiting'
+const [permissionStatus, setPermissionStatus] = useState<
+  'waiting' | 'requesting' | 'granted' | 'denied' | 'unavailable'
+>('waiting');
+
+// Show button that triggers permission request
+if (permissionStatus === 'waiting') {
+  return (
+    <button onClick={requestPermissions}>
+      Activate the Lens!
+    </button>
+  );
+}
+
+// requestPermissions is called FROM the button click (user gesture)
+const requestPermissions = useCallback(async () => {
+  setPermissionStatus('requesting');
+
+  // This now works because it's in a user gesture context
+  const permission = await DeviceOrientationEvent.requestPermission();
+  ...
+}, []);
+```
+
+### Debug Logging Added
+```tsx
+console.log('[SeekerLens] === Starting permission request ===');
+console.log('[SeekerLens] User agent:', navigator.userAgent);
+console.log('[SeekerLens] DeviceOrientationEvent in window:', 'DeviceOrientationEvent' in window);
+console.log('[SeekerLens] requestPermission function exists:', typeof ... === 'function');
+```
+
+### Key Files
+- `src/components/SeekerLensPuzzle.tsx`
+
+### Key Principle
+iOS requires camera AND motion sensor permissions to be requested from user gestures. Don't auto-request on mount.
+
+---
+
+## 19. Camera facingMode for AR Puzzles
+
+### Problem
+The Seeker's Lens puzzle used the front-facing camera, showing the player's face instead of letting them "search the room."
+
+### Root Cause
+Default camera constraint was using front camera:
+```tsx
+video: { facingMode: 'user' }  // Front camera (selfie mode)
+```
+
+### Solution
+Use environment-facing (back) camera for room search:
+```tsx
+video: { facingMode: 'environment' }  // Back camera
+```
+
+Also removed the mirror CSS transform that was for selfie mode:
+```tsx
+// Removed: style={{ transform: 'scaleX(-1)' }}
+```
+
+### Key Files
+- `src/components/SeekerLensPuzzle.tsx`
+
+---
+
+## 20. formatError Showing "[object Object]"
+
+### Problem
+Clicking "Start Challenge" on DM screen showed error message: `[object Object]`
+
+### Root Cause
+`formatError()` function only handled `Error` instances and strings. Supabase returns `PostgrestError` objects which have a `message` property but aren't `Error` instances.
+
+```tsx
+// WRONG - doesn't handle PostgrestError
+const message = err instanceof Error ? err.message : String(err);
+// String({message: "foo"}) → "[object Object]"
+```
+
+### Solution
+Check for objects with a `message` property:
+```tsx
+const message = err instanceof Error
+  ? err.message
+  : (typeof err === 'object' && err !== null && 'message' in err)
+    ? (err as { message: string }).message
+    : null;
+```
+
+### Key Files
+- `src/lib/errorRecovery.ts`
+
+### Lesson
+When formatting errors, handle common error shapes: `Error`, `{ message: string }`, and strings.
+
+---
+
+## 21. Wake Lock API for Keeping Screen Awake
+
+### Problem
+iPad screen kept turning off during gameplay, requiring taps to wake it.
+
+### Solution
+Use the Wake Lock API to prevent screen from sleeping:
+
+```tsx
+export function useWakeLock() {
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  useEffect(() => {
+    if (!('wakeLock' in navigator)) return;
+
+    const requestWakeLock = async () => {
+      try {
+        wakeLockRef.current = await navigator.wakeLock.request('screen');
+      } catch (err) {
+        console.warn('[WakeLock] Failed to acquire:', err);
+      }
+    };
+
+    requestWakeLock();
+
+    // Re-acquire when page becomes visible (after screen lock/unlock)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        requestWakeLock();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      wakeLockRef.current?.release();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+}
+```
+
+### Usage
+```tsx
+// In PlayPage.tsx and DMPage.tsx
+import { useWakeLock } from '../hooks';
+useWakeLock();  // Just call the hook - no return value needed
+```
+
+### Key Files
+- `src/hooks/useWakeLock.ts` (new file)
+- `src/hooks/index.ts` - Export the hook
+- `src/pages/PlayPage.tsx` - Uses the hook
+- `src/pages/DMPage.tsx` - Uses the hook
+
+### Notes
+- Wake Lock is released automatically when page is hidden
+- Must re-acquire when page becomes visible again
+- Not all browsers support it, but fails gracefully
+
+---
+
+## 22. Testing Checklist
 
 Before playtesting a new adventure:
 
@@ -346,3 +887,15 @@ Before playtesting a new adventure:
 - [ ] Check browser console for errors during playthrough
 - [ ] Test both cutscenes mode and video mode for climax
 - [ ] Test all character paths in parallel scenes
+
+For puzzle adventures:
+- [ ] Test puzzle state resets when advancing to next scene
+- [ ] Test physical puzzles (DM controls work, player sees challenge)
+- [ ] Test drag puzzles (symbols appear, ordering works)
+- [ ] Test Seeker's Lens on iOS (permission prompt appears, camera activates)
+
+For iOS/iPad testing:
+- [ ] Permission dialogs appear for camera and motion sensors
+- [ ] Screen stays awake during gameplay (wake lock active)
+- [ ] Cutscenes sync properly between DM and player screens
+- [ ] Session recovers after screen lock/unlock
