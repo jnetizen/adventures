@@ -72,7 +72,11 @@ export async function findSessionByCode(roomCode: string): Promise<{ data: GameS
       .single();
 
     if (error) {
-      return { data: null, error };
+      // PGRST116 = no rows returned (room code not found)
+      if (error.code === 'PGRST116') {
+        return { data: null, error: new Error('Room not found. Check the code and try again.') };
+      }
+      return { data: null, error: new Error(error.message || 'Failed to find room') };
     }
 
     return { data: data as GameSession, error: null };
