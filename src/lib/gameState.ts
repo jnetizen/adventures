@@ -561,6 +561,12 @@ export async function startSceneById(
         phase: GAME_PHASES.PLAYING,
         is_split: false,
         character_scenes: null,
+        // Reset puzzle state when entering a new scene
+        puzzle_started: null,
+        puzzle_completed: null,
+        puzzle_outcome: null,
+        // Clear any active cutscene to prevent race conditions on scene transitions
+        active_cutscene: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);

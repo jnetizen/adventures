@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { findSessionByCode, selectAdventure } from '../lib/gameState';
-import { formatError } from '../lib/errorRecovery';
+import { supabase } from '../lib/supabase';
+import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
-import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions } from '../lib/adventures';
+import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions } from '../lib/adventures';
 import { completePuzzle } from '../lib/gameState';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
@@ -23,6 +24,7 @@ import PlaceholderImage from '../components/PlaceholderImage';
 import PhysicalPuzzleOverlay from '../components/PhysicalPuzzleOverlay';
 import SeekerLensPuzzle from '../components/SeekerLensPuzzle';
 import DragPuzzle from '../components/DragPuzzle';
+import MemoryPuzzle from '../components/MemoryPuzzle';
 import AdventurePreviewGrid from '../components/AdventurePreviewGrid';
 import { deriveSceneLabel } from '../lib/deriveSceneLabel';
 import { getKidDisplayName } from '../lib/players';
@@ -60,7 +62,16 @@ export default function PlayPage() {
   // PlayPage always accepts the new session state from the database
   // (unlike DMPage which has optimistic updates to preserve)
   const handleSessionUpdate = useCallback((newSession: GameSession) => {
-    setSession(newSession);
+    setSession((prev) => {
+      if (!prev) return newSession;
+      if (!prev.updated_at || !newSession.updated_at) return newSession;
+      const prevUpdatedAt = Date.parse(prev.updated_at);
+      const nextUpdatedAt = Date.parse(newSession.updated_at);
+      if (Number.isNaN(prevUpdatedAt) || Number.isNaN(nextUpdatedAt)) {
+        return newSession;
+      }
+      return nextUpdatedAt >= prevUpdatedAt ? newSession : prev;
+    });
   }, []);
 
   const handleStatusChange = useCallback((status: ConnectionStatusType) => {
@@ -79,6 +90,30 @@ export default function PlayPage() {
     currentSession: session,
     onStatusChange: handleStatusChange,
   });
+
+  // Direct polling fallback - bypasses subscription entirely
+  // This ensures we always get the latest session state from the database
+  useEffect(() => {
+    if (!session?.id) return;
+
+    const pollSession = async () => {
+      const { data } = await supabase
+        .from('sessions')
+        .select('*')
+        .eq('id', session.id)
+        .single();
+      if (data) {
+        handleSessionUpdate(data as GameSession);
+      }
+    };
+
+    // Run immediately on mount/session change
+    pollSession();
+
+    // Poll every 1 second to catch any missed updates
+    const interval = setInterval(pollSession, 1000);
+    return () => clearInterval(interval);
+  }, [session?.id, handleSessionUpdate]);
 
   // Derived: is the party currently split?
   const isSplit = !!(session?.is_split && session?.character_scenes && session.character_scenes.length > 0);
@@ -172,6 +207,8 @@ export default function PlayPage() {
       return;
     }
 
+    // Clear any old session from storage to prevent confusion on refresh
+    clearSessionFromStorage();
     setSession(data);
     setSessionId(data.id);  // Track session for remote logging
   };
@@ -495,6 +532,43 @@ export default function PlayPage() {
               />
             );
           })()}
+
+          {/* Memory Puzzle - card matching game (only after DM starts) */}
+          {isPuzzleScene(currentScene) && isMemoryPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getMemoryPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+            return (
+              <MemoryPuzzle
+                pairs={instructions.pairs}
+                prompt={instructions.prompt}
+                onComplete={async (success) => {
+                  await completePuzzle(session.id, success ? 'success' : 'fail');
+                  setSession((prev) => prev ? {
+                    ...prev,
+                    puzzle_completed: true,
+                    puzzle_outcome: success ? 'success' : 'fail',
+                  } : null);
+                }}
+              />
+            );
+          })()}
+
+          {/* Puzzle Success Overlay - stays visible until DM advances to next scene */}
+          {/* Only show if puzzle was actually started in this scene (puzzle_started is truthy) */}
+          {isPuzzleScene(currentScene) && session.puzzle_started && session.puzzle_completed && session.puzzle_outcome === 'success' && !session.active_cutscene && (
+            <div className="fixed inset-0 z-50 bg-gradient-to-b from-green-600 to-emerald-700 flex flex-col items-center justify-center p-6 text-center">
+              <div className="text-8xl mb-6 animate-bounce">
+                🎉
+              </div>
+              <h2 className="text-4xl font-bold text-white mb-4">Amazing!</h2>
+              <p className="text-xl text-green-100">Challenge Complete!</p>
+              <div className="mt-8 flex gap-2">
+                <div className="w-4 h-4 bg-white rounded-full animate-pulse" style={{ animationDelay: '0s' }} />
+                <div className="w-4 h-4 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+                <div className="w-4 h-4 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+              </div>
+            </div>
+          )}
 
           {/* Dice Roll Animation - shows before cutscene */}
           {pendingDiceRoll && (

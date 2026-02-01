@@ -458,10 +458,10 @@ export function adventureHasBranching(adventure: Adventure): boolean {
 // ============================================
 
 /**
- * Check if a scene is a puzzle scene (physical, in-game, or seeker-lens).
+ * Check if a scene is a puzzle scene (physical, in-game, seeker-lens, or memory).
  */
 export function isPuzzleScene(scene: Scene): boolean {
-  return scene.sceneType === 'puzzle-physical' || scene.sceneType === 'puzzle-ingame' || scene.sceneType === 'puzzle-seeker-lens';
+  return scene.sceneType === 'puzzle-physical' || scene.sceneType === 'puzzle-ingame' || scene.sceneType === 'puzzle-seeker-lens' || scene.sceneType === 'puzzle-memory';
 }
 
 /**
@@ -511,6 +511,23 @@ export function getDragPuzzleInstructions(scene: Scene): DragPuzzleInstructions 
 export function getSeekerLensInstructions(scene: Scene): import('../types/adventure').SeekerLensInstructions | null {
   if (scene.sceneType === 'puzzle-seeker-lens' && scene.puzzleInstructions?.type === 'seeker-lens') {
     return scene.puzzleInstructions as import('../types/adventure').SeekerLensInstructions;
+  }
+  return null;
+}
+
+/**
+ * Check if a scene is a memory matching puzzle.
+ */
+export function isMemoryPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-memory';
+}
+
+/**
+ * Get memory puzzle instructions (type guard).
+ */
+export function getMemoryPuzzleInstructions(scene: Scene): import('../types/adventure').MemoryPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-memory' && scene.puzzleInstructions?.type === 'memory-match') {
+    return scene.puzzleInstructions as import('../types/adventure').MemoryPuzzleInstructions;
   }
   return null;
 }

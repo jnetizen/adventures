@@ -83,7 +83,7 @@
           "animation": "pulse"
         },
         "triggerDirection": "up",
-        "directionToleranceDegrees": 15,
+        "directionToleranceDegrees": 3,
         "hints": [
           { "delaySeconds": 15, "text": "Ancient magic often hides above..." },
           { "delaySeconds": 30, "text": "Try pointing your iPad toward the ceiling!" }
@@ -119,7 +119,7 @@
             "reward": {
               "id": "lumen-spirit",
               "name": "Lumen the Shrine Spirit",
-              "imageUrl": "/images/rewards/lumen-spirit.png"
+              "imageUrl": ""
             }
           },
           "failOutcome": {
@@ -128,7 +128,7 @@
             "reward": {
               "id": "lumen-spirit",
               "name": "Lumen the Shrine Spirit",
-              "imageUrl": "/images/rewards/lumen-spirit.png"
+              "imageUrl": ""
             }
           }
         }
@@ -141,26 +141,19 @@
     {
       "id": "scene-4",
       "sceneNumber": 3,
-      "title": "The Symbol Door",
-      "sceneType": "puzzle-ingame",
-      "narrationText": "The path to the Guardian is blocked by a massive door covered in glowing symbols. Four symbols, scrambled and wrong.\n\nLumen floats close to examine them. 'I remember this! The symbols tell a story. They need to be in the RIGHT ORDER!'\n\nThe symbols show: A SEED, A TREE, A FLOWER, and the SUN.\n\n'What comes first in the story?' Lumen asks. 'Drag them into the right order!'",
+      "title": "The Memory Stones",
+      "sceneType": "puzzle-memory",
+      "narrationText": "The path to the Guardian is blocked by a massive door. Six glowing stones float in front of it, each hiding a symbol.\n\nLumen gasps. 'The Memory Stones! Ancient magic hides matching symbols beneath them. You must find all the pairs to unlock the door!'\n\nThe stones pulse with soft light, waiting for your touch.",
       "sceneImageUrl": "/images/scenes/ancient-shrine/scene-4.png",
       "puzzleInstructions": {
-        "type": "in-game-drag",
-        "prompt": "Put the symbols in the right order to tell the story of how things grow!",
-        "symbols": [
-          { "id": "sun", "name": "Sun", "imageUrl": "☀️" },
-          { "id": "seed", "name": "Seed", "imageUrl": "🌱" },
-          { "id": "flower", "name": "Flower", "imageUrl": "🌸" },
-          { "id": "tree", "name": "Tree", "imageUrl": "🌳" }
+        "type": "memory-match",
+        "prompt": "Find all the matching pairs!",
+        "pairs": [
+          { "id": "star", "emoji": "⭐" },
+          { "id": "moon", "emoji": "🌙" },
+          { "id": "sun", "emoji": "☀️" }
         ],
-        "correctOrder": ["sun", "seed", "flower", "tree"],
-        "hints": [
-          "Think about how things grow...",
-          "What does a seed need first?",
-          "What comes before a tree?"
-        ],
-        "successNarration": "SUN... SEED... FLOWER... TREE! The symbols lock into place and glow golden! 'That's it!' Lumen cheers. The massive door groans and slowly swings open, revealing the final chamber beyond.\n\nAnd inside... something HUGE begins to move."
+        "successNarration": "The last pair glows bright! All six stones rise into the air and orbit the door, then embed themselves around its frame. CLICK. CLICK. CLICK. The ancient lock releases!\n\n'You did it!' Lumen cheers as the massive door groans and slowly swings open.\n\nAnd inside... something HUGE begins to move."
       },
       "characterTurns": [],
       "outcome": {

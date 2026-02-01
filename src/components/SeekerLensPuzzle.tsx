@@ -71,7 +71,8 @@ export default function SeekerLensPuzzle({
   const [objectVisible, setObjectVisible] = useState(false);  // Shows/hides as you move
   const [objectTapped, setObjectTapped] = useState(false);
 
-  const tolerance = instructions.directionToleranceDegrees ?? 35;
+  // Default tolerance of 5 means device must be tilted to ~85 degrees for "up" (nearly pointing straight at ceiling)
+  const tolerance = instructions.directionToleranceDegrees ?? 5;
   const targetDirection = instructions.triggerDirection;
 
   // Helper to stop the camera

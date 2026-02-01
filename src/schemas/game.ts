@@ -115,6 +115,13 @@ export const GameSessionSchema = z.object({
   collected_rewards: z.array(CollectedRewardSchema).optional(),
   character_scenes: z.array(SessionCharacterSceneStateSchema).nullable().optional(),
   is_split: z.boolean().optional(),
+  // Puzzle scene state
+  puzzle_started: z.boolean().nullable().optional(),
+  puzzle_completed: z.boolean().nullable().optional(),
+  puzzle_outcome: z.enum(['success', 'fail']).nullable().optional(),
+  // Roll-until-success climax state
+  climax_roll_count: z.number().int().min(0).nullable().optional(),
+  climax_fail_index: z.number().int().min(0).nullable().optional(),
 });
 
 export type GameSession = z.infer<typeof GameSessionSchema>;

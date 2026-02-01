@@ -1,9 +1,9 @@
 import { useState, useCallback, useRef } from 'react';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
-import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState } from '../lib/gameState';
-import { formatError } from '../lib/errorRecovery';
+import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle } from '../lib/gameState';
+import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
-import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, isRollUntilSuccessClimax } from '../lib/adventures';
+import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, isRollUntilSuccessClimax } from '../lib/adventures';
 import {
   computeIsSplit,
   computeActiveParallelCharacterId,
@@ -200,16 +200,17 @@ export default function DMPage() {
   // Merge active_cutscene to preserve optimistic updates during race conditions
   const handleSessionUpdate = useCallback((newSession: GameSession) => {
     setSession((prev) => {
-      console.log('%c[SUBSCRIPTION] Update received', 'color: cyan; font-weight: bold', {
-        prevCutscene: prev?.active_cutscene?.characterId,
-        newCutscene: newSession.active_cutscene?.characterId,
-        newTurnIndex: newSession.current_character_turn_index,
-      });
       // If we have an active_cutscene locally but the incoming update doesn't,
       // preserve our local value (it might be an optimistic update not yet confirmed)
       if (prev?.active_cutscene && !newSession.active_cutscene) {
-        console.log('%c[SUBSCRIPTION] Preserving local active_cutscene', 'color: yellow; font-weight: bold', prev.active_cutscene);
         return { ...newSession, active_cutscene: prev.active_cutscene };
+      }
+      // If we're on a puzzle scene and local state says puzzle is started but not completed,
+      // don't let subscription overwrite with completed state (prevents race conditions)
+      if (prev?.puzzle_started && !prev?.puzzle_completed && newSession.puzzle_completed) {
+        // Subscription is trying to mark puzzle complete but we haven't completed it locally
+        // This is likely a stale update - ignore the puzzle_completed field
+        return { ...newSession, puzzle_completed: prev.puzzle_completed, puzzle_outcome: prev.puzzle_outcome };
       }
       return newSession;
     });
@@ -293,6 +294,9 @@ export default function DMPage() {
   const handleCreateSession = async () => {
     setError(null);
     setConnectionStatus(CONNECTION_STATUS.CONNECTING);
+
+    // Clear any old session from storage to prevent confusion
+    clearSessionFromStorage();
 
     const { data, error: sessionError } = await createSession();
 
@@ -699,6 +703,16 @@ export default function DMPage() {
   const handleDismissClimaxCutscene = async () => {
     if (!session || !currentScene || !adventure) return;
 
+    // If we're already showing epilogue, dismissing should complete the game
+    if (showingEpilogue) {
+      setSession((prev) => prev ? { ...prev, active_cutscene: null, phase: GAME_PHASES.COMPLETE } : null);
+      await dismissCutscene(session.id);
+      // Update phase in database to COMPLETE
+      const { error } = await advanceToNextScene(session.id, null);
+      if (error) console.error('Failed to complete adventure:', error);
+      return;
+    }
+
     const climaxTurns = getActiveCharacterTurns(currentScene, players).filter(t => isAlwaysSucceedTurn(t));
     const nextIndex = climaxCutsceneIndex + 1;
 
@@ -748,40 +762,11 @@ export default function DMPage() {
     if (!session || !adventure) return;
     setError(null);
 
-    // For solo players (1 player), check if we should auto-advance
-    const sessionPlayers = session.players || [];
-    const isSoloPlayer = sessionPlayers.length === 1;
-    let shouldAutoAdvance = false;
-
-    if (isSoloPlayer && currentScene && adventure) {
-      const scene = currentScene;
-      const activeTurns = getActiveCharacterTurns(scene, sessionPlayers);
-      const turnIndex = session.current_character_turn_index || 0;
-      const allCharactersActed = turnIndex >= activeTurns.length;
-
-      // Check if next scene is a puzzle - don't auto-advance into puzzle scenes
-      const nextSceneId = scene.outcome?.nextSceneId;
-      const nextScene = nextSceneId ? getSceneById(adventure, nextSceneId as string) : null;
-      const nextSceneIsPuzzle = nextScene ? isPuzzleScene(nextScene) : false;
-
-      // Only auto-advance if all acted AND next scene is NOT a puzzle
-      shouldAutoAdvance = allCharactersActed && !!nextSceneId && !nextSceneIsPuzzle;
-    }
-
-    if (shouldAutoAdvance) {
-      // Keep cutscene visible while advancing scene to prevent flash
-      // handleNextScene will dismiss the cutscene after scene is updated
-      await handleNextScene();
-      // Now dismiss the cutscene after scene has advanced
-      setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
-      await dismissCutscene(session.id);
-    } else {
-      // Normal flow - just dismiss the cutscene
-      setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
-      const { error: dismissError } = await dismissCutscene(session.id);
-      if (dismissError) {
-        setError(formatError(dismissError));
-      }
+    // Simple flow - just dismiss the cutscene, DM will click Next Scene manually
+    setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
+    const { error: dismissError } = await dismissCutscene(session.id);
+    if (dismissError) {
+      setError(formatError(dismissError));
     }
   };
 
@@ -1090,9 +1075,7 @@ export default function DMPage() {
 
     // Use scene ID-based navigation if available, otherwise fall back to legacy
     if (nextSceneId && nextSceneNumber !== null) {
-      // Reset puzzle state when advancing to a new scene
-      await resetPuzzleState(session.id);
-
+      // startSceneById already resets puzzle state, no need for separate call
       const { error: advanceError } = await startSceneById(session.id, nextSceneId, nextSceneNumber);
       setAdvancing(false);
       if (advanceError) {
@@ -1110,6 +1093,7 @@ export default function DMPage() {
         puzzle_started: null,
         puzzle_completed: null,
         puzzle_outcome: null,
+        active_cutscene: null,
       } : null);
     } else {
       // End of adventure or legacy navigation
@@ -1649,8 +1633,8 @@ export default function DMPage() {
             );
           })()}
 
-          {/* Scene Narration */}
-          {currentScene && (
+          {/* Scene Narration - hide during epilogue */}
+          {currentScene && !showingEpilogue && (
             <div className="bg-blue-50 p-4 rounded-lg">
               <h2 className="text-sm font-semibold text-blue-900 mb-2">Narration</h2>
               <p className="text-base text-blue-800 leading-relaxed">{currentScene.narrationText || 'No narration text'}</p>
@@ -1658,7 +1642,8 @@ export default function DMPage() {
           )}
 
           {/* BUG-2 fix: Outcomes shown progressively (immediate per-kid). No batched Reveal. */}
-          {currentScene && session.scene_choices && session.scene_choices.length > 0 && (
+          {/* Hide during epilogue */}
+          {currentScene && !showingEpilogue && session.scene_choices && session.scene_choices.length > 0 && (
             <div className="space-y-4">
               <h2 className="text-lg font-semibold">Outcomes</h2>
               {session.scene_choices?.map((sceneChoice, index) => {
@@ -1744,6 +1729,9 @@ export default function DMPage() {
                 ? 'Next Scene'
                 : 'Dismiss';
 
+            // For solo adventures, also show scene outcome so DM knows what comes next
+            const showSceneOutcome = isSoloAdventure && currentScene.outcome?.resultText && !isClimaxScene;
+
             return (
               <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg space-y-3 mt-4">
                 <div className="flex items-center gap-2">
@@ -1759,6 +1747,13 @@ export default function DMPage() {
                     Reward: <span className="font-medium">{session.active_cutscene.reward.name}</span>
                   </p>
                 )}
+                {/* For solo adventures, show scene outcome text so DM knows what happens next */}
+                {showSceneOutcome && (
+                  <div className="bg-green-50 border border-green-200 p-3 rounded-lg mt-2">
+                    <p className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-1">Scene Outcome</p>
+                    <p className="text-sm text-green-800 whitespace-pre-line">{currentScene.outcome!.resultText}</p>
+                  </div>
+                )}
                 <button
                   onClick={isClimaxScene ? handleDismissClimaxCutscene : handleDismissCutscene}
                   className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
@@ -1771,7 +1766,8 @@ export default function DMPage() {
 
           {/* Scene outcome + Next/End only when all have acted */}
           {/* For solo adventures, hide this when cutscene is showing (cutscene button handles advance) */}
-          {currentScene && allActed && !showingEpilogue && !(players.length === 1 && session.active_cutscene) && (
+          {/* For puzzle scenes, the puzzle completion section handles this instead */}
+          {currentScene && allActed && !showingEpilogue && !(players.length === 1 && session.active_cutscene) && !isPuzzleScene(currentScene) && (
             <>
               {currentScene.outcome && renderSceneOutcome(currentScene.outcome)}
               {isLastScene ? (
@@ -1839,15 +1835,6 @@ export default function DMPage() {
           )}
 
           {/* Puzzle Scene UI - Start Button (shown before puzzle_started) */}
-          {currentScene && isPuzzleScene(currentScene) && (() => {
-            console.log('[PUZZLE DEBUG]', {
-              sceneType: currentScene.sceneType,
-              puzzle_started: session.puzzle_started,
-              puzzle_completed: session.puzzle_completed,
-              active_cutscene: session.active_cutscene?.characterId,
-            });
-            return null;
-          })()}
           {currentScene && isPuzzleScene(currentScene) && !session.puzzle_started && !session.puzzle_completed && !session.active_cutscene && (
             <div className="space-y-4">
               <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg">
@@ -1924,6 +1911,38 @@ export default function DMPage() {
             );
           })()}
 
+          {/* Puzzle Scene UI - Memory Match (shown after puzzle_started) */}
+          {currentScene && isPuzzleScene(currentScene) && isMemoryPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && !session.active_cutscene && (() => {
+            const instructions = getMemoryPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+
+            const kidName = players[0]?.kidName || adventure.characters[0]?.name || 'Player';
+
+            return (
+              <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="animate-pulse text-purple-600 text-xl">🎴</span>
+                  <p className="text-purple-800 font-medium">
+                    {kidName} is playing Memory Match!
+                  </p>
+                </div>
+                <p className="text-sm text-purple-600">
+                  {instructions.pairs.length} pairs to match: {instructions.pairs.map(p => p.emoji).join(' ')}
+                </p>
+                <p className="text-xs text-purple-500 italic">
+                  The puzzle will auto-complete when all pairs are matched.
+                </p>
+                <button
+                  onClick={handlePuzzleOverride}
+                  disabled={submitting}
+                  className="w-full bg-purple-100 text-purple-700 py-2 px-4 rounded-lg font-medium hover:bg-purple-200 transition-colors disabled:opacity-50 text-sm"
+                >
+                  Override: Mark Complete
+                </button>
+              </div>
+            );
+          })()}
+
           {/* Puzzle Scene - Next Scene button after completion */}
           {currentScene && isPuzzleScene(currentScene) && session.puzzle_completed && !session.active_cutscene && (
             <div className="space-y-4">
@@ -1931,6 +1950,10 @@ export default function DMPage() {
                 <p className="font-semibold" style={{ color: session.puzzle_outcome === 'success' ? '#166534' : '#c2410c' }}>
                   {session.puzzle_outcome === 'success' ? 'Challenge Complete!' : 'Nice effort!'}
                 </p>
+                {/* Show scene outcome text for context */}
+                {currentScene.outcome?.resultText && (
+                  <p className="mt-2 text-sm text-gray-700">{currentScene.outcome.resultText}</p>
+                )}
               </div>
               <button
                 onClick={handleNextScene}
@@ -1949,8 +1972,8 @@ export default function DMPage() {
             </div>
           )}
 
-          {/* Roll-Until-Success Climax UI */}
-          {currentScene && isRollUntilSuccessClimax(currentScene) && currentScene.climaxInstructions && !session.active_cutscene && (() => {
+          {/* Roll-Until-Success Climax UI - hide after victory (allActed) */}
+          {currentScene && isRollUntilSuccessClimax(currentScene) && currentScene.climaxInstructions && !session.active_cutscene && !allActed && (() => {
             const character = adventure.characters[0];
             const kidName = players[0]?.kidName || character?.name || 'Player';
             const diceType = (session.dice_type ?? DEFAULT_DICE_TYPE) as DiceType;

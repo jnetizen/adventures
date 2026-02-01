@@ -2,7 +2,6 @@ import { useState } from 'react';
 import type { Adventure, Ending } from '../types/adventure';
 import type { GameSession, CollectedReward } from '../types/game';
 import { calculateEnding, hasSingleEnding } from '../lib/adventures';
-import PlaceholderImage from '../components/PlaceholderImage';
 
 interface EndingPageProps {
   adventure: Adventure;
@@ -50,11 +49,9 @@ function LootScreen({
                 className="w-16 h-16 object-contain rounded-lg mb-2"
               />
             ) : (
-              <PlaceholderImage
-                variant="character"
-                label={reward.name}
-                className="w-16 h-16 flex-shrink-0 mb-2"
-              />
+              <div className="w-16 h-16 flex-shrink-0 mb-2 bg-gradient-to-br from-amber-200 to-yellow-300 rounded-xl flex items-center justify-center text-3xl shadow-sm">
+                ⭐
+              </div>
             )}
             <span className="text-sm font-medium text-gray-900">{reward.name}</span>
             {reward.type && (
@@ -170,11 +167,9 @@ export default function EndingPage({ adventure, session, actions, hideImage = fa
                     className="w-10 h-10 object-contain rounded"
                   />
                 ) : (
-                  <PlaceholderImage
-                    variant="character"
-                    label={r.name}
-                    className="w-10 h-10 flex-shrink-0"
-                  />
+                  <div className="w-10 h-10 flex-shrink-0 bg-gradient-to-br from-amber-200 to-yellow-300 rounded-lg flex items-center justify-center text-xl">
+                    ⭐
+                  </div>
                 )}
                 <span className="text-gray-800">{r.name}</span>
               </li>

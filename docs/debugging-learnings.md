@@ -1054,3 +1054,289 @@ For Vercel deployment:
 - [ ] Deploy using `vercel --prod --yes` (not auto-deploy from Git)
 - [ ] Verify images load on deployed site
 - [ ] Test direct URL navigation (e.g., /dm, /play)
+
+---
+
+## 29. Scene Transition Race Condition with Cutscenes
+
+### Problem
+After dismissing a cutscene on scene 1 and auto-advancing to scene 2, the puzzle UI (e.g., Seeker's Lens) didn't appear. The "Start Challenge" button was missing.
+
+### Root Cause
+`startSceneById()` updated multiple session fields (scene, puzzle state, etc.) but did NOT clear `active_cutscene`. The flow was:
+
+1. DM dismisses cutscene → `handleDismissCutscene()` called
+2. `handleNextScene()` calls `startSceneById()` → updates DB (but `active_cutscene` still set)
+3. Supabase subscription delivers update with new scene BUT old `active_cutscene`
+4. THEN `dismissCutscene()` clears `active_cutscene` in a separate DB call
+5. **Race condition**: The subscription update from step 3 arrives with `active_cutscene` still set
+6. Puzzle UI condition `!session.active_cutscene` is false → button hidden
+
+### Solution
+Clear `active_cutscene` atomically with the scene transition in `startSceneById()`:
+
+```typescript
+// In gameState.ts - startSceneById()
+.update({
+  current_scene: sceneNumber,
+  current_scene_id: sceneId,
+  // ... other fields ...
+  puzzle_started: null,
+  puzzle_completed: null,
+  puzzle_outcome: null,
+  // Clear cutscene atomically to prevent race conditions
+  active_cutscene: null,  // ← ADD THIS
+  updated_at: new Date().toISOString(),
+})
+```
+
+Also update the local state in DMPage:
+```typescript
+setSession((prev) => prev ? {
+  ...prev,
+  current_scene: nextSceneNumber,
+  current_scene_id: nextSceneId,
+  // ... other fields ...
+  active_cutscene: null,  // ← ADD THIS
+} : null);
+```
+
+### Key Insight
+When multiple fields need to change together for correct UI state, update them in a **single database operation** to avoid subscription race conditions.
+
+### Key Files
+- `src/lib/gameState.ts` - `startSceneById()` function
+- `src/pages/DMPage.tsx` - `handleNextScene()` local state update
+
+---
+
+## 30. Session Recovery Loading Wrong Adventure
+
+### Problem
+Player refreshed their screen mid-adventure and ended up on a completely different adventure (Dragon story instead of Shrine story).
+
+### Root Cause
+`localStorage` held a stale session from a previous game. When the player refreshed, the recovery mechanism loaded the old session data.
+
+### Solution
+Clear localStorage when creating or joining a new session:
+
+```typescript
+// In DMPage.tsx - when creating session
+clearSessionFromStorage();
+setSession(data);
+
+// In PlayPage.tsx - when joining session
+clearSessionFromStorage();
+setSession(data);
+```
+
+This ensures that starting a new game always starts fresh, and only recovers sessions when the user explicitly chooses "Recover Session".
+
+### Key Files
+- `src/pages/DMPage.tsx` - Session creation
+- `src/pages/PlayPage.tsx` - Session joining
+- `src/lib/errorRecovery.ts` - `clearSessionFromStorage()`
+
+---
+
+## 31. Puzzle Success Overlay Showing Prematurely
+
+### Problem
+The green "Amazing! Challenge Complete!" success overlay was appearing even when the puzzle hadn't been started yet in the current scene.
+
+### Root Cause
+The success overlay condition only checked `puzzle_completed && puzzle_outcome === 'success'`. If puzzle state wasn't properly reset from a previous scene, the overlay would show immediately.
+
+### Solution
+Add `puzzle_started` to the condition:
+
+```tsx
+// Only show if puzzle was STARTED in this scene
+{isPuzzleScene(currentScene) &&
+ session.puzzle_started &&  // ← Must have started
+ session.puzzle_completed &&
+ session.puzzle_outcome === 'success' &&
+ !session.active_cutscene && (
+  <div className="...">Amazing! Challenge Complete!</div>
+)}
+```
+
+### Key Files
+- `src/pages/PlayPage.tsx` - Puzzle success overlay condition
+
+---
+
+## 32. Scene Outcome Showing Before Challenge Starts
+
+### Problem
+On puzzle scenes, the "Scene Outcome" section with "Next Scene" button was showing before the player completed the challenge.
+
+### Root Cause
+The scene outcome section checked `allActed` but didn't exclude puzzle scenes. Since puzzle scenes often have no character turns, `allActed` was true immediately.
+
+### Solution
+Add `!isPuzzleScene(currentScene)` to the condition:
+
+```tsx
+{currentScene && allActed && !showingEpilogue &&
+ !(players.length === 1 && session.active_cutscene) &&
+ !isPuzzleScene(currentScene) && (  // ← Exclude puzzle scenes
+  <>
+    {currentScene.outcome && renderSceneOutcome(currentScene.outcome)}
+    {/* Next Scene button */}
+  </>
+)}
+```
+
+For puzzle scenes, the "Puzzle Completed" section handles the Next Scene button instead.
+
+### Key Files
+- `src/pages/DMPage.tsx` - Scene outcome section
+
+---
+
+## 33. Epilogue Cutscene Dismiss Loop
+
+### Problem
+When dismissing the epilogue cutscene, the game would loop back and show the epilogue again instead of completing.
+
+### Root Cause
+`handleDismissCutscene()` had logic for auto-advancing to next scene, which would call `handleNextScene()`. For the epilogue, this triggered `goToEpilogue()` again.
+
+### Solution
+Check if we're already showing the epilogue and complete the game instead:
+
+```typescript
+const handleDismissCutscene = async () => {
+  // If we're already showing epilogue, dismissing should complete the game
+  if (showingEpilogue) {
+    setSession((prev) => prev ? {
+      ...prev,
+      active_cutscene: null,
+      phase: GAME_PHASES.COMPLETE
+    } : null);
+    await dismissCutscene(session.id);
+    await advanceToNextScene(session.id, null);  // null = end of adventure
+    return;
+  }
+  // ... normal dismiss logic
+};
+```
+
+### Key Files
+- `src/pages/DMPage.tsx` - `handleDismissCutscene()`
+
+---
+
+## 34. Adventure JSON Overriding Code Defaults
+
+### Problem
+Seeker's Lens puzzle barely required any tilt to find the hidden object, even though code had a strict tolerance.
+
+### Root Cause
+The adventure JSON had `directionToleranceDegrees: 15` which overrode the code's default of 5. The JSON value was too lenient.
+
+### Solution
+Updated the adventure JSON to use a stricter tolerance:
+
+```json
+{
+  "sceneType": "puzzle-seeker-lens",
+  "puzzleInstructions": {
+    "type": "seeker-lens",
+    "directionToleranceDegrees": 3  // Was 15, now 3 (very strict)
+  }
+}
+```
+
+### Key Insight
+Always check if adventure JSON has values that override code defaults. The JSON is the source of truth for adventure-specific settings.
+
+### Key Files
+- `src/data/adventures/ancient-shrine-adventure.json`
+- `src/components/SeekerLensPuzzle.tsx` - Default tolerance in code
+
+---
+
+## 35. Adding New Puzzle Types
+
+### Checklist for adding a new puzzle type (e.g., Memory Match):
+
+1. **Type definitions** (`src/types/adventure.ts`):
+   ```typescript
+   export type SceneType = 'standard' | 'puzzle-physical' | ... | 'puzzle-memory';
+
+   export interface MemoryPuzzleInstructions {
+     type: 'memory';
+     pairs: MemoryPair[];
+     prompt: string;
+   }
+   ```
+
+2. **Helper functions** (`src/lib/adventures.ts`):
+   ```typescript
+   export function isMemoryPuzzle(scene: Scene): boolean {
+     return scene.sceneType === 'puzzle-memory';
+   }
+
+   export function getMemoryPuzzleInstructions(scene: Scene): MemoryPuzzleInstructions | null {
+     // Extract and return instructions
+   }
+   ```
+
+3. **Update `isPuzzleScene()`** (`src/lib/adventures.ts`):
+   ```typescript
+   export function isPuzzleScene(scene: Scene): boolean {
+     return scene.sceneType === 'puzzle-physical' ||
+            scene.sceneType === 'puzzle-ingame' ||
+            scene.sceneType === 'puzzle-seeker-lens' ||
+            scene.sceneType === 'puzzle-memory';  // ← Add new type
+   }
+   ```
+
+4. **Create component** (`src/components/MemoryPuzzle.tsx`)
+
+5. **Add to PlayPage.tsx** - Render the puzzle when active
+6. **Add to DMPage.tsx** - Add DM controls for the puzzle type
+
+### Key Files
+- `src/types/adventure.ts`
+- `src/lib/adventures.ts`
+- `src/pages/PlayPage.tsx`
+- `src/pages/DMPage.tsx`
+- `src/components/[PuzzleName].tsx`
+
+---
+
+## 36. Broken Image Fallbacks
+
+### Problem
+Reward images showed broken placeholder or nothing when the image URL was invalid or missing.
+
+### Solution
+Use a star emoji as universal fallback for rewards:
+
+```tsx
+{reward.imageUrl ? (
+  <img src={reward.imageUrl} alt={reward.name} ... />
+) : (
+  <div className="w-14 h-14 bg-gradient-to-br from-amber-200 to-yellow-300 rounded-xl flex items-center justify-center text-3xl">
+    ⭐
+  </div>
+)}
+```
+
+For adventure data, set empty string instead of broken URL:
+```json
+{
+  "id": "lumen-spirit",
+  "name": "Lumen the Shrine Spirit",
+  "imageUrl": ""  // Empty triggers fallback, broken URL shows error
+}
+```
+
+### Key Files
+- `src/components/CutsceneOverlay.tsx`
+- `src/pages/EndingPage.tsx`
+- Adventure JSON files

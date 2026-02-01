@@ -247,11 +247,9 @@ export default function CutsceneOverlay({
                     style={{ filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.6))' }}
                   />
                 ) : (
-                  <PlaceholderImage
-                    variant="character"
-                    label={reward.name}
-                    className="w-14 h-14 flex-shrink-0"
-                  />
+                  <div className="w-14 h-14 flex-shrink-0 bg-gradient-to-br from-amber-200 to-yellow-300 rounded-xl flex items-center justify-center text-3xl drop-shadow-lg">
+                    ⭐
+                  </div>
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-bold text-amber-600 uppercase tracking-wider animate-text-pop" style={{ animationDelay: '0.5s' }}>

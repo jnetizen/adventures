@@ -12,8 +12,8 @@ interface UseSessionSubscriptionOptions {
   onStatusChange: (status: ConnectionStatusType) => void;
 }
 
-// Heartbeat interval to keep connection alive (2 minutes)
-const HEARTBEAT_INTERVAL_MS = 2 * 60 * 1000;
+// Heartbeat interval - poll frequently to catch missed subscription updates (2 seconds)
+const HEARTBEAT_INTERVAL_MS = 2 * 1000;
 
 /**
  * Subscribes to Supabase realtime updates for a session.
@@ -123,17 +123,11 @@ export function useSessionSubscription({
           filter: `id=eq.${sessionId}`,
         },
         (payload) => {
-          // Validate the incoming payload before updating state
-          const validatedSession = parseGameSession(payload.new);
-          if (validatedSession) {
-            onSessionUpdate(validatedSession);
-            onStatusChange(CONNECTION_STATUS.CONNECTED);
-          } else {
-            // If validation fails, still update but log warning
-            console.warn('[SUBSCRIPTION] Session payload validation failed, using raw data');
-            onSessionUpdate(payload.new as GameSession);
-            onStatusChange(CONNECTION_STATUS.CONNECTED);
-          }
+          // Cast to GameSession and apply update directly
+          // The schema now includes puzzle fields so this should work
+          const newSession = payload.new as GameSession;
+          onSessionUpdate(newSession);
+          onStatusChange(CONNECTION_STATUS.CONNECTED);
         }
       )
       .subscribe((status) => {

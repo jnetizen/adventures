@@ -8,7 +8,7 @@ export interface ChoiceOutcome {
 // ============================================
 
 /** Scene type determines the UI and interaction model for a scene. */
-export type SceneType = 'standard' | 'puzzle-physical' | 'puzzle-ingame' | 'puzzle-seeker-lens';
+export type SceneType = 'standard' | 'puzzle-physical' | 'puzzle-ingame' | 'puzzle-seeker-lens' | 'puzzle-memory';
 
 /** A symbol/element used in drag puzzles. */
 export interface PuzzleSymbol {
@@ -98,8 +98,25 @@ export interface SeekerLensInstructions {
   successReward?: Reward;
 }
 
+/** Pair for memory matching puzzle. */
+export interface MemoryPair {
+  id: string;
+  emoji: string;
+}
+
+/** Instructions for memory matching puzzle. */
+export interface MemoryPuzzleInstructions {
+  type: 'memory-match';
+  /** Prompt shown above the puzzle. */
+  prompt?: string;
+  /** Pairs to match (3 pairs = 6 cards). */
+  pairs: MemoryPair[];
+  /** Narration shown on success. */
+  successNarration?: string;
+}
+
 /** Union type for all puzzle instruction types. */
-export type PuzzleInstructions = PhysicalPuzzleInstructions | DragPuzzleInstructions | SeekerLensInstructions;
+export type PuzzleInstructions = PhysicalPuzzleInstructions | DragPuzzleInstructions | SeekerLensInstructions | MemoryPuzzleInstructions;
 
 /** Instructions for roll-until-success climax (solo boss fight). */
 export interface RollUntilSuccessInstructions {
