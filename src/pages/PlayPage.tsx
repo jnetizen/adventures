@@ -209,15 +209,19 @@ export default function PlayPage() {
   const currentSceneKey = `${session?.current_scene}-${session?.current_scene_id}`;
 
   // Reset dice roll tracking when scene changes (support both scene number and scene ID for branching)
+  // But only if no dice animation is in progress - otherwise let it complete
   useEffect(() => {
-    if (lastSceneRef.current !== currentSceneKey) {
-      // Scene actually changed - set count to current choices to avoid animating old choices
+    if (lastSceneRef.current !== currentSceneKey && !pendingDiceRoll) {
+      // Scene actually changed and no animation in progress - reset count to current choices
       // eslint-disable-next-line react-hooks/set-state-in-effect -- reset roll tracking on scene change
       setProcessedRollCount(session?.scene_choices?.length ?? 0);
-      setPendingDiceRoll(null);
+      lastSceneRef.current = currentSceneKey;
+    } else if (lastSceneRef.current !== currentSceneKey && pendingDiceRoll) {
+      // Scene changed but animation in progress - just update the ref, don't reset count
+      // The animation will complete and increment the count naturally
       lastSceneRef.current = currentSceneKey;
     }
-  }, [currentSceneKey, session?.scene_choices?.length]);
+  }, [currentSceneKey, session?.scene_choices?.length, pendingDiceRoll]);
 
   const handleJoin = async () => {
     if (!roomCode.trim()) {
