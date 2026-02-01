@@ -70,7 +70,6 @@ export default function SeekerLensPuzzle({
   const [warmth, setWarmth] = useState(0);
   const [objectVisible, setObjectVisible] = useState(false);  // Shows/hides as you move
   const [objectTapped, setObjectTapped] = useState(false);
-  const [videoReady, setVideoReady] = useState(false);
 
   const tolerance = instructions.directionToleranceDegrees ?? 35;
   const targetDirection = instructions.triggerDirection;
@@ -176,6 +175,7 @@ export default function SeekerLensPuzzle({
   useEffect(() => {
     if (permissionStatus !== 'granted') return;
 
+    let logCounter = 0;
     const handleOrientation = (event: DeviceOrientationEvent) => {
       const newBeta = event.beta ?? 0;
       const newGamma = event.gamma ?? 0;
@@ -184,14 +184,27 @@ export default function SeekerLensPuzzle({
       const newWarmth = calculateWarmth(newBeta, newGamma, targetDirection);
       setWarmth(newWarmth);
 
+      // Log every 30th event to avoid spam (roughly every second)
+      logCounter++;
+      if (logCounter % 30 === 0) {
+        console.log(`[SeekerLens] Orientation: beta=${newBeta.toFixed(1)}, gamma=${newGamma.toFixed(1)}, detected=${detected}, target=${targetDirection}, warmth=${newWarmth.toFixed(2)}`);
+      }
+
       // Show object when pointing at target, hide when moving away
       const isOnTarget = detected === targetDirection;
+      if (isOnTarget !== objectVisible) {
+        console.log(`[SeekerLens] Object visibility changed: ${isOnTarget ? 'VISIBLE' : 'hidden'}`);
+      }
       setObjectVisible(isOnTarget);
     };
 
+    console.log('[SeekerLens] Starting orientation listener, target direction:', targetDirection);
     window.addEventListener('deviceorientation', handleOrientation);
-    return () => window.removeEventListener('deviceorientation', handleOrientation);
-  }, [permissionStatus, tolerance, targetDirection]);
+    return () => {
+      console.log('[SeekerLens] Stopping orientation listener');
+      window.removeEventListener('deviceorientation', handleOrientation);
+    };
+  }, [permissionStatus, tolerance, targetDirection, objectVisible]);
 
   // Handle object tap
   const handleObjectTap = useCallback(() => {
@@ -215,17 +228,6 @@ export default function SeekerLensPuzzle({
     return 'border-red-500';
   };
 
-  // Get direction instruction text
-  const getDirectionHint = () => {
-    switch (targetDirection) {
-      case 'up': return 'Point your iPad at the ceiling!';
-      case 'down': return 'Point your iPad at the floor!';
-      case 'left': return 'Point your iPad to your left!';
-      case 'right': return 'Point your iPad to your right!';
-      case 'flat-face-up': return 'Hold your iPad flat, screen facing up!';
-      case 'flat-face-down': return 'Hold your iPad flat, screen facing down!';
-    }
-  };
 
   // Waiting for user to tap - iOS requires permissions to be requested from user gesture
   if (permissionStatus === 'waiting') {
@@ -303,37 +305,32 @@ export default function SeekerLensPuzzle({
 
   // Main puzzle UI
   return (
-    <div className="fixed inset-0 z-50 bg-black">
-      {/* Camera feed */}
+    <div className="fixed inset-0 z-50 bg-black overflow-hidden">
+      {/* Camera feed - use z-index to ensure it's on top */}
       <video
         ref={videoRef}
         autoPlay
         playsInline
         muted
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover z-10"
+        style={{ backgroundColor: 'transparent' }}
         onLoadedMetadata={() => {
           console.log('[SeekerLens] Video metadata loaded');
-          setVideoReady(true);
+          if (videoRef.current) {
+            console.log('[SeekerLens] Video dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+          }
         }}
         onPlay={() => console.log('[SeekerLens] Video onPlay fired')}
         onError={(e) => console.error('[SeekerLens] Video error:', e)}
-        // No mirror transform - using back camera for room search
       />
 
-      {/* Loading indicator while video loads */}
-      {!videoReady && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-white text-lg animate-pulse">Starting camera...</div>
-        </div>
-      )}
-
-      {/* Warmth indicator border */}
-      <div className={`absolute inset-0 border-8 ${getWarmthColor()} transition-colors duration-300 pointer-events-none`} />
+      {/* Warmth indicator border - subtle glow around edges */}
+      <div className={`absolute inset-0 border-8 ${getWarmthColor()} transition-colors duration-300 pointer-events-none z-20`} />
 
       {/* Hidden object (shown when direction matches) */}
       {objectVisible && (
         <div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer z-30"
           onClick={handleObjectTap}
         >
           <div className={`relative ${instructions.hiddenObject.animation === 'float-bounce' ? 'animate-bounce' : instructions.hiddenObject.animation === 'pulse' ? 'animate-pulse' : ''}`}>
@@ -346,6 +343,7 @@ export default function SeekerLensPuzzle({
                 height: instructions.hiddenObject.height ?? 128,
                 filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.8))',
               }}
+              onError={() => console.error('[SeekerLens] Hidden object image failed to load:', instructions.hiddenObject.imageUrl)}
             />
             {/* Tap prompt */}
             <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
@@ -357,41 +355,23 @@ export default function SeekerLensPuzzle({
         </div>
       )}
 
-      {/* Reveal narration */}
+      {/* Reveal narration - only show when object is found */}
       {objectVisible && !objectTapped && (
-        <div className="absolute top-8 left-4 right-4">
+        <div className="absolute top-8 left-4 right-4 z-30">
           <div className="bg-black/70 backdrop-blur-sm rounded-xl p-4 text-center">
             <p className="text-white text-lg font-medium">{instructions.revealNarration}</p>
           </div>
         </div>
       )}
 
-      {/* Direction hint (shown when object not yet revealed) */}
+      {/* Minimal search prompt - no direction hints, let them explore! */}
       {!objectVisible && (
-        <div className="absolute bottom-8 left-4 right-4">
-          <div className="bg-black/70 backdrop-blur-sm rounded-xl p-4 text-center space-y-2">
-            <p className="text-purple-300 text-sm">Move your iPad around to search...</p>
-            <p className="text-white text-lg font-bold">{getDirectionHint()}</p>
-            {/* Warmth indicator */}
-            <div className="flex justify-center gap-1 mt-2">
-              {[0.2, 0.4, 0.6, 0.8, 1].map((threshold, i) => (
-                <div
-                  key={i}
-                  className={`w-8 h-2 rounded-full transition-colors ${
-                    warmth >= threshold
-                      ? i < 2 ? 'bg-blue-500' : i < 4 ? 'bg-yellow-500' : 'bg-red-500'
-                      : 'bg-gray-600'
-                  }`}
-                />
-              ))}
-            </div>
-            <p className="text-xs text-gray-400">
-              {warmth < 0.3 ? 'Cold...' : warmth < 0.6 ? 'Getting warmer...' : warmth < 0.85 ? 'Hot!' : 'VERY HOT!!'}
-            </p>
+        <div className="absolute bottom-8 left-4 right-4 z-30">
+          <div className="bg-black/70 backdrop-blur-sm rounded-xl p-3 text-center">
+            <p className="text-white text-lg">Move your iPad around to search...</p>
           </div>
         </div>
       )}
-
     </div>
   );
 }
