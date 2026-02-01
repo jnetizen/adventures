@@ -968,6 +968,10 @@ export default function DMPage() {
     if (!session || !currentScene || !adventure) return;
 
     setError(null);
+    if (isPuzzleScene(currentScene) && !session.puzzle_completed) {
+      setError('Complete the challenge before moving to the next scene.');
+      return;
+    }
     setAdvancing(true);
 
     const outcome = currentScene.outcome;
@@ -1071,6 +1075,12 @@ export default function DMPage() {
       const nextScene = getSceneById(adventure, outcome.nextSceneId);
       nextSceneNumber = nextScene?.sceneNumber ?? null;
       nextSceneId = outcome.nextSceneId;
+    }
+
+    // Clear any lingering cutscene before advancing scenes.
+    if (session.active_cutscene) {
+      await dismissCutscene(session.id);
+      setSession((prev) => prev ? { ...prev, active_cutscene: null } : null);
     }
 
     // Use scene ID-based navigation if available, otherwise fall back to legacy
@@ -1700,20 +1710,8 @@ export default function DMPage() {
             </div>
           )}
 
-          {/* Cutscene Active Indicator - shown regardless of scene choices */}
-          {(() => {
-            if (session.active_cutscene) {
-              console.log('%c[DISMISS] Cutscene IS active - button should show', 'color: lime; font-weight: bold; font-size: 14px', {
-                currentSceneId: currentScene?.id,
-                cutsceneCharacter: session.active_cutscene.characterId,
-                imageUrl: session.active_cutscene.imageUrl,
-              });
-            } else {
-              console.log('[DISMISS] No active cutscene', { currentSceneId: currentScene?.id });
-            }
-            return null;
-          })()}
-          {currentScene && session.active_cutscene && (() => {
+          {/* Cutscene Active Indicator - hidden during puzzle scenes to avoid blocking Start Challenge */}
+          {currentScene && session.active_cutscene && !isPuzzleScene(currentScene) && (() => {
             const isClimaxScene = currentScene.isClimax;
             const allClimaxTurns = isClimaxScene ? getActiveCharacterTurns(currentScene, players).filter(t => isAlwaysSucceedTurn(t)) : [];
             const isVideoMode = climaxPlayMode === 'video';
@@ -1835,7 +1833,7 @@ export default function DMPage() {
           )}
 
           {/* Puzzle Scene UI - Start Button (shown before puzzle_started) */}
-          {currentScene && isPuzzleScene(currentScene) && !session.puzzle_started && !session.puzzle_completed && !session.active_cutscene && (
+          {currentScene && isPuzzleScene(currentScene) && !session.puzzle_started && !session.puzzle_completed && (
             <div className="space-y-4">
               <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg">
                 <p className="text-sm text-purple-600 mb-2">Read the narration above, then start the challenge:</p>
@@ -1851,7 +1849,7 @@ export default function DMPage() {
           )}
 
           {/* Puzzle Scene UI - Physical (shown after puzzle_started) */}
-          {currentScene && isPuzzleScene(currentScene) && isPhysicalPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && !session.active_cutscene && (() => {
+          {currentScene && isPuzzleScene(currentScene) && isPhysicalPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
             const instructions = getPhysicalPuzzleInstructions(currentScene);
             if (!instructions) return null;
 
@@ -1872,7 +1870,7 @@ export default function DMPage() {
           })()}
 
           {/* Puzzle Scene UI - Drag (shown after puzzle_started) */}
-          {currentScene && isPuzzleScene(currentScene) && isDragPuzzle(currentScene) && session.puzzle_started && !session.active_cutscene && (() => {
+          {currentScene && isPuzzleScene(currentScene) && isDragPuzzle(currentScene) && session.puzzle_started && (() => {
             const instructions = getDragPuzzleInstructions(currentScene);
             if (!instructions) return null;
 
@@ -1892,7 +1890,7 @@ export default function DMPage() {
           })()}
 
           {/* Puzzle Scene UI - Seeker's Lens (shown after puzzle_started) */}
-          {currentScene && isPuzzleScene(currentScene) && isSeekerLensPuzzle(currentScene) && session.puzzle_started && !session.active_cutscene && (() => {
+          {currentScene && isPuzzleScene(currentScene) && isSeekerLensPuzzle(currentScene) && session.puzzle_started && (() => {
             const instructions = getSeekerLensInstructions(currentScene);
             if (!instructions) return null;
 
@@ -1912,7 +1910,7 @@ export default function DMPage() {
           })()}
 
           {/* Puzzle Scene UI - Memory Match (shown after puzzle_started) */}
-          {currentScene && isPuzzleScene(currentScene) && isMemoryPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && !session.active_cutscene && (() => {
+          {currentScene && isPuzzleScene(currentScene) && isMemoryPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
             const instructions = getMemoryPuzzleInstructions(currentScene);
             if (!instructions) return null;
 
@@ -1944,7 +1942,7 @@ export default function DMPage() {
           })()}
 
           {/* Puzzle Scene - Next Scene button after completion */}
-          {currentScene && isPuzzleScene(currentScene) && session.puzzle_completed && !session.active_cutscene && (
+          {currentScene && isPuzzleScene(currentScene) && session.puzzle_completed && (
             <div className="space-y-4">
               <div className={`p-4 rounded-lg ${session.puzzle_outcome === 'success' ? 'bg-green-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
                 <p className="font-semibold" style={{ color: session.puzzle_outcome === 'success' ? '#166534' : '#c2410c' }}>
