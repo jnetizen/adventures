@@ -209,9 +209,16 @@ export async function startScene(sessionId: string, sceneNumber: number): Promis
       .from('sessions')
       .update({
         current_scene: sceneNumber,
+        current_scene_id: null,
         current_character_turn_index: 0,
         scene_choices: [],
         phase: GAME_PHASES.PLAYING,
+        // Reset puzzle state when entering a new scene (legacy navigation).
+        puzzle_started: null,
+        puzzle_completed: null,
+        puzzle_outcome: null,
+        // Clear any active cutscene to prevent stale overlays on scene transitions.
+        active_cutscene: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);
