@@ -354,17 +354,6 @@ export default function PlayPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {session && (
-        <div className="fixed top-2 left-2 z-[100] bg-red-600 text-white text-xs font-mono px-3 py-2 rounded-md space-y-0.5 shadow-lg">
-          <div className="font-bold">DEBUG SESSION</div>
-          <div>scene_id: {session.current_scene_id ?? 'null'}</div>
-          <div>scene_num: {session.current_scene ?? 'null'}</div>
-          <div>puzzle_started: {String(!!session.puzzle_started)}</div>
-          <div>puzzle_completed: {String(!!session.puzzle_completed)}</div>
-          <div>active_cutscene: {session.active_cutscene ? 'yes' : 'no'}</div>
-          <div>updated_at: {session.updated_at ?? 'null'}</div>
-        </div>
-      )}
       {showSceneCelebration && currentScene?.outcome?.rewards && (
         <RewardCelebration
           rewards={currentScene.outcome.rewards}
