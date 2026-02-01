@@ -68,8 +68,9 @@ export default function SeekerLensPuzzle({
   // Start as 'waiting' - need user gesture before requesting permissions on iOS
   const [permissionStatus, setPermissionStatus] = useState<'waiting' | 'requesting' | 'granted' | 'denied' | 'unavailable'>('waiting');
   const [warmth, setWarmth] = useState(0);
-  const [objectRevealed, setObjectRevealed] = useState(false);
+  const [objectVisible, setObjectVisible] = useState(false);  // Shows/hides as you move
   const [objectTapped, setObjectTapped] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
 
   const tolerance = instructions.directionToleranceDegrees ?? 35;
   const targetDirection = instructions.triggerDirection;
@@ -183,19 +184,18 @@ export default function SeekerLensPuzzle({
       const newWarmth = calculateWarmth(newBeta, newGamma, targetDirection);
       setWarmth(newWarmth);
 
-      // Check if pointing at target
-      if (detected === targetDirection && !objectRevealed) {
-        setObjectRevealed(true);
-      }
+      // Show object when pointing at target, hide when moving away
+      const isOnTarget = detected === targetDirection;
+      setObjectVisible(isOnTarget);
     };
 
     window.addEventListener('deviceorientation', handleOrientation);
     return () => window.removeEventListener('deviceorientation', handleOrientation);
-  }, [permissionStatus, tolerance, targetDirection, objectRevealed]);
+  }, [permissionStatus, tolerance, targetDirection]);
 
   // Handle object tap
   const handleObjectTap = useCallback(() => {
-    if (!objectRevealed || objectTapped) return;
+    if (!objectVisible || objectTapped) return;
     setObjectTapped(true);
 
     // Stop the camera immediately
@@ -205,7 +205,7 @@ export default function SeekerLensPuzzle({
     setTimeout(() => {
       onComplete(true);
     }, 1500);
-  }, [objectRevealed, objectTapped, onComplete, stopCamera]);
+  }, [objectVisible, objectTapped, onComplete, stopCamera]);
 
   // Get warmth color for border
   const getWarmthColor = () => {
@@ -311,14 +311,27 @@ export default function SeekerLensPuzzle({
         playsInline
         muted
         className="absolute inset-0 w-full h-full object-cover"
+        onLoadedMetadata={() => {
+          console.log('[SeekerLens] Video metadata loaded');
+          setVideoReady(true);
+        }}
+        onPlay={() => console.log('[SeekerLens] Video onPlay fired')}
+        onError={(e) => console.error('[SeekerLens] Video error:', e)}
         // No mirror transform - using back camera for room search
       />
+
+      {/* Loading indicator while video loads */}
+      {!videoReady && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-white text-lg animate-pulse">Starting camera...</div>
+        </div>
+      )}
 
       {/* Warmth indicator border */}
       <div className={`absolute inset-0 border-8 ${getWarmthColor()} transition-colors duration-300 pointer-events-none`} />
 
       {/* Hidden object (shown when direction matches) */}
-      {objectRevealed && (
+      {objectVisible && (
         <div
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
           onClick={handleObjectTap}
@@ -345,7 +358,7 @@ export default function SeekerLensPuzzle({
       )}
 
       {/* Reveal narration */}
-      {objectRevealed && !objectTapped && (
+      {objectVisible && !objectTapped && (
         <div className="absolute top-8 left-4 right-4">
           <div className="bg-black/70 backdrop-blur-sm rounded-xl p-4 text-center">
             <p className="text-white text-lg font-medium">{instructions.revealNarration}</p>
@@ -354,7 +367,7 @@ export default function SeekerLensPuzzle({
       )}
 
       {/* Direction hint (shown when object not yet revealed) */}
-      {!objectRevealed && (
+      {!objectVisible && (
         <div className="absolute bottom-8 left-4 right-4">
           <div className="bg-black/70 backdrop-blur-sm rounded-xl p-4 text-center space-y-2">
             <p className="text-purple-300 text-sm">Move your iPad around to search...</p>
