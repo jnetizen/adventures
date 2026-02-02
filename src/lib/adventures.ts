@@ -23,6 +23,7 @@ import frozenVolcano from '../data/adventures/frozen-volcano-adventure-v2.json';
 import shadowKnight from '../data/adventures/shadow-knight-adventure.json';
 import rainbowBridge from '../data/adventures/rainbow-bridge-adventure.json';
 import ancientShrine from '../data/adventures/ancient-shrine-adventure.json';
+import wizardsLibrary from '../data/adventures/wizards-library-adventure.json';
 
 const adventures: Record<string, Adventure> = {
   'candy-volcano': candyVolcano as Adventure,
@@ -33,6 +34,7 @@ const adventures: Record<string, Adventure> = {
   'shadow-knight-lost-grove': shadowKnight as Adventure,
   'rainbow-bridge': rainbowBridge as Adventure,
   'ancient-shrine': ancientShrine as Adventure,
+  'wizards-library': wizardsLibrary as Adventure,
 };
 
 /**
@@ -458,10 +460,20 @@ export function adventureHasBranching(adventure: Adventure): boolean {
 // ============================================
 
 /**
- * Check if a scene is a puzzle scene (physical, in-game, seeker-lens, or memory).
+ * Check if a scene is a puzzle scene (any interactive puzzle type).
  */
 export function isPuzzleScene(scene: Scene): boolean {
-  return scene.sceneType === 'puzzle-physical' || scene.sceneType === 'puzzle-ingame' || scene.sceneType === 'puzzle-seeker-lens' || scene.sceneType === 'puzzle-memory';
+  return (
+    scene.sceneType === 'puzzle-physical' ||
+    scene.sceneType === 'puzzle-ingame' ||
+    scene.sceneType === 'puzzle-seeker-lens' ||
+    scene.sceneType === 'puzzle-memory' ||
+    scene.sceneType === 'puzzle-simon' ||
+    scene.sceneType === 'puzzle-tap-match' ||
+    scene.sceneType === 'puzzle-draw' ||
+    scene.sceneType === 'puzzle-ar-portal' ||
+    scene.sceneType === 'puzzle-ar-catch'
+  );
 }
 
 /**
@@ -530,6 +542,68 @@ export function getMemoryPuzzleInstructions(scene: Scene): import('../types/adve
     return scene.puzzleInstructions as import('../types/adventure').MemoryPuzzleInstructions;
   }
   return null;
+}
+
+/**
+ * Check if a scene is a Simon Says puzzle.
+ */
+export function isSimonPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-simon';
+}
+
+/**
+ * Get Simon Says puzzle instructions (type guard).
+ */
+export function getSimonPuzzleInstructions(scene: Scene): import('../types/adventure').SimonSaysPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-simon' && scene.puzzleInstructions?.type === 'simon-says-cast') {
+    return scene.puzzleInstructions as import('../types/adventure').SimonSaysPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Check if a scene is a Tap Match puzzle.
+ */
+export function isTapMatchPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-tap-match';
+}
+
+/**
+ * Get Tap Match puzzle instructions (type guard).
+ */
+export function getTapMatchPuzzleInstructions(scene: Scene): import('../types/adventure').TapMatchPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-tap-match' && scene.puzzleInstructions?.type === 'tap-to-match') {
+    return scene.puzzleInstructions as import('../types/adventure').TapMatchPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Check if a scene is a Draw Cast puzzle.
+ */
+export function isDrawPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-draw';
+}
+
+/**
+ * Check if a scene is an AR Portal puzzle.
+ */
+export function isARPortalPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-ar-portal';
+}
+
+/**
+ * Check if a scene is an AR Catch puzzle.
+ */
+export function isARCatchPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-ar-catch';
+}
+
+/**
+ * Check if a scene is a story beat (no interaction).
+ */
+export function isStoryBeat(scene: Scene): boolean {
+  return scene.sceneType === 'story-beat';
 }
 
 // ============================================

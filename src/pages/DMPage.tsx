@@ -3,7 +3,7 @@ import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } fro
 import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle } from '../lib/gameState';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
-import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, isRollUntilSuccessClimax } from '../lib/adventures';
+import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, isRollUntilSuccessClimax } from '../lib/adventures';
 import {
   computeIsSplit,
   computeActiveParallelCharacterId,
@@ -1945,6 +1945,70 @@ export default function DMPage() {
                   onClick={handlePuzzleOverride}
                   disabled={submitting}
                   className="w-full bg-purple-100 text-purple-700 py-2 px-4 rounded-lg font-medium hover:bg-purple-200 transition-colors disabled:opacity-50 text-sm"
+                >
+                  Override: Mark Complete
+                </button>
+              </div>
+            );
+          })()}
+
+          {/* Puzzle Scene UI - Simon Says (shown after puzzle_started) */}
+          {currentScene && isPuzzleScene(currentScene) && isSimonPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getSimonPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+
+            const kidName = players[0]?.kidName || adventure.characters[0]?.name || 'Player';
+
+            return (
+              <div className="bg-indigo-50 border-2 border-indigo-300 p-4 rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="animate-pulse text-indigo-600 text-xl">🎵</span>
+                  <p className="text-indigo-800 font-medium">
+                    {kidName} is playing Spell Sequence!
+                  </p>
+                </div>
+                <p className="text-sm text-indigo-600">
+                  {instructions.rounds.length} rounds - symbols: {instructions.symbols.map(s => s.emoji).join(' ')}
+                </p>
+                <p className="text-xs text-indigo-500 italic">
+                  Watch the symbols light up, then repeat the sequence!
+                </p>
+                <button
+                  onClick={handlePuzzleOverride}
+                  disabled={submitting}
+                  className="w-full bg-indigo-100 text-indigo-700 py-2 px-4 rounded-lg font-medium hover:bg-indigo-200 transition-colors disabled:opacity-50 text-sm"
+                >
+                  Override: Mark Complete
+                </button>
+              </div>
+            );
+          })()}
+
+          {/* Puzzle Scene UI - Tap Match (shown after puzzle_started) */}
+          {currentScene && isPuzzleScene(currentScene) && isTapMatchPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getTapMatchPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+
+            const kidName = players[0]?.kidName || adventure.characters[0]?.name || 'Player';
+
+            return (
+              <div className="bg-pink-50 border-2 border-pink-300 p-4 rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="animate-pulse text-pink-600 text-xl">🦋</span>
+                  <p className="text-pink-800 font-medium">
+                    {kidName} is finding {instructions.targetItems.type}s!
+                  </p>
+                </div>
+                <p className="text-sm text-pink-600">
+                  Find {instructions.targetItems.count} {instructions.targetItems.type}s hiding in the grid!
+                </p>
+                <p className="text-xs text-pink-500 italic">
+                  Tap the right items to free them!
+                </p>
+                <button
+                  onClick={handlePuzzleOverride}
+                  disabled={submitting}
+                  className="w-full bg-pink-100 text-pink-700 py-2 px-4 rounded-lg font-medium hover:bg-pink-200 transition-colors disabled:opacity-50 text-sm"
                 >
                   Override: Mark Complete
                 </button>

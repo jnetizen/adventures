@@ -8,7 +8,18 @@ export interface ChoiceOutcome {
 // ============================================
 
 /** Scene type determines the UI and interaction model for a scene. */
-export type SceneType = 'standard' | 'puzzle-physical' | 'puzzle-ingame' | 'puzzle-seeker-lens' | 'puzzle-memory';
+export type SceneType =
+  | 'standard'
+  | 'puzzle-physical'
+  | 'puzzle-ingame'
+  | 'puzzle-seeker-lens'
+  | 'puzzle-memory'
+  | 'puzzle-simon'      // Simon Says memory sequence
+  | 'puzzle-tap-match'  // Tap to find items
+  | 'puzzle-draw'       // Draw to cast spell
+  | 'puzzle-ar-portal'  // AR portal peek
+  | 'puzzle-ar-catch'   // AR catch flying object
+  | 'story-beat';       // No interaction, just narration
 
 /** A symbol/element used in drag puzzles. */
 export interface PuzzleSymbol {
@@ -115,8 +126,161 @@ export interface MemoryPuzzleInstructions {
   successNarration?: string;
 }
 
+/** Symbol for Simon Says puzzle. */
+export interface SimonSymbol {
+  id: string;
+  emoji: string;
+  color: string;
+  sound?: string;
+}
+
+/** Round configuration for Simon Says puzzle. */
+export interface SimonRound {
+  roundNumber: number;
+  sequence: string[];
+  displaySpeed: number;
+}
+
+/** Instructions for Simon Says memory sequence puzzle. */
+export interface SimonSaysPuzzleInstructions {
+  type: 'simon-says-cast';
+  setupNarration: string;
+  symbols: SimonSymbol[];
+  rounds: SimonRound[];
+  feedbackPerRound?: { round: number; text: string }[];
+  mistakeAllowance: number;
+  mistakeFeedback?: string;
+  successNarration: string;
+}
+
+/** Grid item for Tap Match puzzle. */
+export interface TapMatchItem {
+  type: string;
+  count: number;
+  imageUrl?: string;
+}
+
+/** Instructions for Tap to Match puzzle. */
+export interface TapMatchPuzzleInstructions {
+  type: 'tap-to-match';
+  setupNarration: string;
+  grid: {
+    rows: number;
+    columns: number;
+    itemSize: number;
+  };
+  targetItems: {
+    type: string;
+    count: number;
+    imageUrl?: string;
+    releaseAnimation?: string;
+  };
+  distractorItems: TapMatchItem[];
+  wrongTapBehavior?: {
+    animation?: string;
+    sound?: string;
+    penalty?: string;
+  };
+  correctTapFeedback?: {
+    animation?: string;
+    sound?: string;
+    encouragement?: string[];
+  };
+  successNarration: string;
+}
+
+/** Instructions for Draw to Cast puzzle. */
+export interface DrawCastPuzzleInstructions {
+  type: 'draw-to-cast';
+  setupNarration: string;
+  rune: {
+    shape: string;
+    glowColor: string;
+    strokeWidth: number;
+    tolerancePercent: number;
+  };
+  trailEffect?: {
+    type: string;
+    color: string;
+    particleCount: number;
+  };
+  successThreshold: {
+    minPercentComplete: number;
+    timeBonus?: boolean;
+  };
+  encouragement?: { atPercent: number; text: string }[];
+  successNarration: string;
+  failNarration?: string;
+}
+
+/** Instructions for AR Portal Peek puzzle. */
+export interface ARPortalPuzzleInstructions {
+  type: 'ar-portal-peek';
+  setupNarration: string;
+  targetObject: {
+    id: string;
+    name: string;
+    imageUrl?: string;
+    width?: number;
+    height?: number;
+    animation?: string;
+  };
+  arEnvironment?: {
+    background?: string;
+    floatingObjects?: string[];
+    hiddenLocation?: string;
+    depthLayers?: number;
+  };
+  mechanics?: {
+    moveToLook?: boolean;
+    zoomByDistance?: boolean;
+    hintGlow?: {
+      enabled?: boolean;
+      intensityByProximity?: boolean;
+    };
+  };
+  hints?: { delaySeconds: number; text: string }[];
+  tapPrompt?: string;
+  successNarration: string;
+}
+
+/** Instructions for AR Catch Object puzzle. */
+export interface ARCatchPuzzleInstructions {
+  type: 'ar-catch-object';
+  setupNarration: string;
+  targetObject: {
+    id: string;
+    name: string;
+    imageUrl?: string;
+    width?: number;
+    height?: number;
+    animation?: string;
+  };
+  arBehavior?: {
+    movementPattern?: string;
+    speedLevel?: number;
+    fliesOffScreen?: boolean;
+    hidesTemporarily?: boolean;
+    giggles?: boolean;
+    catchesRequired?: number;
+  };
+  difficulty?: Record<string, { speed: string; hideTime: number }>;
+  catchFeedback?: { catchNumber: number; text: string }[];
+  hints?: { delaySeconds: number; text: string }[];
+  successNarration: string;
+}
+
 /** Union type for all puzzle instruction types. */
-export type PuzzleInstructions = PhysicalPuzzleInstructions | DragPuzzleInstructions | SeekerLensInstructions | MemoryPuzzleInstructions;
+export type PuzzleInstructions =
+  | PhysicalPuzzleInstructions
+  | DragPuzzleInstructions
+  | SeekerLensInstructions
+  | MemoryPuzzleInstructions
+  | SimonSaysPuzzleInstructions
+  | TapMatchPuzzleInstructions
+  | DrawCastPuzzleInstructions
+  | ARPortalPuzzleInstructions
+  | ARCatchPuzzleInstructions;
 
 /** Instructions for roll-until-success climax (solo boss fight). */
 export interface RollUntilSuccessInstructions {

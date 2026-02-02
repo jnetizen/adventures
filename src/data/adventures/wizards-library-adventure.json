@@ -1,0 +1,629 @@
+{
+  "id": "wizards-library",
+  "title": "The Wizard's Library",
+  "description": "A grumpy owl guards the most magical book ever written. Can three heroes prove they're worthy to read it?",
+  "preview": {
+    "tagline": "Unlock the Book of Infinite Stories!",
+    "themes": ["library", "magic", "puzzles", "books", "adventure"],
+    "estimatedMinutes": 20,
+    "previewImageUrl": "/images/scenes/wizards-library/prologue.png",
+    "ageRating": {
+      "minAge": 3,
+      "reason": "Magical library adventure with puzzles and friendly challenges",
+      "intensity": ["mild", "magical"]
+    }
+  },
+  "prologue": {
+    "prologueImageUrl": "/images/scenes/wizards-library/prologue.png",
+    "worldIntro": "Hidden behind the oldest bookshop in the kingdom is a secret door. Behind that door is the Wizard's Library - a place where books are ALIVE.\n\nStory books fly like birds. Encyclopedias stomp like elephants. And somewhere deep inside, locked away in the Forbidden Section, is the most magical book ever written: The Book of Infinite Stories.\n\nNo one has read it in a hundred years. The grumpy Librarian Owl, Octavius, guards it fiercely. He says children are 'too noisy' and 'too messy' for such powerful magic.\n\nBut today, three heroes have found the secret door...",
+    "characterIntros": [
+      {
+        "characterId": "spell-seeker",
+        "introText": "Spell Seeker is clever and curious! When others see a locked door, Spell Seeker sees a puzzle waiting to be solved."
+      },
+      {
+        "characterId": "brave-caster",
+        "introText": "Brave Caster is bold and quick! Those hands can trace any spell, and those feet are always ready to chase adventure."
+      },
+      {
+        "characterId": "sparkle-mage",
+        "introText": "Sparkle Mage has the purest heart! Magical creatures can't help but love someone so kind and sparkly."
+      }
+    ],
+    "missionBrief": "The Wizard's Library awaits. Prove to Octavius the Owl that you're worthy, pass his magical tests, and unlock the Book of Infinite Stories!"
+  },
+  "characters": [
+    {
+      "id": "spell-seeker",
+      "name": "Spell Seeker",
+      "description": "A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing wizard adventure robes with DARK BLUE and GOLD accents",
+      "imageUrl": "/images/characters/spell-seeker.png"
+    },
+    {
+      "id": "brave-caster",
+      "name": "Brave Caster",
+      "description": "A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing wizard adventure robes with ORANGE and BRONZE accents",
+      "imageUrl": "/images/characters/brave-caster.png"
+    },
+    {
+      "id": "sparkle-mage",
+      "name": "Sparkle Mage",
+      "description": "A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK wizard dress with SILVER sparkles and a tiny pointed hat",
+      "imageUrl": "/images/characters/sparkle-mage.png"
+    }
+  ],
+  "scoring": {
+    "thresholds": [
+      { "minSuccesses": 8, "endingId": "ending-legendary" },
+      { "minSuccesses": 5, "endingId": "ending-great" },
+      { "minSuccesses": 0, "endingId": "ending-good" }
+    ]
+  },
+  "scenes": [
+    {
+      "id": "scene-1",
+      "sceneNumber": 0,
+      "title": "The Forbidden Section",
+      "narrationText": "You push open the secret door and step into the most amazing place you've ever seen. Books EVERYWHERE - floating, flying, sleeping on shelves that reach up into the clouds.\n\nA tiny blob of ink drops from a shelf and lands in front of you - SPLAT! It grows two big eyes and looks up at you curiously. Then it smiles!\n\nThis is Blot, a friendly ink sprite. Blot bounces excitedly and points toward a glowing door at the back of the library. The Forbidden Section!\n\nBut the door is guarded by an enormous owl perched above it. His feathers are gray and ruffled. His eyes are sharp. A tiny pair of spectacles sits on his beak.\n\n'AHEM.' The owl's voice echoes through the library. 'MORE children? The Forbidden Section is CLOSED. Go away.'\n\nBlot hides behind your legs, trembling. But you didn't come this far to give up now!",
+      "sceneImageUrl": "/images/scenes/wizards-library/scene-1.png",
+      "characterTurns": [
+        {
+          "characterId": "spell-seeker",
+          "promptText": "Octavius blocks the door! How do you convince him to let you try?",
+          "choices": [
+            { "id": "scene1-seek-polite", "label": "Ask politely for a chance" },
+            { "id": "scene1-seek-challenge", "label": "Challenge him to test you" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "Standing tall with confidence! 'We're not just ANY children. Test us!' Octavius raises one eyebrow. 'Hmm. Spirit. Very well... we shall see.'",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene1-spell-seeker-success.png"
+          },
+          "failOutcome": {
+            "text": "The words come out a little shaky, but they're brave words! Octavius sighs heavily. 'Fine. ONE chance. Don't waste it.'",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene1-spell-seeker-fail.png"
+          }
+        },
+        {
+          "characterId": "brave-caster",
+          "promptText": "Octavius looks grumpy! How do you show him you're not scared?",
+          "choices": [
+            { "id": "scene1-brave-flex", "label": "Show off your bravery" },
+            { "id": "scene1-brave-ready", "label": "Get in adventure stance" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The best adventure pose EVER! Fists up, eyes fierce! Octavius actually looks a tiny bit impressed. 'Hmph. At least this one has energy.'",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene1-brave-caster-success.png"
+          },
+          "failOutcome": {
+            "text": "The pose is a little wobbly but the spirit is there! Octavius rolls his eyes but doesn't look away. 'Enthusiasm. I suppose that counts for something.'",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene1-brave-caster-fail.png"
+          }
+        },
+        {
+          "characterId": "sparkle-mage",
+          "promptText": "Octavius is so grumpy! Can you make him smile?",
+          "choices": [
+            { "id": "scene1-sparkle-wave", "label": "Wave and smile big" },
+            { "id": "scene1-sparkle-twirl", "label": "Do a little twirl" }
+          ],
+          "successThreshold": 5,
+          "successOutcome": {
+            "text": "The BIGGEST smile and the cutest wave! Octavius's beak twitches. Was that... almost a smile? Blot bounces happily!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene1-sparkle-mage-success.png"
+          },
+          "failOutcome": {
+            "text": "A sweet little wave! Octavius pretends not to notice, but his feathers ruffle just a little softer. Blot gives a thumbs up!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene1-sparkle-mage-fail.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "Octavius spreads his enormous wings and glides down from his perch. Up close, he's even bigger - and his eyes are VERY serious.\n\n'Very well. You want to enter the Forbidden Section? You must pass THREE tests. Fail, and you leave. Forever.'\n\nHe taps a talon on the floor. The glowing door creaks open, just a crack.\n\n'Let us see what you're made of.'\n\nBlot transforms into a tiny ink arrow, pointing the way forward. Adventure awaits!",
+        "nextSceneId": "scene-2"
+      }
+    },
+    {
+      "id": "scene-2",
+      "sceneNumber": 1,
+      "title": "The Portal Window",
+      "sceneType": "puzzle-ar-portal",
+      "narrationText": "The first chamber is dark except for a shimmering window floating in the center. It's not a regular window - through it, you can see another DIMENSION! Swirling colors, floating books, distant stars.\n\nOctavius lands on a pedestal. 'The first test is for the THINKER.' His eyes lock onto Spell Seeker. 'Somewhere in that dimension is a Golden Quill - the key to the first lock. Find it... IF you can.'\n\nThe window ripples like water. The other dimension is vast and confusing. The Quill could be anywhere!\n\nBlot transforms into a tiny magnifying glass to help.",
+      "sceneImageUrl": "/images/scenes/wizards-library/scene-2.png",
+      "activeCharacter": "spell-seeker",
+      "puzzleInstructions": {
+        "type": "ar-portal-peek",
+        "setupNarration": "Hold up your iPad - it's now a magic window into another dimension! Move it around to look through the portal. The Golden Quill is hiding somewhere in there!",
+        "targetObject": {
+          "id": "golden-quill",
+          "name": "The Golden Quill",
+          "imageUrl": "/images/rewards/golden-quill.png",
+          "width": 120,
+          "height": 120,
+          "animation": "float"
+        },
+        "arEnvironment": {
+          "background": "magical-dimension",
+          "floatingObjects": ["books", "stars", "inkblots", "scrolls"],
+          "hiddenLocation": "upper-left-behind-books",
+          "depthLayers": 3
+        },
+        "mechanics": {
+          "moveToLook": true,
+          "zoomByDistance": true,
+          "hintGlow": {
+            "enabled": true,
+            "intensityByProximity": true
+          }
+        },
+        "hints": [
+          { "delaySeconds": 15, "text": "Quills are for writing... look where a writer might keep one!" },
+          { "delaySeconds": 30, "text": "Try looking UP and to the LEFT, behind those floating books!" }
+        ],
+        "tapPrompt": "Tap the Golden Quill to grab it!",
+        "successNarration": "THERE! Hidden behind a stack of floating spell books - the Golden Quill! Reaching through the portal, fingers wrap around it and pull it back into the real world. It glows warm and happy in your hand.\n\nOctavius blinks slowly. 'Adequate.' But his feathers puff up just a little - that's owl for impressed!"
+      },
+      "outcome": {
+        "resultText": "The Golden Quill floats over to the first of three locks on a massive book-shaped door. CLICK! One lock down, two to go.\n\nOctavius ruffles his feathers. 'Don't get cocky. The next test is... different.'\n\nBut before anyone can move - the floating books in the chamber start to SHAKE!",
+        "nextSceneId": "scene-3"
+      }
+    },
+    {
+      "id": "scene-3",
+      "sceneNumber": 2,
+      "title": "The Awakened Books",
+      "narrationText": "The books are ALIVE - and they're not happy about being disturbed! Story books flap around like angry birds! Encyclopedias stomp like elephants! Comic books bounce off the walls like super balls!\n\nOctavius hoots with alarm. 'The books have awakened! Quick - calm them down before they cause chaos!'\n\nBlot ducks and weaves through the flying books, trying to help!",
+      "sceneImageUrl": "/images/scenes/wizards-library/scene-3.png",
+      "characterTurns": [
+        {
+          "characterId": "spell-seeker",
+          "promptText": "A huge dictionary is stomping toward the shelf! Stop it!",
+          "choices": [
+            { "id": "scene3-seek-reason", "label": "Talk to it calmly" },
+            { "id": "scene3-seek-distract", "label": "Show it an interesting word" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "'Hey, look - ADVENTURE!' The dictionary stops mid-stomp, flips to the A's, and settles down happily to read its own pages. Clever!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene3-spell-seeker-success.png"
+          },
+          "failOutcome": {
+            "text": "The dictionary almost tramples forward - but Blot quickly draws the word 'FRIEND' in ink, and the dictionary calms down to read it!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene3-spell-seeker-fail.png"
+          }
+        },
+        {
+          "characterId": "brave-caster",
+          "promptText": "Flying comic books are zooming everywhere! Catch them!",
+          "choices": [
+            { "id": "scene3-brave-grab", "label": "Jump and grab them" },
+            { "id": "scene3-brave-stack", "label": "Make a super hero pose" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "The best superhero pose EVER! The comic books see it and LOVE it - they flutter down and stack themselves neatly, wanting to see more poses!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene3-brave-caster-success.png"
+          },
+          "failOutcome": {
+            "text": "The comics zoom past at first - but one little comic bonks into your head, sees your determined face, and decides you're cool enough to follow. The others copy!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene3-brave-caster-fail.png"
+          }
+        },
+        {
+          "characterId": "sparkle-mage",
+          "promptText": "A little picture book is crying in the corner! It's scared!",
+          "choices": [
+            { "id": "scene3-sparkle-hug", "label": "Give it a gentle hug" },
+            { "id": "scene3-sparkle-pet", "label": "Pet it softly" }
+          ],
+          "successThreshold": 5,
+          "successOutcome": {
+            "text": "The sweetest, gentlest hug! The little picture book sniffles... then snuggles in happily. Its pages show hearts and smiley faces!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene3-sparkle-mage-success.png"
+          },
+          "failOutcome": {
+            "text": "The picture book is still scared at first, but Blot draws a little smiley face, and together you comfort it until it stops crying!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene3-sparkle-mage-fail.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "The chaos settles. Books float peacefully back to their shelves, some of them even waving goodbye.\n\nOctavius stares in disbelief. 'You... actually calmed them. Hmph.' He clears his throat. 'Moving on. The SECOND lock requires... bravery.'\n\nHis eyes turn to Brave Caster.",
+        "nextSceneId": "scene-4"
+      }
+    },
+    {
+      "id": "scene-4",
+      "sceneNumber": 3,
+      "title": "The Rune Door",
+      "sceneType": "puzzle-draw",
+      "narrationText": "A massive stone door blocks the path deeper into the library. Ancient runes glow on its surface - a language of magic.\n\nOctavius lands beside it. 'This door opens only to those with BOLD magic. Not timid little sparks - CONFIDENT strokes!'\n\nHis eyes fix on Brave Caster. 'Trace the rune. If your magic is strong enough, the door will open.'\n\nBlot transforms into a little cheerleader, waving pom-poms made of ink!",
+      "sceneImageUrl": "/images/scenes/wizards-library/scene-4.png",
+      "activeCharacter": "brave-caster",
+      "puzzleInstructions": {
+        "type": "draw-to-cast",
+        "setupNarration": "A glowing rune appears on the screen! Trace it with your finger - bold and brave! The faster and more confident, the stronger the spell!",
+        "rune": {
+          "shape": "spiral-into-star",
+          "glowColor": "orange",
+          "strokeWidth": 40,
+          "tolerancePercent": 25
+        },
+        "trailEffect": {
+          "type": "magic-sparkle",
+          "color": "orange-gold",
+          "particleCount": 20
+        },
+        "successThreshold": {
+          "minPercentComplete": 70,
+          "timeBonus": true
+        },
+        "encouragement": [
+          { "atPercent": 25, "text": "Keep going! The door is starting to glow!" },
+          { "atPercent": 50, "text": "Halfway there! The runes are lighting up!" },
+          { "atPercent": 75, "text": "Almost done! The door is shaking!" }
+        ],
+        "successNarration": "The rune BLAZES with orange light! The magic flows from fingertip to stone, and the entire door RUMBLES and slowly swings open!\n\nOctavius's feathers ruffle. 'Bold. Very bold.' Is that... respect in his voice?",
+        "failNarration": "The rune flickers - but Blot jumps in and traces alongside, adding extra ink-magic! Together, the door creaks open. Teamwork!"
+      },
+      "outcome": {
+        "resultText": "The second lock on the book-shaped door CLICKS open. Two down, one to go!\n\nBeyond the stone door is a chamber filled with swirling mist. And somewhere in that mist... something is flying around very fast.",
+        "nextSceneId": "scene-5"
+      }
+    },
+    {
+      "id": "scene-5",
+      "sceneNumber": 4,
+      "title": "The Enchanted Key",
+      "sceneType": "puzzle-ar-catch",
+      "narrationText": "The chamber is foggy and mysterious. But through the mist, you can see something ZOOMING around - a golden key with tiny wings!\n\nOctavius sighs. 'The Enchanted Key. It opens the final lock. But it's... playful. It WANTS to be caught, but it won't make it easy.'\n\nThe key zips past, giggling! It darts behind a bookshelf, pops out the other side, and does a loop-de-loop.\n\nOctavius looks at Brave Caster again. 'This one needs SPEED. Catch it three times.'",
+      "sceneImageUrl": "/images/scenes/wizards-library/scene-5.png",
+      "activeCharacter": "brave-caster",
+      "puzzleInstructions": {
+        "type": "ar-catch-object",
+        "setupNarration": "Hold up your iPad! The Enchanted Key is flying around the room. Turn and move to track it - when you see it, TAP to catch it! You need to catch it THREE times!",
+        "targetObject": {
+          "id": "enchanted-key",
+          "name": "The Enchanted Key",
+          "imageUrl": "/images/rewards/enchanted-key.png",
+          "width": 100,
+          "height": 100,
+          "animation": "fly-flutter"
+        },
+        "arBehavior": {
+          "movementPattern": "playful-dart",
+          "speedLevel": 2,
+          "fliesOffScreen": true,
+          "hidesTemporarily": true,
+          "giggles": true,
+          "catchesRequired": 3
+        },
+        "difficulty": {
+          "catch1": { "speed": "slow", "hideTime": 0 },
+          "catch2": { "speed": "medium", "hideTime": 1 },
+          "catch3": { "speed": "fast", "hideTime": 1.5 }
+        },
+        "catchFeedback": [
+          { "catchNumber": 1, "text": "Got it once! It's giggling - here it goes again!" },
+          { "catchNumber": 2, "text": "Twice! It's getting faster - one more time!" },
+          { "catchNumber": 3, "text": "THREE! The key settles into your hand, finally caught!" }
+        ],
+        "hints": [
+          { "delaySeconds": 10, "text": "Listen for the giggling - it tells you where the key went!" },
+          { "delaySeconds": 20, "text": "Try turning around - it might be behind you!" }
+        ],
+        "successNarration": "The Enchanted Key flutters happily in your hands. It WANTED to be caught by someone fast enough! It nuzzles against your palm like a tiny pet.\n\nOctavius clears his throat. 'Impressive reflexes. For a child.'"
+      },
+      "outcome": {
+        "resultText": "The Enchanted Key floats over to the book-shaped door and inserts itself into the third lock. But it doesn't turn yet - one more test remains.\n\nOctavius's expression softens, just a little. 'One lock left. And this one...' He looks at Sparkle Mage. '...requires the purest heart.'",
+        "nextSceneId": "scene-6"
+      }
+    },
+    {
+      "id": "scene-6",
+      "sceneNumber": 5,
+      "title": "The Ink Flood",
+      "narrationText": "Suddenly - CRASH! A massive inkwell tips over in the corner! Black ink spreads across the floor like a flood!\n\n'No no NO!' Octavius hoots. 'The Ancient Ink! If it touches the books, it'll smear their stories forever!'\n\nThe ink is spreading fast! Everyone needs to climb up the bookshelves to get to safety - and save the books along the way!\n\nBlot looks at the ink nervously - that's their family down there!",
+      "sceneImageUrl": "/images/scenes/wizards-library/scene-6.png",
+      "characterTurns": [
+        {
+          "characterId": "spell-seeker",
+          "promptText": "The ink is rising! Climb the bookshelf!",
+          "choices": [
+            { "id": "scene6-seek-fast", "label": "Climb fast and grab books" },
+            { "id": "scene6-seek-smart", "label": "Find the safest path up" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "Scrambling up the shelves like a pro! Grabbing books along the way - one under each arm - and making it to the top just as the ink reaches the bottom shelf!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene6-spell-seeker-success.png"
+          },
+          "failOutcome": {
+            "text": "A foot slips! But grabbing a sturdy encyclopedia saves the day - it's so heavy it makes a perfect step to climb higher!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene6-spell-seeker-fail.png"
+          }
+        },
+        {
+          "characterId": "brave-caster",
+          "promptText": "The ink is coming! Quick, get up high!",
+          "choices": [
+            { "id": "scene6-brave-leap", "label": "Leap from shelf to shelf" },
+            { "id": "scene6-brave-swing", "label": "Swing on the hanging lamp" }
+          ],
+          "successThreshold": 10,
+          "successOutcome": {
+            "text": "Running, JUMPING! Flying through the air from one shelf to the next like an action hero! Landing safely at the top with a perfect superhero pose!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene6-brave-caster-success.png"
+          },
+          "failOutcome": {
+            "text": "The jump is a little short - but a flying picture book swoops under and carries you the rest of the way! It remembers being saved earlier!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene6-brave-caster-fail.png"
+          }
+        },
+        {
+          "characterId": "sparkle-mage",
+          "promptText": "Oh no, the ink! How do you get to safety?",
+          "choices": [
+            { "id": "scene6-sparkle-help", "label": "Let Blot help you up" },
+            { "id": "scene6-sparkle-float", "label": "Ask the books for a lift" }
+          ],
+          "successThreshold": 5,
+          "successOutcome": {
+            "text": "Blot transforms into a little ink slide! Sliding UP instead of down because magic! Wheee! Safe and sound at the top, giggling!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene6-sparkle-mage-success.png"
+          },
+          "failOutcome": {
+            "text": "The little picture book from before flutters over, inviting a climb on! It's returning the favor from the hug! Up, up, up to safety!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene6-sparkle-mage-fail.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "Safe at the top of the bookshelves! The ink slowly settles below, turning back into a puddle and eventually flowing back into the inkwell like nothing happened.\n\nOctavius lands beside you, slightly out of breath. 'That was... unexpected. But you handled it.' A pause. 'Well done.'\n\nDid he just... compliment you?\n\n'One test remains. The final lock.' He looks at Sparkle Mage.",
+        "nextSceneId": "scene-7"
+      }
+    },
+    {
+      "id": "scene-7",
+      "sceneNumber": 6,
+      "title": "The Spell Sequence",
+      "sceneType": "puzzle-simon",
+      "narrationText": "You've reached the final lock - and it's the most complicated. Four magical symbols float in a circle: a MOON, a STAR, a FLAME, and a WATER DROP.\n\nOctavius lands beside them. 'This lock requires MEMORY. Watch the sequence. Repeat it perfectly.' His eyes find Spell Seeker. 'This is YOUR challenge, thinker.'\n\nThe symbols begin to glow, one by one, in a pattern...",
+      "sceneImageUrl": "/images/scenes/wizards-library/scene-7.png",
+      "activeCharacter": "spell-seeker",
+      "puzzleInstructions": {
+        "type": "simon-says-cast",
+        "setupNarration": "Watch the symbols light up in order - then tap them in the SAME order! Each round gets one longer. Can you remember the whole spell?",
+        "symbols": [
+          { "id": "moon", "emoji": "🌙", "color": "silver", "sound": "chime-low" },
+          { "id": "star", "emoji": "⭐", "color": "gold", "sound": "chime-high" },
+          { "id": "flame", "emoji": "🔥", "color": "orange", "sound": "whoosh" },
+          { "id": "water", "emoji": "💧", "color": "blue", "sound": "drip" }
+        ],
+        "rounds": [
+          { "roundNumber": 1, "sequence": ["star", "moon", "flame"], "displaySpeed": 800 },
+          { "roundNumber": 2, "sequence": ["star", "moon", "flame", "water"], "displaySpeed": 700 }
+        ],
+        "feedbackPerRound": [
+          { "round": 1, "text": "Three symbols - watch carefully!" },
+          { "round": 2, "text": "Four symbols - the complete spell!" }
+        ],
+        "mistakeAllowance": 2,
+        "mistakeFeedback": "Oops! The symbols flash red. Try that round again!",
+        "successNarration": "The final symbol BLAZES with light! All four symbols spin around faster and faster, creating a ring of magical energy!\n\nOctavius's eyes go wide. 'The complete sequence. On the first try. Remarkable.'\n\nThe symbols fly toward the last lock and embed themselves in its surface. CLICK. CLICK. CLICK. CLICK.\n\nThe final lock is OPEN!"
+      },
+      "outcome": {
+        "resultText": "All three locks are open! The Book of Infinite Stories is finally within reach!\n\nOctavius flutters to the ground, looking at you three with something new in his eyes. Is that... pride?\n\n'You've passed every test. The Book is yours to read. Go on.'\n\nBut first - one more act of magic is needed.",
+        "nextSceneId": "scene-8"
+      }
+    },
+    {
+      "id": "scene-8",
+      "sceneNumber": 7,
+      "title": "Free the Butterflies",
+      "sceneType": "puzzle-tap-match",
+      "narrationText": "The great door to the Book swings open... but inside, something magical is trapped! Dozens of tiny ink butterflies, stuck to the pages, unable to fly free!\n\n'Oh my,' Octavius whispers. 'The Story Butterflies. They carry imagination from page to page. Someone must free them - someone with a pure heart.'\n\nHis eyes land on Sparkle Mage. Blot bounces excitedly - butterflies are Blot's favorite!\n\n'Tap the butterflies to set them free! But be careful - only tap the BUTTERFLIES, not the other ink drawings.'",
+      "sceneImageUrl": "/images/scenes/wizards-library/scene-8.png",
+      "activeCharacter": "sparkle-mage",
+      "puzzleInstructions": {
+        "type": "tap-to-match",
+        "setupNarration": "Look at all the ink drawings! Find the BUTTERFLIES and tap them to set them free! There are 5 butterflies hiding among the other drawings.",
+        "grid": {
+          "rows": 3,
+          "columns": 3,
+          "itemSize": 100
+        },
+        "targetItems": {
+          "type": "butterfly",
+          "count": 5,
+          "imageUrl": "/images/puzzles/ink-butterfly.png",
+          "releaseAnimation": "flutter-away-sparkle"
+        },
+        "distractorItems": [
+          { "type": "book", "count": 2, "imageUrl": "/images/puzzles/ink-book.png" },
+          { "type": "feather", "count": 1, "imageUrl": "/images/puzzles/ink-feather.png" },
+          { "type": "moon", "count": 1, "imageUrl": "/images/puzzles/ink-moon.png" }
+        ],
+        "wrongTapBehavior": {
+          "animation": "wiggle",
+          "sound": "gentle-buzz",
+          "penalty": "none"
+        },
+        "correctTapFeedback": {
+          "animation": "burst-into-sparkles",
+          "sound": "magical-chime",
+          "encouragement": ["Yay!", "Pretty!", "One more!", "Almost there!", "You did it!"]
+        },
+        "successNarration": "All five butterflies burst free in an explosion of sparkles! They flutter around Sparkle Mage, landing on shoulders and hair and the tip of that cute little nose! One even lands on Blot, who giggles with joy!\n\nOctavius actually SMILES. A real smile! 'Beautiful. Truly beautiful.'"
+      },
+      "outcome": {
+        "resultText": "The butterflies swirl together and fly toward the Book of Infinite Stories. As they land on its cover, the whole room fills with warm, golden light.\n\n'You've done it,' Octavius says softly. 'All of you. Together.'\n\nThe Book begins to open on its own...",
+        "nextSceneId": "scene-9"
+      }
+    },
+    {
+      "id": "scene-9",
+      "sceneNumber": 8,
+      "title": "The Empty Book",
+      "sceneType": "story-beat",
+      "narrationText": "The Book of Infinite Stories slowly opens... and the pages are BLANK.\n\nEveryone stares. After all those tests... nothing?\n\nBut then Octavius does something unexpected. He LAUGHS. A real, genuine, happy laugh.\n\n'You wonderful, wonderful children.' His eyes are twinkling now. 'The Book of Infinite Stories doesn't CONTAIN stories...'\n\nInk begins to flow across the blank pages. Pictures are forming - pictures of YOU. Sneaking into the library. Finding the Golden Quill. Calming the wild books.\n\n'...it COLLECTS them. And you just gave it the best story it's had in a hundred years.'\n\nBlot bounces onto the pages, adding little hearts and stars to the drawings.\n\nBut then - the ink starts to RUN. The pictures smear. The pages flutter wildly.\n\nOctavius's laugh stops. 'No. No no no - the story isn't SEALED. It's unraveling!'\n\nThe whole library begins to shake. Books fall from shelves. The drawings on the pages - YOUR drawings - are FADING.\n\n'If we don't seal it NOW,' Octavius hoots urgently, 'your entire adventure will be unwritten! Like it NEVER HAPPENED!'",
+      "sceneImageUrl": "/images/scenes/wizards-library/scene-9.png",
+      "outcome": {
+        "resultText": "This is it. Everything you did - every puzzle, every challenge, every moment of bravery - is about to disappear!\n\nOctavius spreads his wings. 'The only way to seal a story is to PROVE it was real! Show me the luck that got you here! Roll your dice - pour your magic into the Book!'",
+        "nextSceneId": "scene-10"
+      }
+    },
+    {
+      "id": "scene-10",
+      "sceneNumber": 9,
+      "title": "Seal the Story",
+      "isClimax": true,
+      "climaxMode": "rapid-fire-combined",
+      "narrationText": "The Book is unraveling! The pages are going blank! Your story is FADING!\n\nOctavius stands before you, feathers wild, eyes blazing. 'PROVE YOUR STORY WAS REAL! Show me the magic that brought you here!'\n\nBlot transforms into a little cheerleader, ink pom-poms waving frantically!\n\nIt's time. Roll your dice. Seal your story. SAVE YOUR ADVENTURE!",
+      "sceneImageUrl": "/images/scenes/wizards-library/scene-10.png",
+      "climaxVideoUrl": "/videos/wizards-library/climax-seal-the-story.mp4",
+      "characterTurns": [
+        {
+          "characterId": "spell-seeker",
+          "promptText": "The pages with YOUR puzzles are fading! Roll to seal your story!",
+          "choices": null,
+          "alwaysSucceed": true,
+          "rollNarration": {
+            "low": "The magic flickers... but it HOLDS! Your puzzle memories glow faintly on the page!",
+            "medium": "The magic flows strong! Your Portal Peek and Spell Sequence shine bright on the pages!",
+            "high": "INCREDIBLE! Your chapters BLAZE with golden light! The pages lock in tight!"
+          },
+          "outcome": {
+            "text": "Magic surges into the Book! The drawings of the Portal Peek and the Spell Sequence glow bright and LOCK into place!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene10-spell-seeker.png"
+          }
+        },
+        {
+          "characterId": "brave-caster",
+          "promptText": "Your chase scenes are disappearing! Roll to seal your story!",
+          "choices": null,
+          "alwaysSucceed": true,
+          "rollNarration": {
+            "low": "The magic sparks... but it catches! Your action moments stay on the page!",
+            "medium": "Brave magic POURS out! The Rune Door and Flying Key chapters glow strong!",
+            "high": "AMAZING! Your pages EXPLODE with orange light! The Book practically cheers!"
+          },
+          "outcome": {
+            "text": "Bold magic shoots into the Book! The drawings of tracing the Rune and catching the Flying Key burn bright and SEAL forever!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene10-brave-caster.png"
+          }
+        },
+        {
+          "characterId": "sparkle-mage",
+          "promptText": "The butterfly page is fading! Roll to seal your story!",
+          "choices": null,
+          "alwaysSucceed": true,
+          "rollNarration": {
+            "low": "Pink sparkles flutter... and CATCH! The butterflies stay!",
+            "medium": "Sparkle magic SWIRLS! The butterflies on the page flutter happily!",
+            "high": "SO SPARKLY! The butterfly page is the PRETTIEST page in the whole Book!"
+          },
+          "outcome": {
+            "text": "The purest, sparkliest magic floats into the Book! The butterflies on the page flutter their wings and settle down peacefully, sealed in the story forever!",
+            "cutsceneImageUrl": "/images/cutscenes/wizards-library/scene10-sparkle-mage.png"
+          }
+        }
+      ],
+      "climaxScoring": {
+        "method": "combined-total",
+        "diceType": "d6",
+        "tiers": {
+          "good": { "minTotal": 3, "maxTotal": 9 },
+          "great": { "minTotal": 10, "maxTotal": 14 },
+          "legendary": { "minTotal": 15, "maxTotal": 18 }
+        }
+      },
+      "outcome": {
+        "resultText": null,
+        "nextSceneId": null
+      }
+    }
+  ],
+  "climaxVideo": {
+    "description": "Three young heroes cast spells to seal their story in the Book of Infinite Stories",
+    "shots": [
+      {
+        "shotNumber": 1,
+        "durationSeconds": 2,
+        "description": "Wide shot: The three heroes stand before the massive glowing Book, pages flying everywhere, ink swirling chaotically. They raise their hands together, magic beginning to form."
+      },
+      {
+        "shotNumber": 2,
+        "durationSeconds": 1.5,
+        "description": "Spell Seeker close-up: Eyes glowing with blue-gold light, hands outstretched, a beam of intellectual magic shooting into the Book. Pages stop mid-flutter."
+      },
+      {
+        "shotNumber": 3,
+        "durationSeconds": 1.5,
+        "description": "Brave Caster close-up: Punching forward with both fists, orange magic EXPLODING from the hands like fire, slamming into the Book. The chaos halts."
+      },
+      {
+        "shotNumber": 4,
+        "durationSeconds": 1.5,
+        "description": "Sparkle Mage close-up: Twirling with arms wide, pink and silver sparkles swirling, butterflies made of magic flowing from fingertips into the Book. The ink settles."
+      },
+      {
+        "shotNumber": 5,
+        "durationSeconds": 1.5,
+        "description": "The three magic beams CONVERGE on the Book - blue, orange, and pink spiraling together. The Book SLAMS shut with a thunderclap of golden light. The library goes still."
+      },
+      {
+        "shotNumber": 6,
+        "durationSeconds": 2,
+        "description": "Final shot: The three heroes together, breathing hard, smiling triumphantly. The Book of Infinite Stories glows peacefully. On its cover, THREE NEW FACES appear - theirs. Blot bounces onto Sparkle Mage's shoulder. Octavius the Owl lands behind them, wings spread, actually SMILING. The library fills with soft golden light."
+      }
+    ],
+    "tierVariations": {
+      "good": {
+        "description": "Magic works but it's a struggle - Book closes with effort, kids look relieved and tired, Octavius nods approvingly",
+        "finalShot": "The Book closes with a soft glow. Octavius nods slowly. 'Acceptable. The story is saved.' The kids exhale with relief."
+      },
+      "great": {
+        "description": "Magic flows strong - Book closes powerfully, kids look heroic, Octavius claps his wings",
+        "finalShot": "The Book SNAPS shut with brilliant light. Octavius claps his wings together. 'Well done. The Library welcomes you.' Library cards appear in their hands."
+      },
+      "legendary": {
+        "description": "Magic is SPECTACULAR - Book closes with golden explosion, their faces embossed on cover, Octavius bows",
+        "finalShot": "The Book EXPLODES with light, reforms with their faces EMBOSSED in gold on the cover! Octavius bows deeply. 'Heroes of the Library. Your story will be read for a hundred years.' A special golden quill appears for each of them."
+      }
+    }
+  },
+  "endings": [
+    {
+      "id": "ending-good",
+      "tier": "good",
+      "title": "Story Saved",
+      "narrationText": "The light fades. The library is calm. The Book of Infinite Stories sits peacefully on its pedestal, your adventure sealed safely inside.\n\nOctavius lands before you, his grumpy expression softer now. 'You did it. Your story is saved.'\n\nBlot bounces happily, drawing little celebration fireworks in the air.\n\n'I suppose...' Octavius ruffles his feathers awkwardly. '...children aren't ALL noise and mess. You may visit the library again. If you're quiet.'\n\nHe almost smiles. Almost.\n\nYour first adventure is complete. But something tells you it won't be your last.",
+      "rewards": [
+        { "type": "item", "id": "library-card", "name": "Library Card", "imageUrl": "/images/rewards/library-card.png" }
+      ]
+    },
+    {
+      "id": "ending-great",
+      "tier": "great",
+      "title": "Library Heroes",
+      "narrationText": "The light fades to a warm golden glow. The library feels different now - friendlier, more magical than ever.\n\nOctavius glides down and lands before you. For the first time, he's actually smiling. 'You didn't just save your story. You reminded this old owl why stories matter.'\n\nHe reaches into his feathers and pulls out three shimmering cards. 'Library Cards. With these, you may visit whenever you wish. The Forbidden Section is forbidden to you... no more.'\n\nBlot transforms into tiny medals and pins them on your chests.\n\nThe Book of Infinite Stories glows on its pedestal. Your adventure is sealed inside forever. But there are infinite more stories waiting to be written.\n\n'Come back soon,' Octavius says. And this time, he means it.",
+      "rewards": [
+        { "type": "item", "id": "silver-library-card", "name": "Silver Library Card", "imageUrl": "/images/rewards/silver-library-card.png" },
+        { "type": "badge", "id": "library-hero-badge", "name": "Library Hero Badge", "imageUrl": "/images/rewards/library-hero-badge.png" }
+      ]
+    },
+    {
+      "id": "ending-legendary",
+      "tier": "legendary",
+      "title": "Legendary Authors",
+      "narrationText": "The golden light doesn't fade - it TRANSFORMS. The whole library sparkles with magic as books fly overhead in celebration!\n\nOctavius swoops down and does something no one has ever seen: he BOWS. Deep and respectful.\n\n'In a hundred years of guarding this library, I have never seen anything like that.' His voice is thick with emotion. 'You aren't just readers. You're AUTHORS. Your story will inspire children for generations.'\n\nThe Book of Infinite Stories floats up from its pedestal. On the cover, three new faces shine in golden ink - YOUR faces. The book drifts to a special shelf labeled 'GREATEST ADVENTURES OF ALL TIME.'\n\nOctavius presents each of you with a Golden Quill. 'With these, you may write new stories in the Book whenever you wish.'\n\nBlot bursts into happy tears (ink tears!) and hugs everyone.\n\n'The Library is yours now,' Octavius says proudly. 'Come back and write your next adventure... whenever you're ready.'\n\nAnd somewhere in the Book of Infinite Stories, a new chapter is already waiting to be written.",
+      "rewards": [
+        { "type": "item", "id": "golden-quill", "name": "Golden Quill", "imageUrl": "/images/rewards/golden-quill.png" },
+        { "type": "companion", "id": "blot", "name": "Blot the Ink Sprite", "imageUrl": "/images/characters/blot.png" },
+        { "type": "badge", "id": "legendary-author-badge", "name": "Legendary Author Badge", "imageUrl": "/images/rewards/legendary-author-badge.png" }
+      ]
+    }
+  ]
+}

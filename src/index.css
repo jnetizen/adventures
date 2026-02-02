@@ -338,3 +338,46 @@
     transform: none !important;
   }
 }
+
+/* ============================================
+   Puzzle Animations (Tap Match, Simon Says)
+   ============================================ */
+
+/* Wiggle for wrong tap */
+@keyframes wiggle {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-8px);
+  }
+  40% {
+    transform: translateX(8px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+/* Float away for freed butterflies */
+@keyframes float-away {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.animate-float-away {
+  animation: float-away 2s ease-out forwards;
+}

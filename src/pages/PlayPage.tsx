@@ -3,7 +3,7 @@ import { findSessionByCode, selectAdventure } from '../lib/gameState';
 import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
-import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions } from '../lib/adventures';
+import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions } from '../lib/adventures';
 import { completePuzzle } from '../lib/gameState';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
@@ -25,6 +25,8 @@ import PhysicalPuzzleOverlay from '../components/PhysicalPuzzleOverlay';
 import SeekerLensPuzzle from '../components/SeekerLensPuzzle';
 import DragPuzzle from '../components/DragPuzzle';
 import MemoryPuzzle from '../components/MemoryPuzzle';
+import SimonSaysPuzzle from '../components/SimonSaysPuzzle';
+import TapMatchPuzzle from '../components/TapMatchPuzzle';
 import AdventurePreviewGrid from '../components/AdventurePreviewGrid';
 import { deriveSceneLabel } from '../lib/deriveSceneLabel';
 import { getKidDisplayName } from '../lib/players';
@@ -576,6 +578,44 @@ export default function PlayPage() {
               <MemoryPuzzle
                 pairs={instructions.pairs}
                 prompt={instructions.prompt}
+                onComplete={async (success) => {
+                  await completePuzzle(session.id, success ? 'success' : 'fail');
+                  setSession((prev) => prev ? {
+                    ...prev,
+                    puzzle_completed: true,
+                    puzzle_outcome: success ? 'success' : 'fail',
+                  } : null);
+                }}
+              />
+            );
+          })()}
+
+          {/* Simon Says Puzzle - memory sequence game (only after DM starts) */}
+          {isPuzzleScene(currentScene) && isSimonPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getSimonPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+            return (
+              <SimonSaysPuzzle
+                instructions={instructions}
+                onComplete={async (success) => {
+                  await completePuzzle(session.id, success ? 'success' : 'fail');
+                  setSession((prev) => prev ? {
+                    ...prev,
+                    puzzle_completed: true,
+                    puzzle_outcome: success ? 'success' : 'fail',
+                  } : null);
+                }}
+              />
+            );
+          })()}
+
+          {/* Tap Match Puzzle - find hidden items game (only after DM starts) */}
+          {isPuzzleScene(currentScene) && isTapMatchPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getTapMatchPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+            return (
+              <TapMatchPuzzle
+                instructions={instructions}
                 onComplete={async (success) => {
                   await completePuzzle(session.id, success ? 'success' : 'fail');
                   setSession((prev) => prev ? {
