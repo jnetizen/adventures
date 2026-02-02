@@ -1526,3 +1526,48 @@ Before any release:
 ### Key Files
 - `src/pages/DMPage.tsx`
 - `src/pages/PlayPage.tsx`
+
+---
+
+## 41. Puzzle Success Not Showing on DM Screen
+
+### Problem
+When a player completed a puzzle successfully on their screen (DragPuzzle, SeekerLensPuzzle, MemoryPuzzle), the DM screen never showed the success. Only the "Override: Mark Complete" button worked.
+
+### Root Cause
+DMPage's subscription handler was rejecting puzzle completion updates from the database:
+
+```tsx
+// WRONG - blocks legitimate player completions
+if (prev?.puzzle_started && !prev?.puzzle_completed && newSession.puzzle_completed) {
+  // "This is likely a stale update - ignore the puzzle_completed field"
+  return { ...newSession, puzzle_completed: prev.puzzle_completed, puzzle_outcome: prev.puzzle_outcome };
+}
+```
+
+The logic assumed: "If MY local state says the puzzle isn't complete, any incoming `puzzle_completed: true` must be stale data."
+
+But the actual flow is:
+1. DM clicks "Start Challenge" → `puzzle_started: true`
+2. Player completes puzzle → calls `completePuzzle(session.id, 'success')`
+3. Database updates with `puzzle_completed: true, puzzle_outcome: 'success'`
+4. Subscription delivers update to DMPage
+5. **DMPage rejects it** because local `puzzle_completed` is still false
+6. DM never sees the success
+
+The override button worked because it called `setSession()` directly, bypassing the subscription handler.
+
+### Solution
+Remove the blocking logic - accept puzzle completion updates from the database:
+
+```tsx
+// CORRECT - accept puzzle completions (this is how player reports success)
+// Just return the new session without filtering puzzle fields
+return newSession;
+```
+
+### Key Insight
+When two screens (DM and Player) can both update the same state, don't assume updates from the database are "stale" just because local state differs. The database is the source of truth for player actions.
+
+### Key Files
+- `src/pages/DMPage.tsx` - `handleSessionUpdate()` subscription handler
