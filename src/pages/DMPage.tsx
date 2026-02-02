@@ -213,13 +213,8 @@ export default function DMPage() {
       if (prev?.active_cutscene && !newSession.active_cutscene) {
         return { ...newSession, active_cutscene: prev.active_cutscene };
       }
-      // If we're on a puzzle scene and local state says puzzle is started but not completed,
-      // don't let subscription overwrite with completed state (prevents race conditions)
-      if (prev?.puzzle_started && !prev?.puzzle_completed && newSession.puzzle_completed) {
-        // Subscription is trying to mark puzzle complete but we haven't completed it locally
-        // This is likely a stale update - ignore the puzzle_completed field
-        return { ...newSession, puzzle_completed: prev.puzzle_completed, puzzle_outcome: prev.puzzle_outcome };
-      }
+      // Accept puzzle completion updates from database - this is how the player reports success
+      // (Previously this was blocked, causing puzzle success to never show on DM screen)
       return newSession;
     });
   }, []);
