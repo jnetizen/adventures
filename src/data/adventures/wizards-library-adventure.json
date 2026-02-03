@@ -482,7 +482,7 @@
       "climaxMode": "rapid-fire-combined",
       "narrationText": "The Book is unraveling! The pages are going blank! Your story is FADING!\n\nOctavius stands before you, feathers wild, eyes blazing. 'PROVE YOUR STORY WAS REAL! Show me the magic that brought you here!'\n\nBlot transforms into a little cheerleader, ink pom-poms waving frantically!\n\nIt's time. Roll your dice. Seal your story. SAVE YOUR ADVENTURE!",
       "sceneImageUrl": "/images/scenes/wizards-library/scene-10.png",
-      "climaxVideoUrl": "/videos/wizards-library/climax-seal-the-story.mp4",
+      "climaxVideoUrl": "/videos/wizards-library/climax.mp4",
       "characterTurns": [
         {
           "characterId": "spell-seeker",
