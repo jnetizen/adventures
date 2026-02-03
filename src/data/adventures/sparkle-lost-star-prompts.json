@@ -1,0 +1,118 @@
+{
+  "adventureId": "sparkle-lost-star",
+  "totalImages": 11,
+  "generatedAt": "2026-02-02",
+  "notes": "Solo adventure for youngest child (ages 3-5). Gentle, cozy, maximum sparkle. All dice rolls succeed - no failure states. Every outcome is positive and celebratory.",
+  "characterDescription": {
+    "star-friend": "a 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles"
+  },
+  "styleGuide": "Pixar-adjacent storybook style, soft painterly rendering, children's book illustration, warm and magical lighting, gentle and cozy atmosphere",
+  "images": [
+    {
+      "id": "prologue",
+      "filename": "prologue.png",
+      "path": "/images/scenes/sparkle-lost-star/prologue.png",
+      "type": "scene",
+      "description": "Title screen - magical nighttime meadow with falling star",
+      "prompt": "Generate a 16:9 landscape image. A magical nighttime meadow called Moonflower Meadow, with large glowing white and purple flowers that shine softly in the dark, gentle fireflies dancing in the air, a deep blue starry sky above. In the sky, one tiny star is falling, leaving a sparkle trail. Peaceful, magical, cozy atmosphere, NO characters visible, soft moonlight, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "character-star-friend",
+      "filename": "star-friend.png",
+      "path": "/images/characters/sparkle-lost-star/star-friend.png",
+      "type": "character",
+      "description": "Character portrait for Star Friend",
+      "prompt": "Generate a 1:1 square portrait image. A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles, smiling sweetly and looking friendly. Soft magical sparkles around her. Portrait style, shoulders and head visible, simple soft gradient background in pastel purple and pink, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-1",
+      "filename": "scene-1.png",
+      "path": "/images/scenes/sparkle-lost-star/scene-1.png",
+      "type": "scene",
+      "description": "Finding the lost star behind a moonflower",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles, kneeling gently beside a big glowing moonflower, peeking behind it to find a tiny cute glowing star creature with big sparkly eyes hiding there. The star is small, round, golden-white glow, adorable face looking shy but curious. Nighttime meadow setting, soft glowing flowers around, fireflies, gentle and sweet atmosphere, the girl looks kind and caring, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-twinkle",
+      "filename": "scene1-twinkle.png",
+      "path": "/images/cutscenes/sparkle-lost-star/scene1-twinkle.png",
+      "type": "cutscene",
+      "description": "Twinkle snuggles against the girl's cheek - new friends!",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles, with a tiny adorable glowing star snuggling against her cheek, both looking happy and loving. The star is small, round, golden-white glow with a cute happy face. Warm tingly glow around them both, magical sparkles, moonflower meadow background at night, pure sweetness and new friendship, the girl's eyes closed with joy, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-2",
+      "filename": "scene-2.png",
+      "path": "/images/scenes/sparkle-lost-star/scene-2.png",
+      "type": "scene",
+      "description": "At the bottom of the cloud staircase",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles, standing at the bottom of magical fluffy cloud stairs that go up into the starry sky. A tiny cute glowing star companion floats beside the girl looking excited. Fireflies swirl nearby. The cloud steps are soft and puffy white, going up up up toward the stars. Magical nighttime atmosphere, sense of wonder and adventure, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene2-fireflies",
+      "filename": "scene2-fireflies.png",
+      "path": "/images/cutscenes/sparkle-lost-star/scene2-fireflies.png",
+      "type": "cutscene",
+      "description": "Fireflies lift the girl up to the cloud steps",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles, being lifted up gently by a swirl of hundreds of glowing golden fireflies, floating up toward a fluffy cloud step. A tiny cute glowing star bounces with joy beside her. Magical lifting moment, wonder and delight on the girl's face, her arms spread with joy, nighttime starry sky background, warm magical glow, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-3",
+      "filename": "scene-3.png",
+      "path": "/images/scenes/sparkle-lost-star/scene-3.png",
+      "type": "scene",
+      "description": "The Moon Gate with sleeping Moon Guardian",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles, standing at the top of cloud stairs before a beautiful Moon Gate made of glowing silver moonbeams forming an elegant archway. A kind sleeping Moon Guardian (gentle feminine figure made of soft silver moonlight with a peaceful motherly face) rests peacefully beside the gate. A tiny cute glowing star companion floats near the girl. Beyond the gate, stars twinkle beautifully in the sky. Magical, peaceful, beautiful atmosphere, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3-guardian",
+      "filename": "scene3-guardian.png",
+      "path": "/images/cutscenes/sparkle-lost-star/scene3-guardian.png",
+      "type": "cutscene",
+      "description": "Moon Guardian wakes and welcomes them warmly",
+      "prompt": "Generate a 16:9 landscape image. A kind beautiful Moon Guardian made of soft silver moonlight, with a gentle motherly face and warm smile, bending down to greet a 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles. A tiny cute glowing star floats between them happily, excited to see the Guardian. The Moon Gate glows softly behind them. Warm reunion moment full of kindness and gratitude, magical moonlit scene, the Guardian's hand gently on the girl's shoulder, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-4",
+      "filename": "scene-4.png",
+      "path": "/images/scenes/sparkle-lost-star/scene-4.png",
+      "type": "scene",
+      "description": "Ready to fly - Twinkle has grown big enough to ride",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles, looking up in wonder at a LARGER glowing star (now big enough to ride, still cute with happy excited face, about the size of a small pony). The Moon Gate is open behind them showing the beautiful starry sky. The Moon Guardian smiles encouragingly nearby. The girl looks excited and ready for adventure, magical anticipation, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene4-flying",
+      "filename": "scene4-flying.png",
+      "path": "/images/cutscenes/sparkle-lost-star/scene4-flying.png",
+      "type": "cutscene",
+      "description": "CLIMAX - Flying through the stars together!",
+      "prompt": "Generate a 16:9 landscape image. MAGICAL FLIGHT! A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles, riding joyfully on a large glowing star (big enough to sit on, with an ecstatically happy cute face), WHOOSHING through the beautiful starry sky leaving a massive sparkling rainbow trail behind them. Stars all around are twinkling and cheering with happy faces. Pure unbridled joy and wonder, the girl's arms spread wide, biggest happiest smile, hair flowing in the wind, flying through the cosmos, MAXIMUM sparkle and magic, triumphant and beautiful, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "ending",
+      "filename": "ending.png",
+      "path": "/images/scenes/sparkle-lost-star/ending.png",
+      "type": "scene",
+      "description": "Back in the meadow, waving goodbye to Twinkle in the sky",
+      "prompt": "Generate a 16:9 landscape image. A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK dress with SILVER sparkles, standing in the Moonflower Meadow at night, looking up at the starry sky and waving happily. One particular star in the sky is twinkling extra bright with a cute waving pose - it's Twinkle saying goodbye. A gentle Moon Guardian made of moonlight smiles warmly nearby. A small glowing star-shaped mark is visible over the girl's heart, sparkling softly. Happy but bittersweet ending, eternal friendship across the sky, magical and heartwarming, the girl blowing a kiss upward, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    }
+  ],
+  "rewards": [
+    {
+      "id": "twinkle-star",
+      "filename": "twinkle-star.png",
+      "path": "/images/rewards/sparkle-lost-star/twinkle-star.png",
+      "type": "reward",
+      "description": "Twinkle the Star - collected when befriending the lost star",
+      "prompt": "Generate a 1:1 square image. A cute tiny glowing star with an adorable happy face, big sparkly eyes, small smile, golden-white glow with soft sparkles radiating outward. Simple soft gradient background in deep blue and purple like night sky. Collectible item style, centered composition, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "star-heart",
+      "filename": "star-heart.png",
+      "path": "/images/rewards/sparkle-lost-star/star-heart.png",
+      "type": "reward",
+      "description": "Star Heart Mark - magical friendship mark",
+      "prompt": "Generate a 1:1 square image. A beautiful glowing heart shape made of starlight and sparkles, with a tiny star in the center, shimmering with soft golden and silver light. Magical and precious looking, like a badge of friendship. Simple soft gradient background in deep purple and pink. Collectible item style, centered composition, Pixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    }
+  ]
+}

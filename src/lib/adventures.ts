@@ -24,6 +24,7 @@ import shadowKnight from '../data/adventures/shadow-knight-adventure.json';
 import rainbowBridge from '../data/adventures/rainbow-bridge-adventure.json';
 import ancientShrine from '../data/adventures/ancient-shrine-adventure.json';
 import wizardsLibrary from '../data/adventures/wizards-library-adventure.json';
+import sparkleLostStar from '../data/adventures/sparkle-lost-star-adventure.json';
 
 const adventures: Record<string, Adventure> = {
   'candy-volcano': candyVolcano as Adventure,
@@ -35,6 +36,7 @@ const adventures: Record<string, Adventure> = {
   'rainbow-bridge': rainbowBridge as Adventure,
   'ancient-shrine': ancientShrine as Adventure,
   'wizards-library': wizardsLibrary as Adventure,
+  'sparkle-lost-star': sparkleLostStar as Adventure,
 };
 
 /**
