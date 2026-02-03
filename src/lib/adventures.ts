@@ -482,7 +482,12 @@ export function isPuzzleScene(scene: Scene): boolean {
     scene.sceneType === 'puzzle-tap-match' ||
     scene.sceneType === 'puzzle-draw' ||
     scene.sceneType === 'puzzle-ar-portal' ||
-    scene.sceneType === 'puzzle-ar-catch'
+    scene.sceneType === 'puzzle-ar-catch' ||
+    scene.sceneType === 'puzzle-portal-zoom' ||
+    scene.sceneType === 'puzzle-magic-mirror' ||
+    scene.sceneType === 'puzzle-scavenger' ||
+    scene.sceneType === 'puzzle-finger-maze' ||
+    scene.sceneType === 'puzzle-constellation'
   );
 }
 
@@ -635,6 +640,91 @@ export function getARPortalPuzzleInstructions(scene: Scene): import('../types/ad
 export function getARCatchPuzzleInstructions(scene: Scene): import('../types/adventure').ARCatchPuzzleInstructions | null {
   if (scene.sceneType === 'puzzle-ar-catch' && scene.puzzleInstructions?.type === 'ar-catch-object') {
     return scene.puzzleInstructions as import('../types/adventure').ARCatchPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Check if a scene is a Portal Zoom puzzle (move device closer/farther).
+ */
+export function isPortalZoomPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-portal-zoom';
+}
+
+/**
+ * Get Portal Zoom puzzle instructions (type guard).
+ */
+export function getPortalZoomPuzzleInstructions(scene: Scene): import('../types/adventure').PortalZoomPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-portal-zoom' && scene.puzzleInstructions?.type === 'portal-zoom') {
+    return scene.puzzleInstructions as import('../types/adventure').PortalZoomPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Check if a scene is a Magic Mirror puzzle (AR pose matching).
+ */
+export function isMagicMirrorPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-magic-mirror';
+}
+
+/**
+ * Get Magic Mirror puzzle instructions (type guard).
+ */
+export function getMagicMirrorPuzzleInstructions(scene: Scene): import('../types/adventure').MagicMirrorPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-magic-mirror' && scene.puzzleInstructions?.type === 'magic-mirror') {
+    return scene.puzzleInstructions as import('../types/adventure').MagicMirrorPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Check if a scene is a Scavenger puzzle (find real-world objects).
+ */
+export function isScavengerPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-scavenger';
+}
+
+/**
+ * Get Scavenger puzzle instructions (type guard).
+ */
+export function getScavengerPuzzleInstructions(scene: Scene): import('../types/adventure').ScavengerPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-scavenger' && scene.puzzleInstructions?.type === 'real-world-scavenger') {
+    return scene.puzzleInstructions as import('../types/adventure').ScavengerPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Check if a scene is a Finger Maze puzzle (trace path).
+ */
+export function isFingerMazePuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-finger-maze';
+}
+
+/**
+ * Get Finger Maze puzzle instructions (type guard).
+ */
+export function getFingerMazePuzzleInstructions(scene: Scene): import('../types/adventure').FingerMazePuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-finger-maze' && scene.puzzleInstructions?.type === 'finger-maze') {
+    return scene.puzzleInstructions as import('../types/adventure').FingerMazePuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Check if a scene is a Constellation puzzle (connect stars).
+ */
+export function isConstellationPuzzle(scene: Scene): boolean {
+  return scene.sceneType === 'puzzle-constellation';
+}
+
+/**
+ * Get Constellation puzzle instructions (type guard).
+ */
+export function getConstellationPuzzleInstructions(scene: Scene): import('../types/adventure').ConstellationPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-constellation' && scene.puzzleInstructions?.type === 'connect-constellation') {
+    return scene.puzzleInstructions as import('../types/adventure').ConstellationPuzzleInstructions;
   }
   return null;
 }

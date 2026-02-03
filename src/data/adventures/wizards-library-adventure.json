@@ -304,6 +304,69 @@
             ],
             "successNarration": "The last pair glows bright! All six runes spin and embed themselves in the door. CLICK! The ancient lock releases!\n\nOctavius's feathers ruffle. 'Bold memory. Very bold.' Is that... respect in his voice?"
           }
+        },
+        {
+          "id": "finger-maze-fire",
+          "sceneType": "puzzle-finger-maze",
+          "title": "The Fire Maze",
+          "narrationText": "A massive stone door blocks the path deeper into the library. But it's guarded by a magical fire maze that floats in the air!\n\nOctavius lands beside it. 'The Fire Maze! Only those with steady hands and brave hearts can navigate its burning paths!'\n\nHis eyes fix on Brave Caster. 'Guide your finger through without touching the walls of flame!'\n\nBlot transforms into a tiny fire extinguisher, just in case!",
+          "puzzleInstructions": {
+            "type": "finger-maze",
+            "setupNarration": "Trace your finger through the fiery maze! Don't touch the walls - they're HOT! Go slowly and steadily to the end!",
+            "maze": {
+              "difficulty": "easy",
+              "theme": "fire",
+              "pathWidth": 60
+            },
+            "obstacles": [
+              { "type": "flame-burst", "count": 2, "speed": "slow", "pattern": "horizontal" }
+            ],
+            "allowedMistakes": 3,
+            "wallTouchFeedback": "Ouch! That's hot! Try again!",
+            "trailEffect": {
+              "type": "cool-water",
+              "color": "blue"
+            },
+            "hints": [
+              { "delaySeconds": 15, "text": "Go slowly - there's no rush!" },
+              { "delaySeconds": 30, "text": "Watch out for the moving flames!" }
+            ],
+            "successNarration": "You made it through! The maze dissolves into sparkles and the door swings open!\n\nOctavius's feathers ruffle. 'Steady hands. Very bold.' Is that... respect in his voice?"
+          }
+        },
+        {
+          "id": "constellation-door",
+          "sceneType": "puzzle-constellation",
+          "title": "The Star Lock",
+          "narrationText": "A massive stone door blocks the path deeper into the library. Floating above it are scattered stars, twinkling mysteriously.\n\nOctavius lands beside it. 'The Star Lock! Connect the stars in the right order to form the ancient symbol of COURAGE!'\n\nHis eyes fix on Brave Caster. 'Draw the constellation. Let the stars guide your brave heart!'\n\nBlot transforms into a little astronomer with a tiny telescope!",
+          "puzzleInstructions": {
+            "type": "connect-constellation",
+            "setupNarration": "Connect the stars by dragging your finger from star to star! Form the shape of a SWORD - the symbol of courage!",
+            "constellation": {
+              "name": "The Brave Sword",
+              "shapeName": "Sword",
+              "stars": [
+                { "id": "hilt-left", "x": 35, "y": 80, "label": "1" },
+                { "id": "hilt-center", "x": 50, "y": 75, "label": "2" },
+                { "id": "hilt-right", "x": 65, "y": 80, "label": "3" },
+                { "id": "blade-mid", "x": 50, "y": 50, "label": "4" },
+                { "id": "blade-tip", "x": 50, "y": 20, "label": "5" }
+              ],
+              "correctOrder": ["hilt-left", "hilt-center", "hilt-right", "hilt-center", "blade-mid", "blade-tip"]
+            },
+            "lineStyle": {
+              "color": "gold",
+              "width": 4,
+              "glow": true
+            },
+            "wrongConnectionBehavior": "undo-last",
+            "completionAnimation": "sword-flash",
+            "hints": [
+              { "delaySeconds": 15, "text": "Start at the bottom - that's the handle!" },
+              { "delaySeconds": 30, "text": "Connect the hilt first, then draw up to the tip!" }
+            ],
+            "successNarration": "The stars BLAZE with golden light! A shining sword constellation floats before the door, then the door swings wide open!\n\nOctavius's feathers ruffle. 'The courage of a true hero.' Is that... respect in his voice?"
+          }
         }
       ],
       "outcome": {
@@ -411,6 +474,60 @@
             "mistakeAllowance": 2,
             "mistakeFeedback": "Oops! The orbs flash red. Try again - faster this time!",
             "successNarration": "PERFECT! The orbs spin together and transform into a golden key that floats into your hands!\n\nOctavius clears his throat. 'Fast fingers. For a child.'"
+          }
+        },
+        {
+          "id": "portal-zoom-key",
+          "sceneType": "puzzle-portal-zoom",
+          "title": "The Portal Key",
+          "narrationText": "A swirling purple portal floats in the chamber! Through it, you can see another world - a magical forest where the key is hidden!\n\nOctavius sighs. 'The Portal Realm. The key is in there, but it's FAR away. Move closer to zoom in and find it!'\n\nBlot transforms into a tiny explorer with binoculars!",
+          "puzzleInstructions": {
+            "type": "portal-zoom",
+            "setupNarration": "Look into the portal! Move your iPad CLOSER to zoom in, FARTHER to zoom out. Find the hidden key in the magical forest!",
+            "portalWorld": {
+              "name": "The Enchanted Grove",
+              "backgroundLayers": ["/images/puzzles/portal-forest-far.png", "/images/puzzles/portal-forest-mid.png", "/images/puzzles/portal-forest-close.png"],
+              "zoomLevels": [
+                { "distance": "far", "visibleObjects": ["trees", "mountains", "sky"] },
+                { "distance": "medium", "visibleObjects": ["mushrooms", "flowers", "path"] },
+                { "distance": "close", "visibleObjects": ["enchanted-key", "fairy-lights", "hidden-door"] }
+              ]
+            },
+            "hiddenItem": {
+              "id": "portal-key",
+              "name": "The Enchanted Key",
+              "imageUrl": "/images/rewards/enchanted-key.png",
+              "revealAtZoom": "close",
+              "position": { "x": 60, "y": 45 }
+            },
+            "hints": [
+              { "delaySeconds": 10, "text": "Try moving your iPad closer to look deeper into the portal!" },
+              { "delaySeconds": 20, "text": "The key is hidden near the fairy lights - zoom in all the way!" }
+            ],
+            "tapPrompt": "Tap the key to pull it through the portal!",
+            "successNarration": "You reached through the portal and grabbed the key! It sparkles with magic from the other world!\n\nOctavius clears his throat. 'Portal navigation. Impressive. For a child.'"
+          }
+        },
+        {
+          "id": "scavenger-gold",
+          "sceneType": "puzzle-scavenger",
+          "title": "The Golden Hunt",
+          "narrationText": "The chamber is empty except for a glowing pedestal. Octavius lands on it.\n\n'The Magic Mirror sees ALL,' he says mysteriously. 'It will conjure the key... but only if you show it something GOLDEN from your world!'\n\nThe pedestal glows with anticipation. Blot looks around excitedly!",
+          "puzzleInstructions": {
+            "type": "real-world-scavenger",
+            "setupNarration": "Quick! Find something YELLOW or GOLDEN in your room and hold it up to the camera! The Magic Mirror will recognize it!",
+            "targetItem": {
+              "detectType": "color",
+              "color": "yellow",
+              "prompt": "Find something YELLOW or GOLDEN and hold it up!"
+            },
+            "holdDuration": 2,
+            "detectionFeedback": "The mirror is seeing something golden...",
+            "hints": [
+              { "delaySeconds": 15, "text": "Look for anything yellow - a toy, a book, a shirt!" },
+              { "delaySeconds": 30, "text": "Even something small and yellow will work!" }
+            ],
+            "successNarration": "The Magic Mirror GLOWS! Your golden treasure reflected into the mirror and TRANSFORMED into the Enchanted Key! It floats out toward you!\n\nOctavius clears his throat. 'Resourceful. For a child.'"
           }
         }
       ],
@@ -559,6 +676,82 @@
             "revealNarration": "There it is! Glowing letters appear on the stone!",
             "tapPrompt": "Tap the spell to speak it!",
             "successNarration": "You tap the glowing words and they SPEAK themselves aloud! The door shimmers, ripples like water, and the lock DISSOLVES!\n\nOctavius's eyes go wide. 'You found the ancient word. Remarkable.'\n\nThe final lock is OPEN!"
+          }
+        },
+        {
+          "id": "magic-mirror-wizard",
+          "sceneType": "puzzle-magic-mirror",
+          "title": "The Wizard's Mirror",
+          "narrationText": "You've reached the final lock - and floating before it is an ancient Magic Mirror! But instead of your reflection, you see... a WIZARD!\n\nOctavius lands beside it. 'The Mirror of Mimicry! It shows what you COULD become. Match the wizard's poses to unlock its power!'\n\nHis eyes find Spell Seeker. 'Become the wizard. Let the magic flow through you!'\n\nBlot transforms into a tiny wizard costume designer!",
+          "puzzleInstructions": {
+            "type": "magic-mirror",
+            "setupNarration": "Point the iPad at yourself! Match the wizard poses you see - the mirror will transform you!",
+            "costume": {
+              "id": "wise-wizard",
+              "name": "The Wise Wizard",
+              "overlayType": "accessories"
+            },
+            "poses": [
+              {
+                "id": "arms-wide",
+                "name": "Wisdom Stance",
+                "description": "Spread your arms wide like you're welcoming magic!",
+                "holdDuration": 2
+              },
+              {
+                "id": "point-up",
+                "name": "Spell Cast",
+                "description": "Point one finger up to the sky!",
+                "holdDuration": 2
+              },
+              {
+                "id": "hands-together",
+                "name": "Focus Power",
+                "description": "Put your hands together like you're holding a magic ball!",
+                "holdDuration": 2
+              }
+            ],
+            "poseFeedback": ["Perfect! The first rune glows!", "Amazing! The second rune ignites!", "You've got it! The final rune blazes!"],
+            "hints": [
+              { "delaySeconds": 10, "text": "Watch the silhouette and copy the pose!" },
+              { "delaySeconds": 20, "text": "Hold each pose steady for a moment!" }
+            ],
+            "successNarration": "The mirror SHATTERS into a thousand sparkles! But instead of glass, each piece transforms into a glowing letter. The letters swirl together and form the key to the final lock!\n\nOctavius's eyes go wide. 'You became the wizard. Remarkable.'\n\nThe final lock is OPEN!"
+          }
+        },
+        {
+          "id": "constellation-knowledge",
+          "sceneType": "puzzle-constellation",
+          "title": "The Star of Knowledge",
+          "narrationText": "You've reached the final lock - and above it, scattered stars twinkle mysteriously!\n\nOctavius lands beside it. 'The Star of Knowledge! Connect the stars to form the ancient symbol of WISDOM!'\n\nHis eyes find Spell Seeker. 'A true seeker knows that knowledge connects all things. Draw the constellation!'\n\nBlot transforms into a tiny stargazer with a telescope!",
+          "puzzleInstructions": {
+            "type": "connect-constellation",
+            "setupNarration": "Connect the stars by dragging your finger from star to star! Form the shape of an OPEN BOOK - the symbol of knowledge!",
+            "constellation": {
+              "name": "The Book of Stars",
+              "shapeName": "Open Book",
+              "stars": [
+                { "id": "spine-top", "x": 50, "y": 25 },
+                { "id": "spine-bottom", "x": 50, "y": 75 },
+                { "id": "left-top", "x": 20, "y": 30 },
+                { "id": "left-bottom", "x": 25, "y": 70 },
+                { "id": "right-top", "x": 80, "y": 30 },
+                { "id": "right-bottom", "x": 75, "y": 70 }
+              ],
+              "correctOrder": ["left-top", "spine-top", "right-top", "right-bottom", "spine-bottom", "left-bottom", "left-top"]
+            },
+            "lineStyle": {
+              "color": "silver",
+              "width": 3,
+              "glow": true
+            },
+            "wrongConnectionBehavior": "undo-last",
+            "completionAnimation": "book-opens",
+            "hints": [
+              { "delaySeconds": 15, "text": "It's shaped like an open book! Start at the top left corner!" },
+              { "delaySeconds": 30, "text": "Draw around the edges, connecting each corner!" }
+            ],
+            "successNarration": "The constellation BLAZES with silver light! The stars form a glowing book that floats down and touches the lock. CLICK!\n\nOctavius's eyes go wide. 'The knowledge of the ancients. Remarkable.'\n\nThe final lock is OPEN!"
           }
         }
       ],

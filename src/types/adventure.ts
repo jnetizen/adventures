@@ -14,12 +14,17 @@ export type SceneType =
   | 'puzzle-ingame'
   | 'puzzle-seeker-lens'
   | 'puzzle-memory'
-  | 'puzzle-simon'      // Simon Says memory sequence
-  | 'puzzle-tap-match'  // Tap to find items
-  | 'puzzle-draw'       // Draw to cast spell
-  | 'puzzle-ar-portal'  // AR portal peek
-  | 'puzzle-ar-catch'   // AR catch flying object
-  | 'story-beat';       // No interaction, just narration
+  | 'puzzle-simon'         // Simon Says memory sequence
+  | 'puzzle-tap-match'     // Tap to find items
+  | 'puzzle-draw'          // Draw to cast spell
+  | 'puzzle-ar-portal'     // AR portal peek
+  | 'puzzle-ar-catch'      // AR catch flying object
+  | 'puzzle-portal-zoom'   // Move device closer/farther to zoom into portal world
+  | 'puzzle-magic-mirror'  // AR pose matching with costume overlay
+  | 'puzzle-scavenger'     // Find real-world objects using camera
+  | 'puzzle-finger-maze'   // Trace path without touching walls
+  | 'puzzle-constellation' // Connect stars in correct order
+  | 'story-beat';          // No interaction, just narration
 
 /** A symbol/element used in drag puzzles. */
 export interface PuzzleSymbol {
@@ -270,6 +275,158 @@ export interface ARCatchPuzzleInstructions {
   successNarration: string;
 }
 
+/** Instructions for Portal Zoom puzzle - move iPad closer/farther to zoom into another world. */
+export interface PortalZoomPuzzleInstructions {
+  type: 'portal-zoom';
+  setupNarration: string;
+  /** The portal environment to display. */
+  portalWorld: {
+    name: string;
+    backgroundLayers: string[];
+    /** Objects visible at different zoom levels. */
+    zoomLevels: {
+      distance: 'far' | 'medium' | 'close';
+      visibleObjects: string[];
+    }[];
+  };
+  /** The hidden item to find. */
+  hiddenItem: {
+    id: string;
+    name: string;
+    imageUrl?: string;
+    /** At what zoom level the item becomes visible. */
+    revealAtZoom: 'medium' | 'close';
+    /** Position in the portal world. */
+    position?: { x: number; y: number };
+  };
+  hints?: { delaySeconds: number; text: string }[];
+  tapPrompt?: string;
+  successNarration: string;
+}
+
+/** Instructions for Magic Mirror puzzle - AR pose matching with costume overlay. */
+export interface MagicMirrorPuzzleInstructions {
+  type: 'magic-mirror';
+  setupNarration: string;
+  /** Costume/creature overlay to show on the player. */
+  costume: {
+    id: string;
+    name: string;
+    overlayImageUrl?: string;
+    /** Type of overlay effect. */
+    overlayType: 'full-body' | 'face-only' | 'accessories';
+  };
+  /** Poses to match (player must match all). */
+  poses: {
+    id: string;
+    name: string;
+    /** Silhouette image showing the pose. */
+    silhouetteUrl?: string;
+    /** Description for parent to help guide child. */
+    description: string;
+    /** How long to hold the pose (seconds). */
+    holdDuration?: number;
+  }[];
+  /** Feedback after each successful pose. */
+  poseFeedback?: string[];
+  hints?: { delaySeconds: number; text: string }[];
+  successNarration: string;
+}
+
+/** Instructions for Real World Scavenger puzzle - find real objects using camera. */
+export interface ScavengerPuzzleInstructions {
+  type: 'real-world-scavenger';
+  setupNarration: string;
+  /** What to find in the real world. */
+  targetItem: {
+    /** What property to detect. */
+    detectType: 'color' | 'shape' | 'object';
+    /** The color to find (if detectType is 'color'). */
+    color?: 'red' | 'blue' | 'green' | 'yellow' | 'orange' | 'purple' | 'pink' | 'white' | 'black' | 'brown';
+    /** The shape to find (if detectType is 'shape'). */
+    shape?: 'circle' | 'square' | 'triangle' | 'star' | 'heart';
+    /** The object to find (if detectType is 'object'). */
+    object?: string;
+    /** The prompt shown to the player. */
+    prompt: string;
+  };
+  /** How long the item must be held in view (seconds). */
+  holdDuration?: number;
+  /** Feedback when item is detected. */
+  detectionFeedback?: string;
+  hints?: { delaySeconds: number; text: string }[];
+  successNarration: string;
+}
+
+/** Instructions for Finger Maze puzzle - trace path without touching walls. */
+export interface FingerMazePuzzleInstructions {
+  type: 'finger-maze';
+  setupNarration: string;
+  /** Maze configuration. */
+  maze: {
+    /** Maze layout identifier or custom path data. */
+    layoutId?: string;
+    /** Difficulty level affecting maze complexity. */
+    difficulty: 'easy' | 'medium' | 'hard';
+    /** Theme/appearance of the maze. */
+    theme?: 'ice' | 'fire' | 'magic' | 'forest' | 'library';
+    /** Width of the valid path. */
+    pathWidth?: number;
+  };
+  /** Moving obstacles (optional). */
+  obstacles?: {
+    type: string;
+    count: number;
+    speed: 'slow' | 'medium' | 'fast';
+    pattern: 'horizontal' | 'vertical' | 'circular';
+  }[];
+  /** Number of allowed wall touches before restart. */
+  allowedMistakes?: number;
+  /** Feedback when touching a wall. */
+  wallTouchFeedback?: string;
+  /** Trail effect behind finger. */
+  trailEffect?: {
+    type: string;
+    color: string;
+  };
+  hints?: { delaySeconds: number; text: string }[];
+  successNarration: string;
+}
+
+/** Instructions for Connect Constellation puzzle - connect stars in correct order. */
+export interface ConstellationPuzzleInstructions {
+  type: 'connect-constellation';
+  setupNarration: string;
+  /** The constellation to form. */
+  constellation: {
+    name: string;
+    /** Final shape name (for display). */
+    shapeName?: string;
+    /** Star positions (as percentage of screen). */
+    stars: {
+      id: string;
+      x: number;
+      y: number;
+      /** Optional label shown near the star. */
+      label?: string;
+    }[];
+    /** Correct order to connect stars (array of star IDs). */
+    correctOrder: string[];
+  };
+  /** Visual feedback. */
+  lineStyle?: {
+    color: string;
+    width: number;
+    glow?: boolean;
+  };
+  /** What happens when wrong connection is made. */
+  wrongConnectionBehavior?: 'reset' | 'undo-last' | 'shake';
+  /** Animation when constellation is complete. */
+  completionAnimation?: string;
+  hints?: { delaySeconds: number; text: string }[];
+  successNarration: string;
+}
+
 /** Union type for all puzzle instruction types. */
 export type PuzzleInstructions =
   | PhysicalPuzzleInstructions
@@ -280,7 +437,12 @@ export type PuzzleInstructions =
   | TapMatchPuzzleInstructions
   | DrawCastPuzzleInstructions
   | ARPortalPuzzleInstructions
-  | ARCatchPuzzleInstructions;
+  | ARCatchPuzzleInstructions
+  | PortalZoomPuzzleInstructions
+  | MagicMirrorPuzzleInstructions
+  | ScavengerPuzzleInstructions
+  | FingerMazePuzzleInstructions
+  | ConstellationPuzzleInstructions;
 
 /** Instructions for roll-until-success climax (solo boss fight). */
 export interface RollUntilSuccessInstructions {
