@@ -647,6 +647,59 @@ export function isStoryBeat(scene: Scene): boolean {
 }
 
 // ============================================
+// Random Puzzle Variant Support
+// ============================================
+
+/**
+ * Check if a scene has random puzzle variants.
+ */
+export function hasRandomPuzzle(scene: Scene): boolean {
+  return scene.randomPuzzle === true && Array.isArray(scene.puzzleVariants) && scene.puzzleVariants.length > 0;
+}
+
+/**
+ * Get a random puzzle variant ID for a scene.
+ * Returns null if the scene doesn't have random puzzles.
+ */
+export function getRandomPuzzleVariantId(scene: Scene): string | null {
+  if (!hasRandomPuzzle(scene)) return null;
+  const variants = scene.puzzleVariants!;
+  const randomIndex = Math.floor(Math.random() * variants.length);
+  return variants[randomIndex].id;
+}
+
+/**
+ * Resolve a scene with puzzle variants to a concrete scene.
+ * If variantId is provided, uses that variant. Otherwise, selects randomly.
+ * Returns the scene with the variant's properties merged in.
+ */
+export function resolvePuzzleVariant(scene: Scene, variantId?: string | null): Scene {
+  if (!hasRandomPuzzle(scene)) return scene;
+
+  const variants = scene.puzzleVariants!;
+  let selectedVariant;
+
+  if (variantId) {
+    selectedVariant = variants.find(v => v.id === variantId);
+  }
+
+  if (!selectedVariant) {
+    // Random selection
+    const randomIndex = Math.floor(Math.random() * variants.length);
+    selectedVariant = variants[randomIndex];
+  }
+
+  // Merge variant properties into the scene
+  return {
+    ...scene,
+    sceneType: selectedVariant.sceneType,
+    title: selectedVariant.title || scene.title,
+    narrationText: selectedVariant.narrationText || scene.narrationText,
+    puzzleInstructions: selectedVariant.puzzleInstructions,
+  };
+}
+
+// ============================================
 // Roll-Until-Success Climax Support
 // ============================================
 

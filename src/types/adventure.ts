@@ -392,6 +392,25 @@ export interface Scene {
   sceneType?: SceneType;
   /** Instructions for puzzle scenes (physical or in-game). */
   puzzleInstructions?: PuzzleInstructions;
+
+  // Random puzzle variant support
+  /** True if this scene should randomly select from puzzleVariants. */
+  randomPuzzle?: boolean;
+  /** Array of puzzle variants to randomly choose from. */
+  puzzleVariants?: PuzzleVariant[];
+}
+
+export interface PuzzleVariant {
+  /** Unique ID for this variant (used for persistence). */
+  id: string;
+  /** Scene type for this variant. */
+  sceneType: SceneType;
+  /** Optional title override. */
+  title?: string;
+  /** Narration text for this variant. */
+  narrationText?: string;
+  /** Puzzle instructions specific to this variant. */
+  puzzleInstructions: PuzzleInstructions;
 }
 
 export interface Character {

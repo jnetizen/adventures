@@ -127,15 +127,15 @@
     {
       "id": "scene-2",
       "sceneNumber": 1,
-      "title": "The Portal Window",
-      "sceneType": "puzzle-ar-portal",
-      "narrationText": "The first chamber is dark except for a shimmering window floating in the center. It's not a regular window - through it, you can see another DIMENSION! Swirling colors, floating books, distant stars.\n\nOctavius lands on a pedestal. 'The first test is for the THINKER.' His eyes lock onto Spell Seeker. 'Somewhere in that dimension is a Golden Quill - the key to the first lock. Find it... IF you can.'\n\nThe window ripples like water. The other dimension is vast and confusing. The Quill could be anywhere!\n\nBlot transforms into a tiny magnifying glass to help.",
+      "title": "The Hidden Quill",
+      "sceneType": "puzzle-seeker-lens",
+      "narrationText": "The first chamber is dark and mysterious. Ancient magic swirls in the air - you can feel it tingling on your skin.\n\nOctavius lands on a pedestal. 'The first test is for the THINKER.' His eyes lock onto Spell Seeker. 'Hidden somewhere in this chamber is a Golden Quill - the key to the first lock. But it's cloaked in invisible magic. Only a true seeker can find it!'\n\nBlot transforms into a tiny magnifying glass to help.\n\n'Use your Seeker's Lens,' Octavius instructs. 'It will glow warmer when you're getting closer to the hidden Quill!'",
       "sceneImageUrl": "/images/scenes/wizards-library/scene-2.png",
       "activeCharacter": "spell-seeker",
       "puzzleInstructions": {
-        "type": "ar-portal-peek",
-        "setupNarration": "Hold up your iPad - it's now a magic window into another dimension! Move it around to look through the portal. The Golden Quill is hiding somewhere in there!",
-        "targetObject": {
+        "type": "seeker-lens",
+        "setupNarration": "Hold up your iPad and look around the room! The Seeker's Lens will glow warmer when you're getting close to the hidden Golden Quill!",
+        "hiddenObject": {
           "id": "golden-quill",
           "name": "The Golden Quill",
           "imageUrl": "/images/rewards/golden-quill.png",
@@ -143,26 +143,15 @@
           "height": 120,
           "animation": "float"
         },
-        "arEnvironment": {
-          "background": "magical-dimension",
-          "floatingObjects": ["books", "stars", "inkblots", "scrolls"],
-          "hiddenLocation": "upper-left-behind-books",
-          "depthLayers": 3
-        },
-        "mechanics": {
-          "moveToLook": true,
-          "zoomByDistance": true,
-          "hintGlow": {
-            "enabled": true,
-            "intensityByProximity": true
-          }
-        },
+        "triggerDirection": "up-left",
+        "directionToleranceDegrees": 15,
         "hints": [
           { "delaySeconds": 15, "text": "Quills are for writing... look where a writer might keep one!" },
-          { "delaySeconds": 30, "text": "Try looking UP and to the LEFT, behind those floating books!" }
+          { "delaySeconds": 30, "text": "Try pointing your iPad UP and to the LEFT!" }
         ],
+        "revealNarration": "There it is! A glowing quill hidden in the magical shadows!",
         "tapPrompt": "Tap the Golden Quill to grab it!",
-        "successNarration": "THERE! Hidden behind a stack of floating spell books - the Golden Quill! Reaching through the portal, fingers wrap around it and pull it back into the real world. It glows warm and happy in your hand.\n\nOctavius blinks slowly. 'Adequate.' But his feathers puff up just a little - that's owl for impressed!"
+        "successNarration": "THERE! Hidden in the magical shadows - the Golden Quill! Reaching out, fingers wrap around it and pull it from its hiding place. It glows warm and happy in your hand.\n\nOctavius blinks slowly. 'Adequate.' But his feathers puff up just a little - that's owl for impressed!"
       },
       "outcome": {
         "resultText": "The Golden Quill floats over to the first of three locks on a massive book-shaped door. CLICK! One lock down, two to go.\n\nOctavius ruffles his feathers. 'Don't get cocky. The next test is... different.'\n\nBut before anyone can move - the floating books in the chamber start to SHAKE!",
@@ -236,37 +225,87 @@
     {
       "id": "scene-4",
       "sceneNumber": 3,
-      "title": "The Rune Door",
-      "sceneType": "puzzle-draw",
-      "narrationText": "A massive stone door blocks the path deeper into the library. Ancient runes glow on its surface - a language of magic.\n\nOctavius lands beside it. 'This door opens only to those with BOLD magic. Not timid little sparks - CONFIDENT strokes!'\n\nHis eyes fix on Brave Caster. 'Trace the rune. If your magic is strong enough, the door will open.'\n\nBlot transforms into a little cheerleader, waving pom-poms made of ink!",
+      "title": "The Magic Challenge",
       "sceneImageUrl": "/images/scenes/wizards-library/scene-4.png",
       "activeCharacter": "brave-caster",
-      "puzzleInstructions": {
-        "type": "draw-to-cast",
-        "setupNarration": "A glowing rune appears on the screen! Trace it with your finger - bold and brave! The faster and more confident, the stronger the spell!",
-        "rune": {
-          "shape": "spiral-into-star",
-          "glowColor": "orange",
-          "strokeWidth": 40,
-          "tolerancePercent": 25
+      "randomPuzzle": true,
+      "puzzleVariants": [
+        {
+          "id": "draw-rune",
+          "sceneType": "puzzle-draw",
+          "title": "The Rune Door",
+          "narrationText": "A massive stone door blocks the path deeper into the library. Ancient runes glow on its surface - a language of magic.\n\nOctavius lands beside it. 'This door opens only to those with BOLD magic. Not timid little sparks - CONFIDENT strokes!'\n\nHis eyes fix on Brave Caster. 'Trace the rune. If your magic is strong enough, the door will open.'\n\nBlot transforms into a little cheerleader, waving pom-poms made of ink!",
+          "puzzleInstructions": {
+            "type": "draw-to-cast",
+            "setupNarration": "A glowing rune appears on the screen! Trace it with your finger - bold and brave! The faster and more confident, the stronger the spell!",
+            "rune": {
+              "shape": "spiral-into-star",
+              "glowColor": "orange",
+              "strokeWidth": 40,
+              "tolerancePercent": 25
+            },
+            "trailEffect": {
+              "type": "magic-sparkle",
+              "color": "orange-gold",
+              "particleCount": 20
+            },
+            "successThreshold": {
+              "minPercentComplete": 70,
+              "timeBonus": true
+            },
+            "encouragement": [
+              { "atPercent": 25, "text": "Keep going! The door is starting to glow!" },
+              { "atPercent": 50, "text": "Halfway there! The runes are lighting up!" },
+              { "atPercent": 75, "text": "Almost done! The door is shaking!" }
+            ],
+            "successNarration": "The rune BLAZES with orange light! The magic flows from fingertip to stone, and the entire door RUMBLES and slowly swings open!\n\nOctavius's feathers ruffle. 'Bold. Very bold.' Is that... respect in his voice?",
+            "failNarration": "The rune flickers - but Blot jumps in and traces alongside, adding extra ink-magic! Together, the door creaks open. Teamwork!"
+          }
         },
-        "trailEffect": {
-          "type": "magic-sparkle",
-          "color": "orange-gold",
-          "particleCount": 20
+        {
+          "id": "seeker-lens-flame",
+          "sceneType": "puzzle-seeker-lens",
+          "title": "The Hidden Flame",
+          "narrationText": "A massive stone door blocks the path deeper into the library. But it's COLD - frozen shut by ancient magic!\n\nOctavius lands beside it. 'Only an Eternal Flame can melt this ice. But the flame is hidden, cloaked in invisible magic.'\n\nHis eyes fix on Brave Caster. 'Use your Seeker's Lens to find the hidden flame!'\n\nBlot transforms into a tiny torch to help!",
+          "puzzleInstructions": {
+            "type": "seeker-lens",
+            "setupNarration": "Hold up your iPad and search the room! The Seeker's Lens will glow warmer when you're getting close to the hidden Eternal Flame!",
+            "hiddenObject": {
+              "id": "eternal-flame",
+              "name": "The Eternal Flame",
+              "imageUrl": "/images/rewards/eternal-flame.png",
+              "width": 120,
+              "height": 120,
+              "animation": "flicker"
+            },
+            "triggerDirection": "right",
+            "directionToleranceDegrees": 15,
+            "hints": [
+              { "delaySeconds": 15, "text": "Fire loves to hide where it's dark..." },
+              { "delaySeconds": 30, "text": "Try pointing your iPad to the RIGHT!" }
+            ],
+            "revealNarration": "There it is! A flickering flame hidden in the shadows!",
+            "tapPrompt": "Tap the Eternal Flame to grab it!",
+            "successNarration": "The Eternal Flame leaps into your hands! It's warm but doesn't burn. You hold it up to the frozen door and the ice MELTS away!\n\nOctavius's feathers ruffle. 'Bold. Very bold.' Is that... respect in his voice?"
+          }
         },
-        "successThreshold": {
-          "minPercentComplete": 70,
-          "timeBonus": true
-        },
-        "encouragement": [
-          { "atPercent": 25, "text": "Keep going! The door is starting to glow!" },
-          { "atPercent": 50, "text": "Halfway there! The runes are lighting up!" },
-          { "atPercent": 75, "text": "Almost done! The door is shaking!" }
-        ],
-        "successNarration": "The rune BLAZES with orange light! The magic flows from fingertip to stone, and the entire door RUMBLES and slowly swings open!\n\nOctavius's feathers ruffle. 'Bold. Very bold.' Is that... respect in his voice?",
-        "failNarration": "The rune flickers - but Blot jumps in and traces alongside, adding extra ink-magic! Together, the door creaks open. Teamwork!"
-      },
+        {
+          "id": "memory-runes",
+          "sceneType": "puzzle-memory",
+          "title": "The Memory Runes",
+          "narrationText": "A massive stone door blocks the path deeper into the library. Six glowing runes float in front of it, each hiding a matching pair.\n\nOctavius lands beside it. 'The Memory Runes! Ancient magic hides matching symbols beneath them. Find all the pairs to unlock the door!'\n\nHis eyes fix on Brave Caster. 'Show me your memory is as bold as your courage!'\n\nBlot bounces excitedly!",
+          "puzzleInstructions": {
+            "type": "memory-match",
+            "prompt": "Find all the matching pairs!",
+            "pairs": [
+              { "id": "star", "emoji": "⭐" },
+              { "id": "flame", "emoji": "🔥" },
+              { "id": "bolt", "emoji": "⚡" }
+            ],
+            "successNarration": "The last pair glows bright! All six runes spin and embed themselves in the door. CLICK! The ancient lock releases!\n\nOctavius's feathers ruffle. 'Bold memory. Very bold.' Is that... respect in his voice?"
+          }
+        }
+      ],
       "outcome": {
         "resultText": "The second lock on the book-shaped door CLICKS open. Two down, one to go!\n\nBeyond the stone door is a chamber filled with swirling mist. And somewhere in that mist... something is flying around very fast.",
         "nextSceneId": "scene-5"
@@ -275,46 +314,106 @@
     {
       "id": "scene-5",
       "sceneNumber": 4,
-      "title": "The Enchanted Key",
-      "sceneType": "puzzle-ar-catch",
-      "narrationText": "The chamber is foggy and mysterious. But through the mist, you can see something ZOOMING around - a golden key with tiny wings!\n\nOctavius sighs. 'The Enchanted Key. It opens the final lock. But it's... playful. It WANTS to be caught, but it won't make it easy.'\n\nThe key zips past, giggling! It darts behind a bookshelf, pops out the other side, and does a loop-de-loop.\n\nOctavius looks at Brave Caster again. 'This one needs SPEED. Catch it three times.'",
+      "title": "The Speed Challenge",
       "sceneImageUrl": "/images/scenes/wizards-library/scene-5.png",
       "activeCharacter": "brave-caster",
-      "puzzleInstructions": {
-        "type": "ar-catch-object",
-        "setupNarration": "Hold up your iPad! The Enchanted Key is flying around the room. Turn and move to track it - when you see it, TAP to catch it! You need to catch it THREE times!",
-        "targetObject": {
-          "id": "enchanted-key",
-          "name": "The Enchanted Key",
-          "imageUrl": "/images/rewards/enchanted-key.png",
-          "width": 100,
-          "height": 100,
-          "animation": "fly-flutter"
+      "randomPuzzle": true,
+      "puzzleVariants": [
+        {
+          "id": "ar-catch-key",
+          "sceneType": "puzzle-ar-catch",
+          "title": "The Enchanted Key",
+          "narrationText": "The chamber is foggy and mysterious. But through the mist, you can see something ZOOMING around - a golden key with tiny wings!\n\nOctavius sighs. 'The Enchanted Key. It opens the final lock. But it's... playful. It WANTS to be caught, but it won't make it easy.'\n\nThe key zips past, giggling! It darts behind a bookshelf, pops out the other side, and does a loop-de-loop.\n\nOctavius looks at Brave Caster again. 'This one needs SPEED. Catch it three times.'",
+          "puzzleInstructions": {
+            "type": "ar-catch-object",
+            "setupNarration": "Hold up your iPad! The Enchanted Key is flying around the room. Turn and move to track it - when you see it, TAP to catch it! You need to catch it THREE times!",
+            "targetObject": {
+              "id": "enchanted-key",
+              "name": "The Enchanted Key",
+              "imageUrl": "/images/rewards/enchanted-key.png",
+              "width": 100,
+              "height": 100,
+              "animation": "fly-flutter"
+            },
+            "arBehavior": {
+              "movementPattern": "playful-dart",
+              "speedLevel": 2,
+              "fliesOffScreen": true,
+              "hidesTemporarily": true,
+              "giggles": true,
+              "catchesRequired": 3
+            },
+            "difficulty": {
+              "catch1": { "speed": "slow", "hideTime": 0 },
+              "catch2": { "speed": "medium", "hideTime": 1 },
+              "catch3": { "speed": "fast", "hideTime": 1.5 }
+            },
+            "catchFeedback": [
+              { "catchNumber": 1, "text": "Got it once! It's giggling - here it goes again!" },
+              { "catchNumber": 2, "text": "Twice! It's getting faster - one more time!" },
+              { "catchNumber": 3, "text": "THREE! The key settles into your hand, finally caught!" }
+            ],
+            "hints": [
+              { "delaySeconds": 10, "text": "Listen for the giggling - it tells you where the key went!" },
+              { "delaySeconds": 20, "text": "Try turning around - it might be behind you!" }
+            ],
+            "successNarration": "The Enchanted Key flutters happily in your hands. It WANTED to be caught by someone fast enough! It nuzzles against your palm like a tiny pet.\n\nOctavius clears his throat. 'Impressive reflexes. For a child.'"
+          }
         },
-        "arBehavior": {
-          "movementPattern": "playful-dart",
-          "speedLevel": 2,
-          "fliesOffScreen": true,
-          "hidesTemporarily": true,
-          "giggles": true,
-          "catchesRequired": 3
+        {
+          "id": "seeker-lens-key",
+          "sceneType": "puzzle-seeker-lens",
+          "title": "The Hidden Key",
+          "narrationText": "The chamber is foggy and mysterious. Somewhere in here is a golden key - but it's cloaked in invisible magic!\n\nOctavius sighs. 'The Enchanted Key. It's hiding. Playing its little game.'\n\nHis eyes fix on Brave Caster. 'Use your Seeker's Lens! Find where the key is hiding!'\n\nBlot bounces around, trying to sniff it out.",
+          "puzzleInstructions": {
+            "type": "seeker-lens",
+            "setupNarration": "Hold up your iPad and search the misty room! The Seeker's Lens will glow warmer when you're getting close to the hidden key!",
+            "hiddenObject": {
+              "id": "enchanted-key",
+              "name": "The Enchanted Key",
+              "imageUrl": "/images/rewards/enchanted-key.png",
+              "width": 100,
+              "height": 100,
+              "animation": "fly-flutter"
+            },
+            "triggerDirection": "down",
+            "directionToleranceDegrees": 15,
+            "hints": [
+              { "delaySeconds": 10, "text": "Keys like to hide in low places..." },
+              { "delaySeconds": 20, "text": "Try pointing your iPad DOWN toward the floor!" }
+            ],
+            "revealNarration": "There it is! The key was hiding in the mist near the floor!",
+            "tapPrompt": "Tap the Enchanted Key to grab it!",
+            "successNarration": "The Enchanted Key flutters happily into your hands! It giggles - it loved playing hide and seek!\n\nOctavius clears his throat. 'Quick eyes. For a child.'"
+          }
         },
-        "difficulty": {
-          "catch1": { "speed": "slow", "hideTime": 0 },
-          "catch2": { "speed": "medium", "hideTime": 1 },
-          "catch3": { "speed": "fast", "hideTime": 1.5 }
-        },
-        "catchFeedback": [
-          { "catchNumber": 1, "text": "Got it once! It's giggling - here it goes again!" },
-          { "catchNumber": 2, "text": "Twice! It's getting faster - one more time!" },
-          { "catchNumber": 3, "text": "THREE! The key settles into your hand, finally caught!" }
-        ],
-        "hints": [
-          { "delaySeconds": 10, "text": "Listen for the giggling - it tells you where the key went!" },
-          { "delaySeconds": 20, "text": "Try turning around - it might be behind you!" }
-        ],
-        "successNarration": "The Enchanted Key flutters happily in your hands. It WANTED to be caught by someone fast enough! It nuzzles against your palm like a tiny pet.\n\nOctavius clears his throat. 'Impressive reflexes. For a child.'"
-      },
+        {
+          "id": "simon-speed",
+          "sceneType": "puzzle-simon",
+          "title": "The Speed Spell",
+          "narrationText": "The chamber pulses with energy. Three magical orbs float in the air - red, blue, and yellow - flashing in a pattern!\n\nOctavius sighs. 'The Speed Spell. Watch the pattern and repeat it FAST! The faster you tap, the stronger the magic!'\n\nBlot transforms into a tiny conductor, ready to help keep the beat!",
+          "puzzleInstructions": {
+            "type": "simon-says-cast",
+            "setupNarration": "Watch the orbs flash in order - then tap them in the SAME order as fast as you can! Speed matters!",
+            "symbols": [
+              { "id": "red", "emoji": "🔴", "color": "red", "sound": "ping-low" },
+              { "id": "blue", "emoji": "🔵", "color": "blue", "sound": "ping-mid" },
+              { "id": "yellow", "emoji": "🟡", "color": "yellow", "sound": "ping-high" }
+            ],
+            "rounds": [
+              { "roundNumber": 1, "sequence": ["red", "blue", "yellow"], "displaySpeed": 600 },
+              { "roundNumber": 2, "sequence": ["red", "blue", "yellow", "red"], "displaySpeed": 500 }
+            ],
+            "feedbackPerRound": [
+              { "round": 1, "text": "Three flashes - be quick!" },
+              { "round": 2, "text": "Four flashes - even faster!" }
+            ],
+            "mistakeAllowance": 2,
+            "mistakeFeedback": "Oops! The orbs flash red. Try again - faster this time!",
+            "successNarration": "PERFECT! The orbs spin together and transform into a golden key that floats into your hands!\n\nOctavius clears his throat. 'Fast fingers. For a child.'"
+          }
+        }
+      ],
       "outcome": {
         "resultText": "The Enchanted Key floats over to the book-shaped door and inserts itself into the third lock. But it doesn't turn yet - one more test remains.\n\nOctavius's expression softens, just a little. 'One lock left. And this one...' He looks at Sparkle Mage. '...requires the purest heart.'",
         "nextSceneId": "scene-6"
@@ -387,32 +486,82 @@
     {
       "id": "scene-7",
       "sceneNumber": 6,
-      "title": "The Spell Sequence",
-      "sceneType": "puzzle-simon",
-      "narrationText": "You've reached the final lock - and it's the most complicated. Four magical symbols float in a circle: a MOON, a STAR, a FLAME, and a WATER DROP.\n\nOctavius lands beside them. 'This lock requires MEMORY. Watch the sequence. Repeat it perfectly.' His eyes find Spell Seeker. 'This is YOUR challenge, thinker.'\n\nThe symbols begin to glow, one by one, in a pattern...",
+      "title": "The Mind Challenge",
       "sceneImageUrl": "/images/scenes/wizards-library/scene-7.png",
       "activeCharacter": "spell-seeker",
-      "puzzleInstructions": {
-        "type": "simon-says-cast",
-        "setupNarration": "Watch the symbols light up in order - then tap them in the SAME order! Each round gets one longer. Can you remember the whole spell?",
-        "symbols": [
-          { "id": "moon", "emoji": "🌙", "color": "silver", "sound": "chime-low" },
-          { "id": "star", "emoji": "⭐", "color": "gold", "sound": "chime-high" },
-          { "id": "flame", "emoji": "🔥", "color": "orange", "sound": "whoosh" },
-          { "id": "water", "emoji": "💧", "color": "blue", "sound": "drip" }
-        ],
-        "rounds": [
-          { "roundNumber": 1, "sequence": ["star", "moon", "flame"], "displaySpeed": 800 },
-          { "roundNumber": 2, "sequence": ["star", "moon", "flame", "water"], "displaySpeed": 700 }
-        ],
-        "feedbackPerRound": [
-          { "round": 1, "text": "Three symbols - watch carefully!" },
-          { "round": 2, "text": "Four symbols - the complete spell!" }
-        ],
-        "mistakeAllowance": 2,
-        "mistakeFeedback": "Oops! The symbols flash red. Try that round again!",
-        "successNarration": "The final symbol BLAZES with light! All four symbols spin around faster and faster, creating a ring of magical energy!\n\nOctavius's eyes go wide. 'The complete sequence. On the first try. Remarkable.'\n\nThe symbols fly toward the last lock and embed themselves in its surface. CLICK. CLICK. CLICK. CLICK.\n\nThe final lock is OPEN!"
-      },
+      "randomPuzzle": true,
+      "puzzleVariants": [
+        {
+          "id": "simon-spell",
+          "sceneType": "puzzle-simon",
+          "title": "The Spell Sequence",
+          "narrationText": "You've reached the final lock - and it's the most complicated. Four magical symbols float in a circle: a MOON, a STAR, a FLAME, and a WATER DROP.\n\nOctavius lands beside them. 'This lock requires MEMORY. Watch the sequence. Repeat it perfectly.' His eyes find Spell Seeker. 'This is YOUR challenge, thinker.'\n\nThe symbols begin to glow, one by one, in a pattern...",
+          "puzzleInstructions": {
+            "type": "simon-says-cast",
+            "setupNarration": "Watch the symbols light up in order - then tap them in the SAME order! Each round gets one longer. Can you remember the whole spell?",
+            "symbols": [
+              { "id": "moon", "emoji": "🌙", "color": "silver", "sound": "chime-low" },
+              { "id": "star", "emoji": "⭐", "color": "gold", "sound": "chime-high" },
+              { "id": "flame", "emoji": "🔥", "color": "orange", "sound": "whoosh" },
+              { "id": "water", "emoji": "💧", "color": "blue", "sound": "drip" }
+            ],
+            "rounds": [
+              { "roundNumber": 1, "sequence": ["star", "moon", "flame"], "displaySpeed": 800 },
+              { "roundNumber": 2, "sequence": ["star", "moon", "flame", "water"], "displaySpeed": 700 }
+            ],
+            "feedbackPerRound": [
+              { "round": 1, "text": "Three symbols - watch carefully!" },
+              { "round": 2, "text": "Four symbols - the complete spell!" }
+            ],
+            "mistakeAllowance": 2,
+            "mistakeFeedback": "Oops! The symbols flash red. Try that round again!",
+            "successNarration": "The final symbol BLAZES with light! All four symbols spin around faster and faster, creating a ring of magical energy!\n\nOctavius's eyes go wide. 'The complete sequence. On the first try. Remarkable.'\n\nThe symbols fly toward the last lock and embed themselves in its surface. CLICK. CLICK. CLICK. CLICK.\n\nThe final lock is OPEN!"
+          }
+        },
+        {
+          "id": "memory-symbols",
+          "sceneType": "puzzle-memory",
+          "title": "The Memory Lock",
+          "narrationText": "You've reached the final lock - and it's a puzzle! Six glowing tiles float before the door, each hiding a matching symbol.\n\nOctavius lands beside them. 'The Memory Lock! Find the matching pairs to open it.' His eyes find Spell Seeker. 'A true thinker remembers what they've seen.'\n\nBlot transforms into a tiny brain, ready to help!",
+          "puzzleInstructions": {
+            "type": "memory-match",
+            "prompt": "Find all the matching pairs!",
+            "pairs": [
+              { "id": "moon", "emoji": "🌙" },
+              { "id": "star", "emoji": "⭐" },
+              { "id": "book", "emoji": "📖" }
+            ],
+            "successNarration": "The last pair glows bright! All six tiles spin and merge into a glowing key that floats into the final lock!\n\nOctavius's eyes go wide. 'Perfect memory. Remarkable.'\n\nCLICK. CLICK. CLICK.\n\nThe final lock is OPEN!"
+          }
+        },
+        {
+          "id": "seeker-lens-book",
+          "sceneType": "puzzle-seeker-lens",
+          "title": "The Invisible Spell",
+          "narrationText": "You've reached the final lock - but there's no keyhole! Just blank stone.\n\nOctavius lands beside it. 'The Invisible Spell! An ancient word is written here in invisible ink. Only a Seeker's Lens can reveal it.'\n\nHis eyes find Spell Seeker. 'Find the hidden spell to open the lock!'\n\nBlot transforms into a detective's magnifying glass!",
+          "puzzleInstructions": {
+            "type": "seeker-lens",
+            "setupNarration": "Hold up your iPad and search the door! The Seeker's Lens will glow warmer when you're getting close to the hidden spell!",
+            "hiddenObject": {
+              "id": "invisible-spell",
+              "name": "The Invisible Spell",
+              "imageUrl": "/images/rewards/spell-scroll.png",
+              "width": 150,
+              "height": 100,
+              "animation": "glow"
+            },
+            "triggerDirection": "forward",
+            "directionToleranceDegrees": 20,
+            "hints": [
+              { "delaySeconds": 15, "text": "The spell is written on the door itself..." },
+              { "delaySeconds": 30, "text": "Point your iPad straight at the door!" }
+            ],
+            "revealNarration": "There it is! Glowing letters appear on the stone!",
+            "tapPrompt": "Tap the spell to speak it!",
+            "successNarration": "You tap the glowing words and they SPEAK themselves aloud! The door shimmers, ripples like water, and the lock DISSOLVES!\n\nOctavius's eyes go wide. 'You found the ancient word. Remarkable.'\n\nThe final lock is OPEN!"
+          }
+        }
+      ],
       "outcome": {
         "resultText": "All three locks are open! The Book of Infinite Stories is finally within reach!\n\nOctavius flutters to the ground, looking at you three with something new in his eyes. Is that... pride?\n\n'You've passed every test. The Book is yours to read. Go on.'\n\nBut first - one more act of magic is needed.",
         "nextSceneId": "scene-8"
