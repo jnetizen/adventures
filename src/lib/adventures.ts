@@ -102,6 +102,7 @@ export function getPlayerForCharacter(players: Player[], characterId: string): s
  * Get active character turns (only those with assigned players)
  */
 export function getActiveCharacterTurns(scene: Scene, players: Player[]): CharacterTurn[] {
+  if (!scene.characterTurns) return [];
   const assigned = getAssignedCharacterIds(players);
   return scene.characterTurns.filter(turn => assigned.includes(turn.characterId));
 }
