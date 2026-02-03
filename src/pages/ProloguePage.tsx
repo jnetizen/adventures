@@ -83,10 +83,22 @@ export default function ProloguePage({ adventure, onStart, disabled }: PrologueP
                   className="flex gap-4 items-start p-3 rounded-lg bg-amber-50/50"
                 >
                   <div className="flex-shrink-0">
+                    {char.imageUrl ? (
+                      <img
+                        src={char.imageUrl}
+                        alt={char.name}
+                        className="w-14 h-14 rounded-lg object-cover"
+                        onError={(e) => {
+                          // Fallback to placeholder on error
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                        }}
+                      />
+                    ) : null}
                     <PlaceholderImage
                       variant="character"
                       label={char.name}
-                      className="w-14 h-14"
+                      className={`w-14 h-14 ${char.imageUrl ? 'hidden' : ''}`}
                     />
                   </div>
                   <div>
