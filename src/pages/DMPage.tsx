@@ -15,7 +15,7 @@ import {
   computeParallelSceneStatus,
   groupCharacterScenesBySceneId,
 } from '../lib/dmDerivedState';
-import { getKidDisplayName } from '../lib/players';
+import { getKidDisplayName, substituteCharacterNames } from '../lib/players';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
 import type { GameSession, Player, DiceType } from '../types/game';
@@ -1764,7 +1764,9 @@ export default function DMPage() {
           {currentScene && !showingEpilogue && (
             <div className="bg-blue-50 p-4 rounded-lg">
               <h2 className="text-sm font-semibold text-blue-900 mb-2">Narration</h2>
-              <p className="text-base text-blue-800 leading-relaxed">{currentScene.narrationText || 'No narration text'}</p>
+              <p className="text-base text-blue-800 leading-relaxed">
+                {substituteCharacterNames(currentScene.narrationText || 'No narration text', players, adventure.characters)}
+              </p>
             </div>
           )}
 
@@ -1856,7 +1858,9 @@ export default function DMPage() {
                     {showingClimaxCutscene && ` (${cutsceneNumber}/${totalCutscenes})`}
                   </p>
                 </div>
-                <p className="text-sm text-purple-800">{session.active_cutscene.outcomeText}</p>
+                <p className="text-sm text-purple-800">
+                  {substituteCharacterNames(session.active_cutscene.outcomeText, players, adventure.characters)}
+                </p>
                 {session.active_cutscene.reward && (
                   <p className="text-sm text-purple-700">
                     Reward: <span className="font-medium">{session.active_cutscene.reward.name}</span>
@@ -1866,7 +1870,9 @@ export default function DMPage() {
                 {showSceneOutcome && (
                   <div className="bg-green-50 border border-green-200 p-3 rounded-lg mt-2">
                     <p className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-1">Scene Outcome</p>
-                    <p className="text-sm text-green-800 whitespace-pre-line">{currentScene.outcome!.resultText}</p>
+                    <p className="text-sm text-green-800 whitespace-pre-line">
+                      {substituteCharacterNames(currentScene.outcome!.resultText, players, adventure.characters)}
+                    </p>
                   </div>
                 )}
                 <button
@@ -2228,7 +2234,9 @@ export default function DMPage() {
                 </p>
                 {/* Show scene outcome text for context */}
                 {currentScene.outcome?.resultText && (
-                  <p className="mt-2 text-sm text-gray-700">{currentScene.outcome.resultText}</p>
+                  <p className="mt-2 text-sm text-gray-700">
+                    {substituteCharacterNames(currentScene.outcome.resultText, players, adventure.characters)}
+                  </p>
                 )}
               </div>
               <button
@@ -2250,8 +2258,12 @@ export default function DMPage() {
 
           {/* Roll-Until-Success Climax UI - hide after victory (allActed) */}
           {currentScene && isRollUntilSuccessClimax(currentScene) && currentScene.climaxInstructions && !session.active_cutscene && !allActed && (() => {
-            const character = adventure.characters[0];
-            const kidName = players[0]?.kidName || character?.name || 'Player';
+            // Cycle through players based on roll count
+            const rollCount = session.climax_roll_count ?? 0;
+            const playerIndex = rollCount % players.length;
+            const player = players[playerIndex];
+            const character = adventure.characters.find(c => c.id === player?.characterId) || adventure.characters[playerIndex % adventure.characters.length];
+            const kidName = player?.kidName || character?.name || 'Player';
             const diceType = (session.dice_type ?? DEFAULT_DICE_TYPE) as DiceType;
 
             return (
@@ -2261,6 +2273,8 @@ export default function DMPage() {
                 characterName={character?.name || 'Unknown'}
                 diceType={diceType}
                 session={session}
+                players={players}
+                characters={adventure.characters}
                 onRollSubmit={handleRollUntilSuccessRoll}
                 onVictory={handleRollUntilSuccessVictory}
                 disabled={submitting}
@@ -2279,7 +2293,7 @@ export default function DMPage() {
                   : session.current_character_turn_index || 0;
                 const activeTurns = getActiveCharacterTurns(currentScene, players);
                 const totalTurns = activeTurns.length;
-                const prompt = `${kidName} (${character?.name ?? 'Unknown'}), ${currentCharacterTurn.promptText}`;
+                const prompt = `${kidName} (${character?.name ?? 'Unknown'}), ${substituteCharacterNames(currentCharacterTurn.promptText, players, adventure.characters)}`;
                 const isClimaxTurn = isAlwaysSucceedTurn(currentCharacterTurn);
 
                 // For climax turns, show unified UI with all character prompts and single GO button
@@ -2343,7 +2357,9 @@ export default function DMPage() {
                           return (
                             <div key={climaxTurn.characterId} className="bg-amber-50 border border-amber-200 p-3 rounded-lg">
                               <p className="font-bold text-amber-900">{kid} ({char?.name}):</p>
-                              <p className="text-amber-800 mt-1">{climaxTurn.promptText}</p>
+                              <p className="text-amber-800 mt-1">
+                                {substituteCharacterNames(climaxTurn.promptText, players, adventure.characters)}
+                              </p>
                             </div>
                           );
                         })}

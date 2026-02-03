@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import type { RollUntilSuccessInstructions } from '../types/adventure';
-import type { DiceType, GameSession } from '../types/game';
+import type { RollUntilSuccessInstructions, Character } from '../types/adventure';
+import type { DiceType, GameSession, Player } from '../types/game';
+import { substituteCharacterNames } from '../lib/players';
 import DiceRoller from './DiceRoller';
 
 interface RollUntilSuccessControlsProps {
@@ -9,6 +10,8 @@ interface RollUntilSuccessControlsProps {
   characterName: string;
   diceType: DiceType;
   session: GameSession;
+  players: Player[];
+  characters: Character[];
   onRollSubmit: (roll: number, isMax: boolean) => void;
   onVictory: () => void;
   disabled?: boolean;
@@ -24,6 +27,8 @@ export default function RollUntilSuccessControls({
   characterName,
   diceType,
   session,
+  players,
+  characters,
   onRollSubmit,
   onVictory,
   disabled = false,
@@ -35,10 +40,11 @@ export default function RollUntilSuccessControls({
   const failIndex = session.climax_fail_index ?? 0;
   const maxRoll = diceType;
 
-  // Get the current fail narration (clamped to last one)
-  const currentNarration = instructions.failNarrations[
+  // Get the current fail narration (clamped to last one), with character names substituted
+  const rawNarration = instructions.failNarrations[
     Math.min(failIndex, instructions.failNarrations.length - 1)
   ];
+  const currentNarration = substituteCharacterNames(rawNarration, players, characters);
 
   const handleRoll = (roll: number) => {
     setCurrentRoll(roll);
