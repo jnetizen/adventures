@@ -357,19 +357,30 @@ export default function PlayPage() {
     });
   }, [session?.phase, session?.adventure_id, session?.current_scene, adventureEnded]);
 
+  // Memoized callbacks for RewardCelebration to prevent timer resets
+  const handleSceneCelebrationClose = useCallback(() => {
+    if (currentScene) {
+      setCelebratedSceneIds((prev) => [...prev, currentScene.id]);
+    }
+  }, [currentScene]);
+
+  const handleEndingCelebrationClose = useCallback(() => {
+    setCelebratedEnding(true);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {showSceneCelebration && currentScene?.outcome?.rewards && (
         <RewardCelebration
           rewards={currentScene.outcome.rewards}
-          onClose={() => setCelebratedSceneIds((prev) => [...prev, currentScene.id])}
+          onClose={handleSceneCelebrationClose}
           variant="scene"
         />
       )}
       {showEndingCelebration && ending?.rewards && (
         <RewardCelebration
           rewards={ending.rewards}
-          onClose={() => setCelebratedEnding(true)}
+          onClose={handleEndingCelebrationClose}
           variant="ending"
         />
       )}

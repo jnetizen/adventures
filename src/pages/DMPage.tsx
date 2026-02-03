@@ -993,6 +993,35 @@ export default function DMPage() {
     }
   };
 
+  /**
+   * Directly end the adventure from the epilogue screen.
+   * This is a simpler path than handleNextScene for the final "End Adventure" button.
+   */
+  const handleEndAdventure = async () => {
+    if (!session) return;
+    setError(null);
+    setAdvancing(true);
+
+    // Dismiss any active cutscene
+    if (session.active_cutscene) {
+      await dismissCutscene(session.id);
+    }
+
+    // Complete the adventure
+    const { error: advanceError } = await advanceToNextScene(session.id, null);
+    setAdvancing(false);
+
+    if (advanceError) {
+      setError(formatError(advanceError));
+      return;
+    }
+
+    // Update local state to complete
+    setShowingEpilogue(false);
+    setClimaxPlayMode(null);
+    setSession((prev) => prev ? { ...prev, phase: GAME_PHASES.COMPLETE, active_cutscene: null } : null);
+  };
+
   const handleNextScene = async () => {
     if (!session || !currentScene || !adventure) return;
 
@@ -1582,19 +1611,30 @@ export default function DMPage() {
     currentSceneId: currentScene?.id,
   });
 
+  // Memoized callbacks for RewardCelebration to prevent timer resets
+  const handleSceneCelebrationClose = useCallback(() => {
+    if (currentScene) {
+      setCelebratedSceneIds((prev) => [...prev, currentScene.id]);
+    }
+  }, [currentScene]);
+
+  const handleEndingCelebrationClose = useCallback(() => {
+    setCelebratedEnding(true);
+  }, []);
+
   return (
     <>
       {showSceneCelebration && currentScene?.outcome?.rewards && (
         <RewardCelebration
           rewards={currentScene.outcome.rewards}
-          onClose={() => setCelebratedSceneIds((prev) => [...prev, currentScene.id])}
+          onClose={handleSceneCelebrationClose}
           variant="scene"
         />
       )}
       {showEndingCelebration && ending?.rewards && (
         <RewardCelebration
           rewards={ending.rewards}
-          onClose={() => setCelebratedEnding(true)}
+          onClose={handleEndingCelebrationClose}
           variant="ending"
         />
       )}
@@ -1843,7 +1883,7 @@ export default function DMPage() {
               actions={
                 <div className="mt-4">
                   <button
-                    onClick={handleNextScene}
+                    onClick={handleEndAdventure}
                     disabled={advancing}
                     className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
