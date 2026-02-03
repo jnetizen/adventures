@@ -540,8 +540,7 @@
         }
       },
       "outcome": {
-        "resultText": null,
-        "nextSceneId": null
+        "resultText": "The Book SLAMS shut with a thunderclap of golden light! Your story is sealed forever!"
       }
     }
   ],

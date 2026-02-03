@@ -726,13 +726,21 @@ export default function DMPage() {
       await dismissCutscene(session.id);
 
       // Auto-advance to epilogue after climax cutscene
-      if (adventure.ending) {
+      // Handle both single ending and tiered endings
+      const tieredEnding = calculateEnding(adventure, session.success_count ?? 0);
+      const singleEnding = adventure.ending;
+      const ending = singleEnding || tieredEnding;
+
+      if (ending) {
         setShowingEpilogue(true);
-        if (adventure.ending.endingImageUrl) {
+        // For tiered endings, use videoUrl or imageUrl; for single endings, use endingImageUrl
+        const mediaUrl = 'videoUrl' in ending ? (ending.videoUrl || ending.imageUrl) :
+                         'endingImageUrl' in ending ? ending.endingImageUrl : null;
+        if (mediaUrl) {
           await showCutscene(session.id, {
             characterId: 'epilogue',
-            imageUrl: adventure.ending.endingImageUrl,
-            outcomeText: adventure.ending.title || 'The End',
+            imageUrl: mediaUrl,
+            outcomeText: ending.title || 'The End',
           });
         }
       }
@@ -958,19 +966,29 @@ export default function DMPage() {
   };
 
   const handleShowEpilogue = async () => {
-    if (!session || !adventure?.ending) return;
+    if (!session || !adventure) return;
     setError(null);
     setShowingEpilogue(true);
 
-    // Show the ending image on the player screen using the cutscene mechanism
-    if (adventure.ending.endingImageUrl) {
+    // Handle both single ending and tiered endings
+    const tieredEnding = calculateEnding(adventure, session.success_count ?? 0);
+    const singleEnding = adventure.ending;
+    const ending = singleEnding || tieredEnding;
+
+    if (!ending) return;
+
+    // Show the ending video/image on the player screen using the cutscene mechanism
+    // For tiered endings, use videoUrl or imageUrl; for single endings, use endingImageUrl
+    const mediaUrl = 'videoUrl' in ending ? (ending.videoUrl || ending.imageUrl) :
+                     'endingImageUrl' in ending ? ending.endingImageUrl : null;
+    if (mediaUrl) {
       const { error: cutsceneError } = await showCutscene(session.id, {
         characterId: 'epilogue',
-        imageUrl: adventure.ending.endingImageUrl,
-        outcomeText: adventure.ending.title || 'The End',
+        imageUrl: mediaUrl,
+        outcomeText: ending.title || 'The End',
       });
       if (cutsceneError) {
-        console.error('Failed to show epilogue image:', cutsceneError);
+        console.error('Failed to show epilogue media:', cutsceneError);
       }
     }
   };
