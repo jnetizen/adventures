@@ -376,6 +376,8 @@ export interface Scene {
   parallelWith?: string;
   /** Which characters are active in this scene (for branching) */
   activeCharacters?: string[];
+  /** Single character who performs puzzle scenes */
+  activeCharacter?: string;
   /** True if this is a climax scene (dramatic finale). */
   isClimax?: boolean;
   /** Climax mode: 'rapid-fire' = quick succession, 'roll-until-success' = solo boss fight. */

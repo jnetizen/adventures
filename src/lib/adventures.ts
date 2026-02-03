@@ -345,17 +345,24 @@ export function isParallelScene(scene: Scene): boolean {
 /**
  * Get the characters that are active in a specific scene.
  * For parallel scenes, uses activeCharacters field.
+ * For puzzle scenes, uses activeCharacter field (singular).
  * For normal scenes, returns all assigned player character IDs.
  */
 export function getSceneActiveCharacters(scene: Scene, players: Player[]): string[] {
-  // If scene specifies active characters, use those (filtered by assigned players)
+  const assignedIds = getAssignedCharacterIds(players);
+
+  // If scene specifies active characters (plural), use those (filtered by assigned players)
   if (scene.activeCharacters && scene.activeCharacters.length > 0) {
-    const assignedIds = getAssignedCharacterIds(players);
     return scene.activeCharacters.filter(id => assignedIds.includes(id));
   }
 
+  // If scene specifies a single active character (for puzzles), use that if assigned
+  if (scene.activeCharacter && assignedIds.includes(scene.activeCharacter)) {
+    return [scene.activeCharacter];
+  }
+
   // Otherwise, all assigned players are active
-  return getAssignedCharacterIds(players);
+  return assignedIds;
 }
 
 /**
