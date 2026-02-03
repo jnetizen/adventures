@@ -153,14 +153,15 @@ export async function startAdventure(
   sessionId: string,
   adventureId: string,
   players: Player[],
-  diceType?: number
+  diceType?: number,
+  diceMode?: 'physical' | 'digital'
 ): Promise<{ error: Error | null }> {
   if (!isOnline()) {
     await saveOperationToQueue({
       id: generateOperationId(),
       type: OPERATION_TYPES.START_ADVENTURE,
       sessionId,
-      data: { adventureId, players, diceType },
+      data: { adventureId, players, diceType, diceMode },
       timestamp: new Date().toISOString(),
     });
     return { error: null };
@@ -175,6 +176,7 @@ export async function startAdventure(
         phase: GAME_PHASES.PROLOGUE,
         success_count: 0,
         dice_type: diceType ?? 20,
+        dice_mode: diceMode ?? 'physical',
         active_cutscene: null,
         collected_rewards: [],
         updated_at: new Date().toISOString(),
@@ -219,6 +221,50 @@ export async function startScene(sessionId: string, sceneNumber: number): Promis
         puzzle_outcome: null,
         // Clear any active cutscene to prevent stale overlays on scene transitions.
         active_cutscene: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Submits a player's dice roll (for digital dice mode).
+ * This stores the roll for the DM to use when submitting the choice.
+ */
+export async function submitPlayerRoll(
+  sessionId: string,
+  roll: number
+): Promise<{ error: Error | null }> {
+  if (roll < 1 || roll > 20) {
+    return { error: new Error('Dice roll must be between 1 and 20') };
+  }
+
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        pending_player_roll: roll,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
+ * Clears the pending player roll (after DM uses it).
+ */
+export async function clearPlayerRoll(
+  sessionId: string
+): Promise<{ error: Error | null }> {
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        pending_player_roll: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);

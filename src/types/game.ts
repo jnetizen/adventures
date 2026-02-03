@@ -10,6 +10,10 @@ export type DiceType = 6 | 10 | 12 | 20;
 export const DICE_TYPES: DiceType[] = [6, 10, 12, 20];
 export const DEFAULT_DICE_TYPE: DiceType = 6;
 
+/** Dice mode: physical (DM enters roll) or digital (player taps to roll). */
+export type DiceMode = 'physical' | 'digital';
+export const DEFAULT_DICE_MODE: DiceMode = 'physical';
+
 /** Choices made this scene, for batched reveal. */
 export interface SceneChoice {
   characterId: string;
@@ -73,6 +77,10 @@ export interface GameSession {
   success_count?: number;
   /** Dice type (max value): 6, 10, 12, or 20. Defaults to 20. */
   dice_type?: DiceType;
+  /** Dice mode: 'physical' (DM enters roll) or 'digital' (player taps to roll). */
+  dice_mode?: DiceMode;
+  /** Player's pending roll (for digital dice mode). */
+  pending_player_roll?: number | null;
   /** Post-session feedback */
   feedback_rating?: number | null;
   feedback_positive?: string | null;

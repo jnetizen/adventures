@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
-import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle } from '../lib/gameState';
+import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, clearPlayerRoll } from '../lib/gameState';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
 import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions, isRollUntilSuccessClimax } from '../lib/adventures';
@@ -176,6 +176,7 @@ export default function DMPage() {
   const [kidNames, setKidNames] = useState<string[]>(['', '']);
   const [playerAssignments, setPlayerAssignments] = useState<Array<{ kidName: string; characterId: string }>>([]);
   const [selectedDiceType, setSelectedDiceType] = useState<DiceType>(DEFAULT_DICE_TYPE);
+  const [selectedDiceMode, setSelectedDiceMode] = useState<'physical' | 'digital'>('physical');
   const [submitting, setSubmitting] = useState(false);
   const submittingRef = useRef(false); // Ref-based guard for immediate double-click prevention
   const [advancing, setAdvancing] = useState(false);
@@ -456,13 +457,13 @@ export default function DMPage() {
     }
 
     setError(null);
-    const { error: startError } = await startAdventure(session.id, adventure.id, players, selectedDiceType);
+    const { error: startError } = await startAdventure(session.id, adventure.id, players, selectedDiceType, selectedDiceMode);
     if (startError) {
       setError(formatError(startError));
       return;
     }
     setSession((prev) =>
-      prev ? { ...prev, players, adventure_id: adventure.id, phase: GAME_PHASES.PROLOGUE, dice_type: selectedDiceType } : null
+      prev ? { ...prev, players, adventure_id: adventure.id, phase: GAME_PHASES.PROLOGUE, dice_type: selectedDiceType, dice_mode: selectedDiceMode } : null
     );
   };
 
@@ -513,13 +514,18 @@ export default function DMPage() {
       failCutsceneUrl: turn?.failOutcome?.cutsceneImageUrl,
     });
 
-    if (!session || !turn || !choice || !diceRoll.trim()) {
-      setError('Please select a choice and enter a dice roll');
+    // In digital mode, use the player's roll if available
+    const isDigitalMode = session?.dice_mode === 'digital';
+    const playerRoll = session?.pending_player_roll;
+    const rollSource = isDigitalMode && playerRoll ? String(playerRoll) : diceRoll;
+
+    if (!session || !turn || !choice || !rollSource.trim()) {
+      setError(isDigitalMode ? 'Waiting for player to roll dice' : 'Please select a choice and enter a dice roll');
       submittingRef.current = false;
       return;
     }
 
-    const roll = parseInt(diceRoll, 10);
+    const roll = parseInt(rollSource, 10);
     const maxRoll = session.dice_type ?? DEFAULT_DICE_TYPE;
     if (isNaN(roll) || roll < 1 || roll > maxRoll) {
       setError(`Dice roll must be between 1 and ${maxRoll}`);
@@ -629,6 +635,12 @@ export default function DMPage() {
     // Reset selection for next turn
     setSelectedChoice(null);
     setDiceRoll('');
+
+    // Clear the player's pending roll if in digital mode
+    if (isDigitalMode && playerRoll) {
+      await clearPlayerRoll(session.id);
+      setSession((prev) => prev ? { ...prev, pending_player_roll: null } : null);
+    }
   };
 
   /**
@@ -1388,6 +1400,42 @@ export default function DMPage() {
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
                     Choose the dice your family will use for rolls.
+                  </p>
+                </div>
+
+                {/* Dice mode selector */}
+                <div className="pt-4 border-t border-gray-200">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    How will you roll?
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDiceMode('physical')}
+                      className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-colors ${
+                        selectedDiceMode === 'physical'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      Physical Dice
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDiceMode('digital')}
+                      className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-colors ${
+                        selectedDiceMode === 'digital'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      Digital Dice
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {selectedDiceMode === 'physical'
+                      ? 'You enter dice rolls manually.'
+                      : 'Players tap to roll on their screen.'}
                   </p>
                 </div>
 
@@ -2380,36 +2428,56 @@ export default function DMPage() {
                       </div>
                     )}
 
-                    <div className="flex flex-wrap items-end gap-4">
-                      <div className="flex-1 min-w-[140px]">
-                        <label htmlFor="diceRoll" className="block text-sm font-medium text-gray-700 mb-2">
-                          {diceLabel}
-                        </label>
-                        <input
-                          id="diceRoll"
-                          type="number"
-                          min="1"
-                          max={session.dice_type ?? DEFAULT_DICE_TYPE}
-                          value={diceRoll}
-                          onChange={(e) => setDiceRoll(e.target.value)}
-                          placeholder="Enter roll"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                    {/* Dice Roll Section - different for physical vs digital mode */}
+                    {session.dice_mode === 'digital' ? (
+                      <div className="flex flex-wrap items-end gap-4">
+                        <div className="flex-1 min-w-[140px]">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Player's Roll
+                          </label>
+                          {session.pending_player_roll ? (
+                            <div className="w-full px-4 py-3 bg-green-50 border-2 border-green-500 rounded-lg text-center text-xl font-bold text-green-700">
+                              {session.pending_player_roll}
+                            </div>
+                          ) : (
+                            <div className="w-full px-4 py-3 bg-amber-50 border-2 border-amber-300 rounded-lg text-center text-sm text-amber-700">
+                              Waiting for player to tap dice...
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-xs text-gray-500">{rollPrompt}</span>
-                        <DiceRoller
-                          onRoll={(v) => setDiceRoll(String(v))}
-                          disabled={submitting}
-                          min={1}
-                          max={session.dice_type ?? DEFAULT_DICE_TYPE}
-                        />
+                    ) : (
+                      <div className="flex flex-wrap items-end gap-4">
+                        <div className="flex-1 min-w-[140px]">
+                          <label htmlFor="diceRoll" className="block text-sm font-medium text-gray-700 mb-2">
+                            {diceLabel}
+                          </label>
+                          <input
+                            id="diceRoll"
+                            type="number"
+                            min="1"
+                            max={session.dice_type ?? DEFAULT_DICE_TYPE}
+                            value={diceRoll}
+                            onChange={(e) => setDiceRoll(e.target.value)}
+                            placeholder="Enter roll"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="text-xs text-gray-500">{rollPrompt}</span>
+                          <DiceRoller
+                            onRoll={(v) => setDiceRoll(String(v))}
+                            disabled={submitting}
+                            min={1}
+                            max={session.dice_type ?? DEFAULT_DICE_TYPE}
+                          />
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     <button
                       onClick={handleSubmitChoice}
-                      disabled={!selectedChoice || !diceRoll.trim() || submitting}
+                      disabled={!selectedChoice || (session.dice_mode === 'digital' ? !session.pending_player_roll : !diceRoll.trim()) || submitting}
                       className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                     >
                       {submitting ? (

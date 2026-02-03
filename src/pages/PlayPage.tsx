@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { findSessionByCode, selectAdventure } from '../lib/gameState';
+import { findSessionByCode, selectAdventure, submitPlayerRoll } from '../lib/gameState';
 import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
@@ -56,6 +56,9 @@ export default function PlayPage() {
     characterId: string;
   } | null>(null);
   const [processedRollCount, setProcessedRollCount] = useState(0);
+
+  // Digital dice state - track when player has rolled and is waiting for DM
+  const [playerRollSubmitted, setPlayerRollSubmitted] = useState(false);
 
   // Custom hooks for extracted logic
   useSessionPersistence(session);
@@ -367,6 +370,11 @@ export default function PlayPage() {
   const handleEndingCelebrationClose = useCallback(() => {
     setCelebratedEnding(true);
   }, []);
+
+  // Reset player roll state when turn advances (scene_choices changes)
+  useEffect(() => {
+    setPlayerRollSubmitted(false);
+  }, [session?.scene_choices?.length, session?.current_character_turn_index]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -741,10 +749,44 @@ export default function PlayPage() {
             />
           )}
           
-          {/* Dice roller for future player-driven choices; disabled until then */}
-          <div className="fixed bottom-4 right-4 z-40 opacity-60">
-            <DiceRoller onRoll={() => {}} disabled min={1} max={20} />
-          </div>
+          {/* Digital dice roller - prominent when in digital mode and waiting for roll */}
+          {session.dice_mode === 'digital' && !session.pending_player_roll && !playerRollSubmitted && !allActed && !pendingDiceRoll && (
+            <div className="fixed inset-x-0 bottom-0 z-40 p-4 bg-gradient-to-t from-black/80 to-transparent">
+              <div className="max-w-sm mx-auto text-center">
+                <p className="text-white text-lg font-bold mb-3 drop-shadow-lg">
+                  Tap to Roll!
+                </p>
+                <DiceRoller
+                  onRoll={async (roll) => {
+                    if (!session) return;
+                    setPlayerRollSubmitted(true);
+                    await submitPlayerRoll(session.id, roll);
+                  }}
+                  min={1}
+                  max={session.dice_type ?? 20}
+                />
+              </div>
+            </div>
+          )}
+          {/* Show waiting message after player rolls */}
+          {session.dice_mode === 'digital' && (session.pending_player_roll || playerRollSubmitted) && !allActed && !pendingDiceRoll && (
+            <div className="fixed inset-x-0 bottom-0 z-40 p-4 bg-gradient-to-t from-black/80 to-transparent">
+              <div className="max-w-sm mx-auto text-center">
+                <p className="text-white text-lg font-bold drop-shadow-lg">
+                  You rolled: {session.pending_player_roll ?? '...'}
+                </p>
+                <p className="text-white/70 text-sm mt-1">
+                  Waiting for DM...
+                </p>
+              </div>
+            </div>
+          )}
+          {/* Physical dice mode - small indicator */}
+          {session.dice_mode !== 'digital' && (
+            <div className="fixed bottom-4 right-4 z-40 opacity-60">
+              <DiceRoller onRoll={() => {}} disabled min={1} max={session.dice_type ?? 20} />
+            </div>
+          )}
           {error && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border-2 border-red-500 text-red-700 px-4 py-2 rounded-lg shadow-lg z-50 text-sm">
               {error}
