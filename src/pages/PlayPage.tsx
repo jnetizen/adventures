@@ -3,7 +3,7 @@ import { findSessionByCode, selectAdventure } from '../lib/gameState';
 import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
-import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions } from '../lib/adventures';
+import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions } from '../lib/adventures';
 import { completePuzzle } from '../lib/gameState';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
@@ -27,6 +27,9 @@ import DragPuzzle from '../components/DragPuzzle';
 import MemoryPuzzle from '../components/MemoryPuzzle';
 import SimonSaysPuzzle from '../components/SimonSaysPuzzle';
 import TapMatchPuzzle from '../components/TapMatchPuzzle';
+import DrawCastPuzzle from '../components/DrawCastPuzzle';
+import ARPortalPuzzle from '../components/ARPortalPuzzle';
+import ARCatchPuzzle from '../components/ARCatchPuzzle';
 import AdventurePreviewGrid from '../components/AdventurePreviewGrid';
 import { deriveSceneLabel } from '../lib/deriveSceneLabel';
 import { getKidDisplayName } from '../lib/players';
@@ -615,6 +618,63 @@ export default function PlayPage() {
             if (!instructions) return null;
             return (
               <TapMatchPuzzle
+                instructions={instructions}
+                onComplete={async (success) => {
+                  await completePuzzle(session.id, success ? 'success' : 'fail');
+                  setSession((prev) => prev ? {
+                    ...prev,
+                    puzzle_completed: true,
+                    puzzle_outcome: success ? 'success' : 'fail',
+                  } : null);
+                }}
+              />
+            );
+          })()}
+
+          {/* Draw Cast Puzzle - trace rune to cast spell (only after DM starts) */}
+          {isPuzzleScene(currentScene) && isDrawPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getDrawPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+            return (
+              <DrawCastPuzzle
+                instructions={instructions}
+                onComplete={async (success) => {
+                  await completePuzzle(session.id, success ? 'success' : 'fail');
+                  setSession((prev) => prev ? {
+                    ...prev,
+                    puzzle_completed: true,
+                    puzzle_outcome: success ? 'success' : 'fail',
+                  } : null);
+                }}
+              />
+            );
+          })()}
+
+          {/* AR Portal Puzzle - look through portal to find object (only after DM starts) */}
+          {isPuzzleScene(currentScene) && isARPortalPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getARPortalPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+            return (
+              <ARPortalPuzzle
+                instructions={instructions}
+                onComplete={async (success) => {
+                  await completePuzzle(session.id, success ? 'success' : 'fail');
+                  setSession((prev) => prev ? {
+                    ...prev,
+                    puzzle_completed: true,
+                    puzzle_outcome: success ? 'success' : 'fail',
+                  } : null);
+                }}
+              />
+            );
+          })()}
+
+          {/* AR Catch Puzzle - catch flying object (only after DM starts) */}
+          {isPuzzleScene(currentScene) && isARCatchPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getARCatchPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+            return (
+              <ARCatchPuzzle
                 instructions={instructions}
                 onComplete={async (success) => {
                   await completePuzzle(session.id, success ? 'success' : 'fail');

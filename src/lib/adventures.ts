@@ -600,6 +600,36 @@ export function isARCatchPuzzle(scene: Scene): boolean {
 }
 
 /**
+ * Get Draw Cast puzzle instructions (type guard).
+ */
+export function getDrawPuzzleInstructions(scene: Scene): import('../types/adventure').DrawCastPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-draw' && scene.puzzleInstructions?.type === 'draw-to-cast') {
+    return scene.puzzleInstructions as import('../types/adventure').DrawCastPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Get AR Portal puzzle instructions (type guard).
+ */
+export function getARPortalPuzzleInstructions(scene: Scene): import('../types/adventure').ARPortalPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-ar-portal' && scene.puzzleInstructions?.type === 'ar-portal-peek') {
+    return scene.puzzleInstructions as import('../types/adventure').ARPortalPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
+ * Get AR Catch puzzle instructions (type guard).
+ */
+export function getARCatchPuzzleInstructions(scene: Scene): import('../types/adventure').ARCatchPuzzleInstructions | null {
+  if (scene.sceneType === 'puzzle-ar-catch' && scene.puzzleInstructions?.type === 'ar-catch-object') {
+    return scene.puzzleInstructions as import('../types/adventure').ARCatchPuzzleInstructions;
+  }
+  return null;
+}
+
+/**
  * Check if a scene is a story beat (no interaction).
  */
 export function isStoryBeat(scene: Scene): boolean {

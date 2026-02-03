@@ -3,7 +3,7 @@ import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } fro
 import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle } from '../lib/gameState';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
-import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, isRollUntilSuccessClimax } from '../lib/adventures';
+import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions, isRollUntilSuccessClimax } from '../lib/adventures';
 import {
   computeIsSplit,
   computeActiveParallelCharacterId,
@@ -2009,6 +2009,103 @@ export default function DMPage() {
                   onClick={handlePuzzleOverride}
                   disabled={submitting}
                   className="w-full bg-pink-100 text-pink-700 py-2 px-4 rounded-lg font-medium hover:bg-pink-200 transition-colors disabled:opacity-50 text-sm"
+                >
+                  Override: Mark Complete
+                </button>
+              </div>
+            );
+          })()}
+
+          {/* Puzzle Scene UI - Draw Cast (shown after puzzle_started) */}
+          {currentScene && isPuzzleScene(currentScene) && isDrawPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getDrawPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+
+            const kidName = players[0]?.kidName || adventure.characters[0]?.name || 'Player';
+
+            return (
+              <div className="bg-orange-50 border-2 border-orange-300 p-4 rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="animate-pulse text-orange-600 text-xl">✨</span>
+                  <p className="text-orange-800 font-medium">
+                    {kidName} is tracing the rune!
+                  </p>
+                </div>
+                <p className="text-sm text-orange-600">
+                  Draw the {instructions.rune.shape} pattern to cast the spell!
+                </p>
+                <p className="text-xs text-orange-500 italic">
+                  Bold strokes make powerful magic!
+                </p>
+                <button
+                  onClick={handlePuzzleOverride}
+                  disabled={submitting}
+                  className="w-full bg-orange-100 text-orange-700 py-2 px-4 rounded-lg font-medium hover:bg-orange-200 transition-colors disabled:opacity-50 text-sm"
+                >
+                  Override: Mark Complete
+                </button>
+              </div>
+            );
+          })()}
+
+          {/* Puzzle Scene UI - AR Portal (shown after puzzle_started) */}
+          {currentScene && isPuzzleScene(currentScene) && isARPortalPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getARPortalPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+
+            const kidName = players[0]?.kidName || adventure.characters[0]?.name || 'Player';
+
+            return (
+              <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="animate-pulse text-purple-600 text-xl">🔮</span>
+                  <p className="text-purple-800 font-medium">
+                    {kidName} is searching the portal!
+                  </p>
+                </div>
+                <p className="text-sm text-purple-600">
+                  Find the {instructions.targetObject.name} hidden in the dimension!
+                </p>
+                <p className="text-xs text-purple-500 italic">
+                  Move around to look through the portal window!
+                </p>
+                <button
+                  onClick={handlePuzzleOverride}
+                  disabled={submitting}
+                  className="w-full bg-purple-100 text-purple-700 py-2 px-4 rounded-lg font-medium hover:bg-purple-200 transition-colors disabled:opacity-50 text-sm"
+                >
+                  Override: Mark Complete
+                </button>
+              </div>
+            );
+          })()}
+
+          {/* Puzzle Scene UI - AR Catch (shown after puzzle_started) */}
+          {currentScene && isPuzzleScene(currentScene) && isARCatchPuzzle(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const instructions = getARCatchPuzzleInstructions(currentScene);
+            if (!instructions) return null;
+
+            const kidName = players[0]?.kidName || adventure.characters[0]?.name || 'Player';
+            const catchesRequired = instructions.arBehavior?.catchesRequired || 3;
+
+            return (
+              <div className="bg-slate-50 border-2 border-slate-300 p-4 rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="animate-pulse text-slate-600 text-xl">🔑</span>
+                  <p className="text-slate-800 font-medium">
+                    {kidName} is catching the {instructions.targetObject.name}!
+                  </p>
+                </div>
+                <p className="text-sm text-slate-600">
+                  Catch it {catchesRequired} times as it flies around!
+                </p>
+                <p className="text-xs text-slate-500 italic">
+                  Tap fast when you see it!
+                </p>
+                <button
+                  onClick={handlePuzzleOverride}
+                  disabled={submitting}
+                  className="w-full bg-slate-100 text-slate-700 py-2 px-4 rounded-lg font-medium hover:bg-slate-200 transition-colors disabled:opacity-50 text-sm"
                 >
                   Override: Mark Complete
                 </button>
