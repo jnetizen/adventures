@@ -30,7 +30,7 @@ export async function generateImage(
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash-exp-image-generation',
+    model: 'gemini-2.5-flash-image',
     generationConfig: {
       responseModalities: ['image', 'text'],
     } as Record<string, unknown>,

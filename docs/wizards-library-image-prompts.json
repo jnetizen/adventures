@@ -1,0 +1,302 @@
+{
+  "adventureId": "wizards-library",
+  "adventureTitle": "The Wizard's Library",
+  "totalImages": 36,
+  "estimatedCost": 0.036,
+  "prompts": [
+    {
+      "id": "prologue",
+      "type": "background",
+      "filename": "prologue.png",
+      "scene": "prologue",
+      "prompt": "Generate a 16:9 landscape image.\n\nA magnificent magical library stretching impossibly high, with floating bookshelves reaching into clouds. Books fly through the air like birds. Warm golden light streams through tall arched windows. A glowing door marked \"FORBIDDEN SECTION\" is visible in the background, guarded by a large owl silhouette perched above it. Magical sparkles and floating candles fill the air. No people in this scene.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, magical atmosphere, warm inviting colors."
+    },
+    {
+      "id": "scene-1",
+      "type": "background",
+      "filename": "scene-1.png",
+      "scene": "scene-1",
+      "prompt": "Generate a 16:9 landscape image.\n\nThree young wizard children each separately standing at the entrance of a magical library, looking up at a large grumpy owl perched above a glowing door. A small ink blob creature (Blot) hides behind the children's legs.\n\nLeft side of image: A 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing wizard robes with DARK BLUE and GOLD accents.\n\nCenter of image: A 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing wizard robes with ORANGE and BRONZE accents.\n\nRight side of image: A 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK wizard dress with SILVER sparkles and a tiny pointed hat.\n\nThe owl is large with gray and white feathers, wearing tiny round spectacles, looking down sternly. Flying books visible in the background. The glowing door behind the owl says \"FORBIDDEN\". Feet visible on the library floor. NOT overlapping, NOT touching.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-2",
+      "type": "background",
+      "filename": "scene-2.png",
+      "scene": "scene-2",
+      "prompt": "Generate a 16:9 landscape image.\n\nA dark chamber with a shimmering magical portal window floating in the center, showing a swirling other dimension with floating books, stars, and cosmic colors visible through it. A 7-year-old boy wizard with short messy brown hair, wearing DARK BLUE and GOLD robes, stands before the portal, reaching toward it. A small ink blob creature with big curious eyes floats nearby, transformed into a tiny magnifying glass shape. A large owl with spectacles watches from a pedestal.\n\nMagical ethereal lighting from the portal. The portal glows with purple and blue swirling energy. Feet visible on stone floor.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-3",
+      "type": "background",
+      "filename": "scene-3.png",
+      "scene": "scene-3",
+      "prompt": "Generate a 16:9 landscape image.\n\nChaos in a magical library! Books are flying everywhere like startled birds. Three young wizard children each separately reacting to the book chaos. A large dictionary with legs is stomping. Comic books bounce off walls. A small picture book cowers in the corner.\n\nLeft side of image: A 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, looking at a stomping dictionary.\n\nCenter of image: A 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, reaching toward flying comic books.\n\nRight side of image: A 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, tiny pointed hat, reaching toward a scared picture book.\n\nA small ink blob creature with big eyes ducks between flying books. An owl with spectacles looks alarmed. Books flying in all directions. Feet visible on library floor. NOT overlapping, NOT touching.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, dynamic action scene."
+    },
+    {
+      "id": "scene-4",
+      "type": "background",
+      "filename": "scene-4.png",
+      "scene": "scene-4",
+      "prompt": "Generate a 16:9 landscape image.\n\nA massive ancient stone door covered in glowing orange runes. A 5-year-old boy wizard with short messy brown hair, wearing ORANGE and BRONZE robes, stands before it with hand raised toward the door. Orange magical energy glows around his hand. A small ink blob creature has transformed into a cheerleader shape with tiny pom-poms. A large owl with spectacles watches from the side. Two other children (a boy in DARK BLUE robes and a small girl in PINK dress) watch from behind.\n\nThe runes on the door pulse with warm orange light. Mystical atmosphere. Feet visible on stone floor.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-5",
+      "type": "background",
+      "filename": "scene-5.png",
+      "scene": "scene-5",
+      "prompt": "Generate a 16:9 landscape image.\n\nA misty chamber with a golden winged key flying playfully through the air. The key has small feathered wings and seems to be giggling/playing. A 5-year-old boy wizard with short messy brown hair, wearing ORANGE and BRONZE robes, is reaching up trying to catch it, looking determined and excited. The other two children (boy in DARK BLUE, girl in PINK) watch from behind. A small ink blob creature points at the key. An owl with spectacles sighs in the background.\n\nSwirling mist in the chamber. The key sparkles with golden light. Dynamic chase energy. Feet visible on stone floor.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-6",
+      "type": "background",
+      "filename": "scene-6.png",
+      "scene": "scene-6",
+      "prompt": "Generate a 16:9 landscape image.\n\nA dramatic scene in the library - black ink flooding across the floor! Three young wizard children each separately climbing up tall bookshelves to escape the rising ink.\n\nLeft side of image: A 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, climbing a bookshelf, grabbing books to save them.\n\nCenter of image: A 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, leaping between shelves heroically.\n\nRight side of image: A 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, being helped up by a small ink blob creature that has formed into a slide.\n\nBlack ink spreading across the floor below. A tipped over giant inkwell visible. An owl with spectacles flapping wings in alarm. Books on lower shelves in danger. NOT overlapping, NOT touching.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, dramatic lighting."
+    },
+    {
+      "id": "scene-7",
+      "type": "background",
+      "filename": "scene-7.png",
+      "scene": "scene-7",
+      "prompt": "Generate a 16:9 landscape image.\n\nA 7-year-old boy wizard with short messy brown hair, wearing DARK BLUE and GOLD robes, standing before four floating magical symbols arranged in a circle: a glowing silver MOON, a golden STAR, an orange FLAME, and a blue WATER DROP. His eyes are focused in concentration, hand outstretched toward the symbols. The symbols glow and pulse with magical energy.\n\nBehind him, a 5-year-old boy in ORANGE robes and a 3-year-old girl in PINK dress watch in awe. A small ink blob creature bounces excitedly. A large owl with spectacles watches intently.\n\nMagical sparkling atmosphere. The symbols cast colored light on everything. Feet visible on stone floor.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene-8",
+      "type": "background",
+      "filename": "scene-8.png",
+      "scene": "scene-8",
+      "prompt": "Generate a 16:9 landscape image.\n\nA 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK wizard dress with SILVER sparkles and a tiny pointed hat, reaching toward beautiful ink butterflies. Several ink butterflies flutter around her, some landing on her shoulders and hair. She looks delighted and magical.\n\nBehind her, two boys (one in DARK BLUE robes, one in ORANGE robes) watch with smiles. A small ink blob creature bounces with joy - butterflies are landing on it too! A large owl with spectacles actually SMILES warmly.\n\nThe butterflies are made of shimmering black ink but with iridescent colorful wing patterns. Sparkles fill the air. Warm golden lighting. Feet visible on stone floor.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, magical heartwarming scene."
+    },
+    {
+      "id": "scene-9",
+      "type": "background",
+      "filename": "scene-9.png",
+      "scene": "scene-9",
+      "prompt": "Generate a 16:9 landscape image.\n\nA dramatic moment - a massive ancient book floating open, its pages filling with INK DRAWINGS of the three children's adventure! The drawings show tiny versions of them doing their challenges. But the ink is starting to RUN and SMEAR - the drawings are fading!\n\nThree young wizard children each separately looking alarmed at the unraveling book.\n\nLeft side of image: A 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, looking worried.\n\nCenter of image: A 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, looking determined.\n\nRight side of image: A 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, looking concerned.\n\nA large owl with spectacles looks panicked, wings spread. A small ink blob creature looks at the smearing pages in distress. The library is shaking - books falling from shelves. Dramatic lighting. NOT overlapping, NOT touching.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, dramatic tension."
+    },
+    {
+      "id": "scene-10",
+      "type": "background",
+      "filename": "scene-10.png",
+      "scene": "scene-10",
+      "prompt": "Generate a 16:9 landscape image.\n\nThree young wizard children each separately standing heroically before the massive Book of Infinite Stories, hands raised, magical energy streaming from them toward the book! The book floats in the center, pages swirling with ink that's being STABILIZED by their magic.\n\nLeft side of image: A 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, blue-gold magic streaming from hands.\n\nCenter of image: A 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, orange fire magic streaming from hands.\n\nRight side of image: A 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, pink sparkle magic streaming from hands.\n\nA small ink blob creature has transformed into a cheerleader with pom-poms. A large owl with spectacles watches with hope. The three streams of magic CONVERGE on the book. Epic magical atmosphere. Feet visible on floor. NOT overlapping, NOT touching.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, climactic heroic moment."
+    },
+    {
+      "id": "ending-good",
+      "type": "background",
+      "filename": "ending-good.png",
+      "scene": "ending-good",
+      "prompt": "Generate a 16:9 landscape image.\n\nThe library is calm and peaceful. The Book of Infinite Stories sits closed on a pedestal, glowing softly. Three young wizard children each separately standing before it, looking relieved and happy.\n\nLeft side of image: A 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, smiling.\n\nCenter of image: A 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, grinning.\n\nRight side of image: A 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, giggling.\n\nA small ink blob creature draws celebration fireworks in the air. A large owl with spectacles looks at them with softened expression, almost smiling. Warm golden library lighting. Feet visible on floor. NOT overlapping, NOT touching.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, warm satisfying conclusion."
+    },
+    {
+      "id": "ending-great",
+      "type": "background",
+      "filename": "ending-great.png",
+      "scene": "ending-great",
+      "prompt": "Generate a 16:9 landscape image.\n\nThe library glows with warm golden light. Three young wizard children each separately holding shimmering LIBRARY CARDS, looking proud and excited.\n\nLeft side of image: A 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, holding up a glowing silver card.\n\nCenter of image: A 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, admiring his glowing silver card.\n\nRight side of image: A 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, hugging her glowing silver card.\n\nA small ink blob creature has transformed into tiny medals pinned on their chests. A large owl with spectacles is actually SMILING warmly. The Book of Infinite Stories glows on its pedestal behind them. Books fly peacefully overhead. Feet visible on floor. NOT overlapping, NOT touching.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, triumphant heartwarming."
+    },
+    {
+      "id": "ending-legendary",
+      "type": "background",
+      "filename": "ending-legendary.png",
+      "scene": "ending-legendary",
+      "prompt": "Generate a 16:9 landscape image.\n\nA spectacular celebration in the library! Books fly overhead in formation. Golden sparkles fill the air. Three young wizard children each separately holding GOLDEN QUILLS that glow with magical light.\n\nLeft side of image: A 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, holding a radiant golden quill, looking amazed.\n\nCenter of image: A 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, holding his golden quill up triumphantly.\n\nRight side of image: A 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, with a small ink blob creature on her shoulder, holding her golden quill with delight.\n\nA large owl with spectacles BOWS deeply before them. The Book of Infinite Stories floats behind them with THREE FACES embossed in gold on its cover - their faces! The library is filled with golden magical light. Feet visible on floor. NOT overlapping, NOT touching.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, legendary triumphant moment."
+    },
+    {
+      "id": "scene1-spell-seeker-success",
+      "type": "cutscene",
+      "filename": "scene1-spell-seeker-success.png",
+      "scene": "scene-1",
+      "character": "spell-seeker",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing wizard robes with DARK BLUE and GOLD accents. He stands tall with confidence, speaking to someone above him (not visible). His expression is brave and determined. A small ink blob creature peeks out from behind his shoulder, looking supportive.\n\nLibrary background slightly blurred. Warm lighting. Upper body and face focus.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-spell-seeker-fail",
+      "type": "cutscene",
+      "filename": "scene1-spell-seeker-fail.png",
+      "scene": "scene-1",
+      "character": "spell-seeker",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 7-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing wizard robes with DARK BLUE and GOLD accents. He looks slightly nervous but still brave, speaking carefully. A small ink blob creature gives him an encouraging nudge.\n\nLibrary background slightly blurred. Warm lighting. Upper body and face focus.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-brave-caster-success",
+      "type": "cutscene",
+      "filename": "scene1-brave-caster-success.png",
+      "scene": "scene-1",
+      "character": "brave-caster",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing wizard robes with ORANGE and BRONZE accents. He strikes an awesome adventure pose - fists up, eyes fierce, looking confident and ready for action!\n\nLibrary background slightly blurred. Warm lighting. Upper body and face focus.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-brave-caster-fail",
+      "type": "cutscene",
+      "filename": "scene1-brave-caster-fail.png",
+      "scene": "scene-1",
+      "character": "brave-caster",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 5-year-old boy with short slightly messy brown hair, brown eyes, rosy cheeks, wearing wizard robes with ORANGE and BRONZE accents. His pose is a little wobbly but his spirit is clearly there - determined expression despite the awkward stance.\n\nLibrary background slightly blurred. Warm lighting. Upper body and face focus.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene1-sparkle-mage-success",
+      "type": "cutscene",
+      "filename": "scene1-sparkle-mage-success.png",
+      "scene": "scene-1",
+      "character": "sparkle-mage",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK wizard dress with SILVER sparkles and a tiny pointed hat. She has the BIGGEST, most adorable smile and is waving cutely. A small ink blob creature bounces happily beside her.\n\nLibrary background slightly blurred. Warm lighting. Upper body and face focus.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, adorable heartwarming."
+    },
+    {
+      "id": "scene1-sparkle-mage-fail",
+      "type": "cutscene",
+      "filename": "scene1-sparkle-mage-fail.png",
+      "scene": "scene-1",
+      "character": "sparkle-mage",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 3-year-old girl with shoulder-length wavy brown hair, big brown eyes, very rosy cheeks, wearing a PINK wizard dress with SILVER sparkles and a tiny pointed hat. She gives a sweet little wave, looking hopeful. A small ink blob creature gives her a tiny thumbs up.\n\nLibrary background slightly blurred. Warm lighting. Upper body and face focus.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, sweet charming."
+    },
+    {
+      "id": "scene3-spell-seeker-success",
+      "type": "cutscene",
+      "filename": "scene3-spell-seeker-success.png",
+      "scene": "scene-3",
+      "character": "spell-seeker",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, looking clever as a large dictionary book settles down peacefully nearby. The dictionary has flipped to the \"A\" section. The boy looks satisfied with his cleverness.\n\nLibrary chaos calming in background. Warm lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3-spell-seeker-fail",
+      "type": "cutscene",
+      "filename": "scene3-spell-seeker-fail.png",
+      "scene": "scene-3",
+      "character": "spell-seeker",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, looking relieved as a small ink blob creature has drawn the word \"FRIEND\" in the air, and a dictionary book is reading it and calming down.\n\nLibrary chaos calming in background. Warm lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3-brave-caster-success",
+      "type": "cutscene",
+      "filename": "scene3-brave-caster-success.png",
+      "scene": "scene-3",
+      "character": "brave-caster",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, doing an awesome superhero pose! Several comic books flutter down around him adoringly, clearly impressed by the pose.\n\nLibrary chaos calming in background. Dynamic energy. Warm lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene3-brave-caster-fail",
+      "type": "cutscene",
+      "filename": "scene3-brave-caster-fail.png",
+      "scene": "scene-3",
+      "character": "brave-caster",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, looking determined even though a small comic book just bonked his head. The comic book now floats beside him looking apologetic and friendly.\n\nLibrary chaos calming in background. Warm lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, funny but sweet."
+    },
+    {
+      "id": "scene3-sparkle-mage-success",
+      "type": "cutscene",
+      "filename": "scene3-sparkle-mage-success.png",
+      "scene": "scene-3",
+      "character": "sparkle-mage",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, tiny pointed hat, giving the gentlest hug to a small crying picture book. The picture book's pages show hearts and smiley faces as it snuggles into the hug.\n\nSoft warm lighting. Heartwarming moment.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, precious adorable."
+    },
+    {
+      "id": "scene3-sparkle-mage-fail",
+      "type": "cutscene",
+      "filename": "scene3-sparkle-mage-fail.png",
+      "scene": "scene-3",
+      "character": "sparkle-mage",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, tiny pointed hat, with a small ink blob creature beside her. Together they comfort a sad picture book - Blot has drawn a smiley face and the book is starting to feel better.\n\nSoft warm lighting. Sweet teamwork moment.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene6-spell-seeker-success",
+      "type": "cutscene",
+      "filename": "scene6-spell-seeker-success.png",
+      "scene": "scene-6",
+      "character": "spell-seeker",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, climbing a bookshelf heroically with books tucked under each arm. He's made it to safety just as black ink reaches the bottom shelf below.\n\nDramatic lighting from above. Action hero moment.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene6-spell-seeker-fail",
+      "type": "cutscene",
+      "filename": "scene6-spell-seeker-fail.png",
+      "scene": "scene-6",
+      "character": "spell-seeker",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, grabbing onto a heavy encyclopedia that's acting as a perfect stepping stone. His foot slipped but he caught himself cleverly.\n\nDramatic lighting. Resourceful problem-solving moment.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene6-brave-caster-success",
+      "type": "cutscene",
+      "filename": "scene6-brave-caster-success.png",
+      "scene": "scene-6",
+      "character": "brave-caster",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, mid-leap between bookshelves in an awesome action hero jump! His expression is fierce and determined. Black ink visible far below.\n\nDynamic action pose. Dramatic lighting. Pure action hero energy.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene6-brave-caster-fail",
+      "type": "cutscene",
+      "filename": "scene6-brave-caster-fail.png",
+      "scene": "scene-6",
+      "character": "brave-caster",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, being carried to safety by a flying picture book! The picture book is helping him - returning the favor from earlier when he was kind to the scared books.\n\nSweet callback moment. Warm lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene6-sparkle-mage-success",
+      "type": "cutscene",
+      "filename": "scene6-sparkle-mage-success.png",
+      "scene": "scene-6",
+      "character": "sparkle-mage",
+      "variant": "success",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, tiny pointed hat, sliding UP a magical ink slide created by a small ink blob creature! She's giggling with delight as she slides upward to safety. The ink slide sparkles with magic.\n\nWhimsical fun moment. Magical playful lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, joyful."
+    },
+    {
+      "id": "scene6-sparkle-mage-fail",
+      "type": "cutscene",
+      "filename": "scene6-sparkle-mage-fail.png",
+      "scene": "scene-6",
+      "character": "sparkle-mage",
+      "variant": "fail",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, tiny pointed hat, riding on the friendly picture book from earlier! The picture book is carrying her to safety, returning the favor from her earlier kindness.\n\nSweet heartwarming rescue. Warm lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration."
+    },
+    {
+      "id": "scene10-spell-seeker",
+      "type": "cutscene",
+      "filename": "scene10-spell-seeker.png",
+      "scene": "scene-10",
+      "character": "spell-seeker",
+      "variant": "climax",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 7-year-old boy with short messy brown hair, DARK BLUE and GOLD wizard robes, eyes glowing with blue-gold magical light! His hands are outstretched and beams of intellectual magic stream toward an ancient book (partially visible). The magic contains swirling symbols - moons and stars.\n\nEpic magical moment. Dramatic blue-gold lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, heroic power moment."
+    },
+    {
+      "id": "scene10-brave-caster",
+      "type": "cutscene",
+      "filename": "scene10-brave-caster.png",
+      "scene": "scene-10",
+      "character": "brave-caster",
+      "variant": "climax",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 5-year-old boy with short messy brown hair, ORANGE and BRONZE wizard robes, punching forward with both fists as ORANGE FIRE MAGIC explodes from his hands! The magic streams toward an ancient book (partially visible). His expression is fierce and powerful.\n\nEpic magical moment. Dramatic orange fire lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, action hero power moment."
+    },
+    {
+      "id": "scene10-sparkle-mage",
+      "type": "cutscene",
+      "filename": "scene10-sparkle-mage.png",
+      "scene": "scene-10",
+      "character": "sparkle-mage",
+      "variant": "climax",
+      "prompt": "Generate a 16:9 landscape image.\n\nClose-up of a 3-year-old girl with wavy brown hair, PINK wizard dress with SILVER sparkles, tiny pointed hat, twirling with arms wide as PINK AND SILVER SPARKLE MAGIC swirls around her! Magical butterflies made of light flow from her fingertips toward an ancient book (partially visible). A small ink blob creature is on her shoulder, also glowing.\n\nMagical princess moment. Dreamy pink and silver lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, magical sparkle power moment."
+    },
+    {
+      "id": "octavius",
+      "type": "background",
+      "filename": "octavius.png",
+      "scene": "character",
+      "prompt": "Generate a 16:9 landscape image.\n\nA large wise owl with gray and white feathers, wearing tiny round spectacles on his beak. Dignified and slightly grumpy expression, but with kindness in his eyes. Perched pose showing full body. Simple library background with warm golden lighting.\n\nPixar-adjacent storybook style, soft painterly rendering, children's book illustration, character portrait."
+    }
+  ]
+}
