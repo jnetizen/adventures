@@ -68,6 +68,7 @@ export default function EndingPage({ adventure, session, actions, hideImage = fa
   const successCount = session.success_count ?? 0;
   const collectedRewards = session.collected_rewards ?? [];
   const [endingImageError, setEndingImageError] = useState(false);
+  const [endingVideoError, setEndingVideoError] = useState(false);
   
   // Check if adventure uses single ending format
   const isSingleEnding = hasSingleEnding(adventure);
@@ -145,6 +146,33 @@ export default function EndingPage({ adventure, session, actions, hideImage = fa
 
   return (
     <div className="space-y-6">
+      {/* Ending video if available */}
+      {ending.videoUrl && !endingVideoError && !hideImage && (
+        <div className="rounded-xl overflow-hidden shadow-lg">
+          <video
+            src={ending.videoUrl}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-auto"
+            onError={() => setEndingVideoError(true)}
+          />
+        </div>
+      )}
+
+      {/* Ending image if available and no video */}
+      {ending.imageUrl && !ending.videoUrl && !endingImageError && !hideImage && (
+        <div className="rounded-xl overflow-hidden shadow-lg">
+          <img
+            src={ending.imageUrl}
+            alt="Adventure ending"
+            className="w-full h-auto"
+            onError={() => setEndingImageError(true)}
+          />
+        </div>
+      )}
+
       <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl shadow-lg p-6 border-2 border-amber-200">
         <p className="text-xs font-semibold text-amber-800 uppercase tracking-wide mb-1">
           {tierLabel}

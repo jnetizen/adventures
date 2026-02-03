@@ -600,6 +600,8 @@
       "tier": "good",
       "title": "Story Saved",
       "narrationText": "The light fades. The library is calm. The Book of Infinite Stories sits peacefully on its pedestal, your adventure sealed safely inside.\n\nOctavius lands before you, his grumpy expression softer now. 'You did it. Your story is saved.'\n\nBlot bounces happily, drawing little celebration fireworks in the air.\n\n'I suppose...' Octavius ruffles his feathers awkwardly. '...children aren't ALL noise and mess. You may visit the library again. If you're quiet.'\n\nHe almost smiles. Almost.\n\nYour first adventure is complete. But something tells you it won't be your last.",
+      "videoUrl": "/videos/wizards-library/climax.mp4",
+      "imageUrl": "/images/scenes/wizards-library/ending-good.png",
       "rewards": [
         { "type": "item", "id": "library-card", "name": "Library Card", "imageUrl": "/images/rewards/library-card.png" }
       ]
@@ -609,6 +611,8 @@
       "tier": "great",
       "title": "Library Heroes",
       "narrationText": "The light fades to a warm golden glow. The library feels different now - friendlier, more magical than ever.\n\nOctavius glides down and lands before you. For the first time, he's actually smiling. 'You didn't just save your story. You reminded this old owl why stories matter.'\n\nHe reaches into his feathers and pulls out three shimmering cards. 'Library Cards. With these, you may visit whenever you wish. The Forbidden Section is forbidden to you... no more.'\n\nBlot transforms into tiny medals and pins them on your chests.\n\nThe Book of Infinite Stories glows on its pedestal. Your adventure is sealed inside forever. But there are infinite more stories waiting to be written.\n\n'Come back soon,' Octavius says. And this time, he means it.",
+      "videoUrl": "/videos/wizards-library/climax.mp4",
+      "imageUrl": "/images/scenes/wizards-library/ending-great.png",
       "rewards": [
         { "type": "item", "id": "silver-library-card", "name": "Silver Library Card", "imageUrl": "/images/rewards/silver-library-card.png" },
         { "type": "badge", "id": "library-hero-badge", "name": "Library Hero Badge", "imageUrl": "/images/rewards/library-hero-badge.png" }
@@ -619,6 +623,8 @@
       "tier": "legendary",
       "title": "Legendary Authors",
       "narrationText": "The golden light doesn't fade - it TRANSFORMS. The whole library sparkles with magic as books fly overhead in celebration!\n\nOctavius swoops down and does something no one has ever seen: he BOWS. Deep and respectful.\n\n'In a hundred years of guarding this library, I have never seen anything like that.' His voice is thick with emotion. 'You aren't just readers. You're AUTHORS. Your story will inspire children for generations.'\n\nThe Book of Infinite Stories floats up from its pedestal. On the cover, three new faces shine in golden ink - YOUR faces. The book drifts to a special shelf labeled 'GREATEST ADVENTURES OF ALL TIME.'\n\nOctavius presents each of you with a Golden Quill. 'With these, you may write new stories in the Book whenever you wish.'\n\nBlot bursts into happy tears (ink tears!) and hugs everyone.\n\n'The Library is yours now,' Octavius says proudly. 'Come back and write your next adventure... whenever you're ready.'\n\nAnd somewhere in the Book of Infinite Stories, a new chapter is already waiting to be written.",
+      "videoUrl": "/videos/wizards-library/climax.mp4",
+      "imageUrl": "/images/scenes/wizards-library/ending-legendary.png",
       "rewards": [
         { "type": "item", "id": "golden-quill", "name": "Golden Quill", "imageUrl": "/images/rewards/golden-quill.png" },
         { "type": "companion", "id": "blot", "name": "Blot the Ink Sprite", "imageUrl": "/images/characters/blot.png" },

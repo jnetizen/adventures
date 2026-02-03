@@ -453,6 +453,10 @@ export interface Ending {
   title: string;
   narrationText: string;
   rewards?: Reward[];
+  /** Optional video URL for ending celebration */
+  videoUrl?: string;
+  /** Optional image URL for ending scene */
+  imageUrl?: string;
 }
 
 /** Loot screen configuration for single-ending adventures. */
