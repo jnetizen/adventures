@@ -2330,8 +2330,10 @@ export default function DMPage() {
                 const prompt = `${kidName} (${character?.name ?? 'Unknown'}), ${substituteCharacterNames(currentCharacterTurn.promptText, players, adventure.characters)}`;
                 const isClimaxTurn = isAlwaysSucceedTurn(currentCharacterTurn);
 
-                // For climax turns, show unified UI with all character prompts and single GO button
-                if (isClimaxTurn) {
+                // For climax turns in climax scenes, show unified UI with all character prompts and single GO button
+                // Only show climax UI when the scene is actually marked as climax - alwaysSucceed alone
+                // is used in solo adventures for narrative-only turns that shouldn't show dice/choices
+                if (isClimaxTurn && currentScene.isClimax) {
                   const hasVideoOption = !!currentScene.climaxVideoUrl;
                   const allClimaxTurns = activeTurns.filter(t => isAlwaysSucceedTurn(t));
 
@@ -2420,6 +2422,33 @@ export default function DMPage() {
                           Mode: {climaxPlayMode === 'video' ? '🎬 Video' : '🖼️ Cutscenes'}
                         </p>
                       )}
+                    </>
+                  );
+                }
+
+                // Narrative-only turn (alwaysSucceed outside of climax scene)
+                // Solo adventures use this for story beats - just show prompt and GO button
+                if (isClimaxTurn && !currentScene.isClimax) {
+                  return (
+                    <>
+                      <div className="bg-yellow-50 p-4 rounded-lg">
+                        <p className="text-sm text-yellow-800 mb-1">Turn {turnIndex + 1} of {totalTurns}</p>
+                        <p className="text-base font-medium text-yellow-900 mt-2">{prompt}</p>
+                      </div>
+                      <button
+                        onClick={handleSubmitClimaxAll}
+                        disabled={submitting}
+                        className="w-full bg-amber-500 text-white py-3 px-4 rounded-lg font-bold text-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {submitting ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                            Going...
+                          </span>
+                        ) : (
+                          'GO!'
+                        )}
+                      </button>
                     </>
                   );
                 }
