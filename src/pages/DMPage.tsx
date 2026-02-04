@@ -327,6 +327,18 @@ export default function DMPage() {
     activeCharacterScene
   );
 
+  // Memoized callbacks for RewardCelebration to prevent timer resets
+  // IMPORTANT: Must be before all early returns to maintain consistent hook ordering
+  const handleSceneCelebrationClose = useCallback(() => {
+    if (currentScene) {
+      setCelebratedSceneIds((prev) => [...prev, currentScene.id]);
+    }
+  }, [currentScene]);
+
+  const handleEndingCelebrationClose = useCallback(() => {
+    setCelebratedEnding(true);
+  }, []);
+
   const handleCreateSession = async () => {
     setError(null);
     setConnectionStatus(CONNECTION_STATUS.CONNECTING);
@@ -1691,16 +1703,6 @@ export default function DMPage() {
     currentSceneId: currentScene?.id,
   });
 
-  // Memoized callbacks for RewardCelebration to prevent timer resets
-  const handleSceneCelebrationClose = useCallback(() => {
-    if (currentScene) {
-      setCelebratedSceneIds((prev) => [...prev, currentScene.id]);
-    }
-  }, [currentScene]);
-
-  const handleEndingCelebrationClose = useCallback(() => {
-    setCelebratedEnding(true);
-  }, []);
 
   return (
     <>
