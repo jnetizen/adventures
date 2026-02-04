@@ -1529,7 +1529,74 @@ Before any release:
 
 ---
 
-## 41. Puzzle Success Not Showing on DM Screen
+## 41. Zod Schema Out of Sync with TypeScript Types (DM Screen Crash)
+
+### Problem
+DM screen crashed with "Something went wrong" error immediately after clicking "Start" on the prologue. Player screen worked fine. Coincided with digital dice mode.
+
+### Root Cause
+Three bugs in the Zod schema (`src/schemas/game.ts`) that were NOT in the TypeScript type (`src/types/game.ts`):
+
+1. **`dice_mode` missing from `GameSessionSchema`** — Added to `types/game.ts` but never added to the Zod schema
+2. **`pending_player_roll` missing from `GameSessionSchema`** — Same issue
+3. **`is_split` missing `.nullable()`** — Schema said `z.boolean().optional()` but the DB always returns `null` for unset boolean columns. `null` is not `boolean | undefined`, so Zod rejected it.
+
+The `is_split: null` issue was the critical one. It caused `parseGameSession()` (used by the heartbeat refetch every 2 seconds) to **always fail** and return `null`. This meant:
+- The heartbeat refetch silently failed on every single poll
+- DMPage relied solely on the Supabase realtime subscription for updates
+- If the subscription missed an update during the PROLOGUE→PLAYING transition, the session state became stale/corrupted
+- PlayPage didn't crash because it has a direct polling fallback (every 1 second) that bypasses Zod validation
+
+### Solution
+1. Added missing fields to `GameSessionSchema`:
+   ```typescript
+   dice_mode: z.enum(['physical', 'digital']).optional(),
+   pending_player_roll: z.number().int().min(1).nullable().optional(),
+   ```
+
+2. Fixed `is_split` to accept null:
+   ```typescript
+   // WRONG
+   is_split: z.boolean().optional(),
+   // CORRECT
+   is_split: z.boolean().nullable().optional(),
+   ```
+
+3. Added `diceMode` to `StartAdventureDataSchema` for offline queue validation.
+
+4. Added direct polling fallback to DMPage (matching PlayPage):
+   ```typescript
+   useEffect(() => {
+     if (!session?.id) return;
+     const pollSession = async () => {
+       const { data } = await supabase
+         .from('sessions').select('*').eq('id', session.id).single();
+       if (data) handleSessionUpdate(data as GameSession);
+     };
+     pollSession();
+     const interval = setInterval(pollSession, 2000);
+     return () => clearInterval(interval);
+   }, [session?.id, handleSessionUpdate]);
+   ```
+
+### Key Insight
+**When adding new DB columns, update BOTH the TypeScript type AND the Zod schema.** The TypeScript type (`types/game.ts`) is used for compile-time checking. The Zod schema (`schemas/game.ts`) is used for runtime validation. If they diverge, `parseGameSession()` silently fails and returns `null`, causing all heartbeat-based session refreshes to be dropped.
+
+Also: **nullable DB columns need `.nullable()` in Zod.** PostgreSQL returns `null` for unset columns, but Zod's `.optional()` only accepts `undefined`, not `null`. Use `.nullable().optional()` for columns that can be null in the DB.
+
+### Debug Tip
+If sessions seem stale or the DM screen crashes on phase transitions, check the browser console for `[SUBSCRIPTION] Session refetched successfully`. If this message NEVER appears, `parseGameSession` is failing silently. Compare `GameSessionSchema` fields against the actual DB response.
+
+### Key Files
+- `src/schemas/game.ts` — Zod validation schema (must match DB columns)
+- `src/types/game.ts` — TypeScript type (must match Zod schema)
+- `src/hooks/useSessionSubscription.ts` — Heartbeat refetch uses `parseGameSession()`
+- `src/pages/DMPage.tsx` — Added polling fallback
+- `src/pages/PlayPage.tsx` — Already had polling fallback (that's why it didn't crash)
+
+---
+
+## 42. Puzzle Success Not Showing on DM Screen
 
 ### Problem
 When a player completed a puzzle successfully on their screen (DragPuzzle, SeekerLensPuzzle, MemoryPuzzle), the DM screen never showed the success. Only the "Override: Mark Complete" button worked.

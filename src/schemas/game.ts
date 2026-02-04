@@ -106,6 +106,8 @@ export const GameSessionSchema = z.object({
   scene_choices: z.array(SceneChoiceSchema).optional(),
   success_count: z.number().int().min(0).optional(),
   dice_type: DiceTypeSchema.optional(),
+  dice_mode: z.enum(['physical', 'digital']).optional(),
+  pending_player_roll: z.number().int().min(1).nullable().optional(),
   feedback_rating: z.number().int().min(1).max(5).nullable().optional(),
   feedback_positive: z.string().nullable().optional(),
   feedback_negative: z.string().nullable().optional(),
@@ -114,7 +116,7 @@ export const GameSessionSchema = z.object({
   active_cutscene: ActiveCutsceneSchema.nullable().optional(),
   collected_rewards: z.array(CollectedRewardSchema).optional(),
   character_scenes: z.array(SessionCharacterSceneStateSchema).nullable().optional(),
-  is_split: z.boolean().optional(),
+  is_split: z.boolean().nullable().optional(),
   // Puzzle scene state
   puzzle_started: z.boolean().nullable().optional(),
   puzzle_completed: z.boolean().nullable().optional(),
@@ -156,6 +158,7 @@ export const StartAdventureDataSchema = z.object({
   adventureId: z.string().min(1),
   players: z.array(PlayerSchema),
   diceType: DiceTypeSchema.optional(),
+  diceMode: z.enum(['physical', 'digital']).optional(),
 });
 
 export type StartAdventureData = z.infer<typeof StartAdventureDataSchema>;

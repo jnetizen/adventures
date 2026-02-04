@@ -1,6 +1,7 @@
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
 import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, clearPlayerRoll } from '../lib/gameState';
+import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
 import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions, isRollUntilSuccessClimax, hasRandomPuzzle, resolvePuzzleVariant } from '../lib/adventures';
@@ -231,6 +232,27 @@ export default function DMPage() {
     onSessionUpdate: handleSessionUpdate,
     onStatusChange: handleStatusChange,
   });
+
+  // Direct polling fallback - bypasses Zod validation to ensure fresh session state
+  // Matches PlayPage's polling to prevent stale data when subscription misses updates
+  useEffect(() => {
+    if (!session?.id) return;
+
+    const pollSession = async () => {
+      const { data } = await supabase
+        .from('sessions')
+        .select('*')
+        .eq('id', session.id)
+        .single();
+      if (data) {
+        handleSessionUpdate(data as GameSession);
+      }
+    };
+
+    pollSession();
+    const interval = setInterval(pollSession, 2000);
+    return () => clearInterval(interval);
+  }, [session?.id, handleSessionUpdate]);
 
   const { recovering, storedSession, recoverSession } = useSessionRecovery({
     currentSession: session,
