@@ -18,6 +18,15 @@ export type StoryBeat =
       image?: string;
     }
   | {
+      type: 'prologue-characters';
+      characters: {
+        characterId: string;
+        characterName: string;
+        text: string;
+        image?: string;
+      }[];
+    }
+  | {
       type: 'prologue-mission';
       text: string;
     }

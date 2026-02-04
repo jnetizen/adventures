@@ -67,6 +67,34 @@ export default function StoryBeatView({ beat, showOutcome }: StoryBeatViewProps)
     );
   }
 
+  // Prologue: All characters on one page
+  if (beat.type === 'prologue-characters') {
+    return (
+      <div className="flex flex-col h-full overflow-y-auto bg-gradient-to-br from-amber-50 to-orange-50">
+        <div className="p-6 space-y-5 max-w-md mx-auto w-full">
+          <h2 className="text-2xl font-bold text-amber-900 text-center">Meet Your Heroes</h2>
+          {beat.characters.map((char) => (
+            <div key={char.characterId} className="flex items-start gap-4 bg-white/70 rounded-xl p-4 shadow-sm">
+              {char.image && (
+                <div className="w-20 h-20 flex-shrink-0 rounded-full overflow-hidden border-3 border-amber-300 shadow">
+                  <StoryImage
+                    src={char.image}
+                    alt={char.characterName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="min-w-0">
+                <h3 className="text-lg font-bold text-amber-900">{char.characterName}</h3>
+                <p className="text-sm text-gray-700 leading-relaxed mt-1">{char.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   // Prologue: Mission brief
   if (beat.type === 'prologue-mission') {
     return (

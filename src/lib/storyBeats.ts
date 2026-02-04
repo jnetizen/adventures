@@ -19,18 +19,20 @@ export function adventureToBeats(adventure: Adventure): StoryBeat[] {
       });
     }
 
-    // Character intros
-    if (adventure.prologue.characterIntros) {
-      for (const intro of adventure.prologue.characterIntros) {
-        const character = adventure.characters.find(c => c.id === intro.characterId);
-        beats.push({
-          type: 'prologue-character',
-          characterId: intro.characterId,
-          characterName: character?.name ?? intro.characterId,
-          text: intro.introText,
-          image: character?.imageUrl,
-        });
-      }
+    // Character intros (all on one page)
+    if (adventure.prologue.characterIntros && adventure.prologue.characterIntros.length > 0) {
+      beats.push({
+        type: 'prologue-characters',
+        characters: adventure.prologue.characterIntros.map(intro => {
+          const character = adventure.characters.find(c => c.id === intro.characterId);
+          return {
+            characterId: intro.characterId,
+            characterName: character?.name ?? intro.characterId,
+            text: intro.introText,
+            image: character?.imageUrl,
+          };
+        }),
+      });
     }
 
     // Mission brief
