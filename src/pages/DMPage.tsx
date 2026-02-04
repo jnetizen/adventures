@@ -757,6 +757,28 @@ export default function DMPage() {
   };
 
   /**
+   * Handle narrative (alwaysSucceed, non-climax) turns in digital dice mode.
+   * Uses the player's pending roll and submits with threshold 1 (always succeed).
+   */
+  const handleSubmitNarrativeTurnDigital = async () => {
+    if (!session || !currentScene || !adventure) return;
+    const playerRoll = session.pending_player_roll;
+    if (!playerRoll) return;
+
+    const turns = getActiveCharacterTurns(currentScene, players)
+      .filter(t => isAlwaysSucceedTurn(t));
+    if (turns.length === 0) return;
+
+    setSubmitting(true);
+    for (const turn of turns) {
+      await submitCharacterChoice(session.id, turn.characterId, 'climax-action', playerRoll, 1);
+    }
+    await clearPlayerRoll(session.id);
+    setSession(prev => prev ? { ...prev, pending_player_roll: null } : null);
+    setSubmitting(false);
+  };
+
+  /**
    * Handle dismissing climax cutscene - shows next cutscene or clears
    */
   const handleDismissClimaxCutscene = async () => {
@@ -2427,7 +2449,7 @@ export default function DMPage() {
                 }
 
                 // Narrative-only turn (alwaysSucceed outside of climax scene)
-                // Solo adventures use this for story beats - just show prompt and GO button
+                // Solo adventures use this for story beats
                 if (isClimaxTurn && !currentScene.isClimax) {
                   return (
                     <>
@@ -2435,20 +2457,51 @@ export default function DMPage() {
                         <p className="text-sm text-yellow-800 mb-1">Turn {turnIndex + 1} of {totalTurns}</p>
                         <p className="text-base font-medium text-yellow-900 mt-2">{prompt}</p>
                       </div>
-                      <button
-                        onClick={handleSubmitClimaxAll}
-                        disabled={submitting}
-                        className="w-full bg-amber-500 text-white py-3 px-4 rounded-lg font-bold text-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {submitting ? (
-                          <span className="flex items-center justify-center gap-2">
-                            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
-                            Going...
-                          </span>
+                      {session.dice_mode === 'digital' ? (
+                        // Digital dice mode: wait for player roll, then show "See Outcome"
+                        session.pending_player_roll ? (
+                          <>
+                            <div className="bg-green-50 border border-green-200 p-3 rounded-lg text-center">
+                              <p className="text-sm text-green-700 mb-1">Player rolled:</p>
+                              <p className="text-3xl font-bold text-green-800">{session.pending_player_roll}</p>
+                            </div>
+                            <button
+                              onClick={handleSubmitNarrativeTurnDigital}
+                              disabled={submitting}
+                              className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium text-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {submitting ? (
+                                <span className="flex items-center justify-center gap-2">
+                                  <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                                  Resolving...
+                                </span>
+                              ) : (
+                                'See Outcome'
+                              )}
+                            </button>
+                          </>
                         ) : (
-                          'GO!'
-                        )}
-                      </button>
+                          <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg text-center">
+                            <p className="text-sm text-amber-700">Waiting for player to tap dice...</p>
+                          </div>
+                        )
+                      ) : (
+                        // Physical dice mode: keep existing GO! button
+                        <button
+                          onClick={handleSubmitClimaxAll}
+                          disabled={submitting}
+                          className="w-full bg-amber-500 text-white py-3 px-4 rounded-lg font-bold text-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {submitting ? (
+                            <span className="flex items-center justify-center gap-2">
+                              <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                              Going...
+                            </span>
+                          ) : (
+                            'GO!'
+                          )}
+                        </button>
+                      )}
                     </>
                   );
                 }
