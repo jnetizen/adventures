@@ -6,7 +6,12 @@
     "tagline": "Can you save Sweet-Top Valley before everything gets covered in candy goo?",
     "themes": ["candy", "teamwork", "dragons", "silly"],
     "estimatedMinutes": 15,
-    "previewImageUrl": "/images/adventures/candy-volcano-preview.png"
+    "previewImageUrl": "/images/adventures/candy-volcano-preview.png",
+    "ageRating": {
+      "minAge": 4,
+      "reason": "Silly candy adventure with teamwork and mild magical action",
+      "intensity": ["mild", "action"]
+    }
   },
   "prologue": {
     "prologueImageUrl": "/images/prologues/candy-volcano-prologue.png",

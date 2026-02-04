@@ -3,7 +3,7 @@ import { findSessionByCode, selectAdventure, submitPlayerRoll } from '../lib/gam
 import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
-import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions } from '../lib/adventures';
+import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions, isAlwaysSucceedTurn } from '../lib/adventures';
 import { completePuzzle } from '../lib/gameState';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
@@ -759,8 +759,33 @@ export default function PlayPage() {
                 <DiceRoller
                   onRoll={async (roll) => {
                     if (!session) return;
+                    const diceMax = session.dice_type ?? 20;
+
+                    // Climax scene: player rolls until they hit max
+                    if (currentScene?.isClimax && roll < diceMax) {
+                      // Show animation but don't submit to DM - player will roll again
+                      const activeTurns = getActiveCharacterTurns(currentScene, session.players || []);
+                      const currentTurn = activeTurns[session.current_character_turn_index ?? 0] ?? activeTurns[0];
+                      if (currentTurn) {
+                        const kidName = getKidDisplayName(session.players, currentTurn.characterId, 'Hero');
+                        setPendingDiceRoll({ kidName, roll, characterId: currentTurn.characterId });
+                      }
+                      return;
+                    }
+
+                    // Max roll on climax or any other turn: submit to DM
                     setPlayerRollSubmitted(true);
                     await submitPlayerRoll(session.id, roll);
+
+                    // Show dice animation immediately for alwaysSucceed turns
+                    if (currentScene) {
+                      const activeTurns = getActiveCharacterTurns(currentScene, session.players || []);
+                      const currentTurn = activeTurns[session.current_character_turn_index ?? 0] ?? activeTurns[0];
+                      if (currentTurn && isAlwaysSucceedTurn(currentTurn)) {
+                        const kidName = getKidDisplayName(session.players, currentTurn.characterId, 'Hero');
+                        setPendingDiceRoll({ kidName, roll, characterId: currentTurn.characterId });
+                      }
+                    }
                   }}
                   min={1}
                   max={session.dice_type ?? 20}

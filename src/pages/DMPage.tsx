@@ -1865,7 +1865,7 @@ export default function DMPage() {
                         className="w-10 h-10 flex-shrink-0"
                       />
                       <p className="font-semibold">{kidName} ({character.name})</p>
-                      {isClimaxTurn && (
+                      {isClimaxTurn && currentScene.isClimax && (
                         <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold">CLIMAX</span>
                       )}
                     </div>
@@ -2399,13 +2399,6 @@ export default function DMPage() {
                         <p className="font-bold text-lg">⚡ CLIMAX ⚡</p>
                       </div>
 
-                      {/* Instructions */}
-                      <div className="bg-purple-50 border border-purple-200 p-3 rounded-lg">
-                        <p className="text-sm text-purple-800 font-medium text-center">
-                          Have ALL players roll together! Wait for someone to roll a 6, then press GO!
-                        </p>
-                      </div>
-
                       {/* All character prompts */}
                       <div className="space-y-3">
                         <p className="text-sm font-semibold text-gray-700">Read aloud to players:</p>
@@ -2423,21 +2416,60 @@ export default function DMPage() {
                         })}
                       </div>
 
-                      {/* Single GO button */}
-                      <button
-                        onClick={handleSubmitClimaxAll}
-                        disabled={submitting}
-                        className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 px-4 rounded-lg font-bold text-xl hover:from-amber-600 hover:to-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-                      >
-                        {submitting ? (
-                          <span className="flex items-center justify-center gap-2">
-                            <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-                            GO!
-                          </span>
+                      {session.dice_mode === 'digital' ? (
+                        // Digital dice: wait for player to roll max, then show GO
+                        session.pending_player_roll ? (
+                          <>
+                            <div className="bg-green-50 border border-green-200 p-3 rounded-lg text-center">
+                              <p className="text-sm text-green-700 mb-1">Player rolled:</p>
+                              <p className="text-3xl font-bold text-green-800">{session.pending_player_roll}</p>
+                            </div>
+                            <button
+                              onClick={handleSubmitClimaxAll}
+                              disabled={submitting}
+                              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 px-4 rounded-lg font-bold text-xl hover:from-amber-600 hover:to-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                            >
+                              {submitting ? (
+                                <span className="flex items-center justify-center gap-2">
+                                  <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+                                  GO!
+                                </span>
+                              ) : (
+                                '⚡ GO! ⚡'
+                              )}
+                            </button>
+                          </>
                         ) : (
-                          '⚡ GO! ⚡'
-                        )}
-                      </button>
+                          <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg text-center">
+                            <p className="text-sm text-amber-700">
+                              Waiting for player to roll a {session.dice_type ?? DEFAULT_DICE_TYPE}...
+                            </p>
+                          </div>
+                        )
+                      ) : (
+                        <>
+                          {/* Physical dice: instructions + GO button */}
+                          <div className="bg-purple-50 border border-purple-200 p-3 rounded-lg">
+                            <p className="text-sm text-purple-800 font-medium text-center">
+                              Have ALL players roll together! Wait for someone to roll a {session.dice_type ?? DEFAULT_DICE_TYPE}, then press GO!
+                            </p>
+                          </div>
+                          <button
+                            onClick={handleSubmitClimaxAll}
+                            disabled={submitting}
+                            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 px-4 rounded-lg font-bold text-xl hover:from-amber-600 hover:to-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                          >
+                            {submitting ? (
+                              <span className="flex items-center justify-center gap-2">
+                                <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+                                GO!
+                              </span>
+                            ) : (
+                              '⚡ GO! ⚡'
+                            )}
+                          </button>
+                        </>
+                      )}
 
                       {climaxPlayMode && (
                         <p className="text-xs text-center text-gray-500">
