@@ -119,7 +119,7 @@
             "reward": {
               "id": "lumen-spirit",
               "name": "Lumen the Shrine Spirit",
-              "imageUrl": ""
+              "imageUrl": "/images/rewards/lumen-spirit.png"
             }
           },
           "failOutcome": {
@@ -128,7 +128,7 @@
             "reward": {
               "id": "lumen-spirit",
               "name": "Lumen the Shrine Spirit",
-              "imageUrl": ""
+              "imageUrl": "/images/rewards/lumen-spirit.png"
             }
           }
         }
