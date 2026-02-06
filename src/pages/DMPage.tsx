@@ -1,10 +1,10 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
-import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, clearPlayerRoll } from '../lib/gameState';
+import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState, clearPlayerRoll } from '../lib/gameState';
 import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
-import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions, isRollUntilSuccessClimax, hasRandomPuzzle, resolvePuzzleVariant } from '../lib/adventures';
+import { getActiveCharacterTurns, calculateChoiceOutcome, getAdventureList, calculateEnding, hasPerTurnOutcomes, getTurnOutcome, getSuccessThreshold, isBranchingOutcome, getSceneById, initializeCharacterScenes, isAlwaysSucceedTurn, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions, isRollUntilSuccessClimax, hasRandomPuzzle, resolvePuzzleVariant, isTurnPuzzle } from '../lib/adventures';
 import {
   computeIsSplit,
   computeActiveParallelCharacterId,
@@ -580,7 +580,8 @@ export default function DMPage() {
     }
 
     // Get the success threshold (from turn or choice level)
-    const threshold = getSuccessThreshold(turn, choice);
+    // For alwaysSucceed turns, use threshold 1 so any roll counts as success
+    const threshold = turn.alwaysSucceed ? 1 : getSuccessThreshold(turn, choice);
 
     setError(null);
     setSubmitting(true);
@@ -777,6 +778,102 @@ export default function DMPage() {
     }
     await clearPlayerRoll(session.id);
     setSession(prev => prev ? { ...prev, pending_player_roll: null } : null);
+    setSubmitting(false);
+  };
+
+  /**
+   * Handle narrative (alwaysSucceed, non-climax, no choices) turns in physical dice mode.
+   * DM enters the physical dice roll; outcome always succeeds.
+   */
+  const handleSubmitNarrativeTurnPhysical = async () => {
+    if (!session || !currentScene || !adventure) return;
+
+    const roll = parseInt(diceRoll, 10);
+    const maxRoll = session.dice_type ?? DEFAULT_DICE_TYPE;
+    if (isNaN(roll) || roll < 1 || roll > maxRoll) {
+      setError(`Dice roll must be between 1 and ${maxRoll}`);
+      return;
+    }
+
+    const turn = currentCharacterTurn;
+    if (!turn) return;
+
+    setError(null);
+    setSubmitting(true);
+
+    await submitCharacterChoice(session.id, turn.characterId, 'narrative-action', roll, 1);
+
+    // Show cutscene if the turn has one
+    if (hasPerTurnOutcomes(turn)) {
+      const turnOutcome = getTurnOutcome(turn, roll, maxRoll);
+      if (turnOutcome?.cutsceneImageUrl) {
+        const cutsceneData = {
+          characterId: turn.characterId,
+          imageUrl: turnOutcome.cutsceneImageUrl,
+          outcomeText: turnOutcome.text || '',
+        };
+        setSession((prev) => prev ? { ...prev, active_cutscene: cutsceneData } : null);
+        await showOutcomeCutscene(session.id, turn.characterId, turnOutcome);
+      }
+    }
+
+    setSubmitting(false);
+    setDiceRoll('');
+  };
+
+  /**
+   * Handle starting a turn-level puzzle. Sets puzzle_started so player screen shows the puzzle.
+   */
+  const handleStartTurnPuzzle = async () => {
+    if (!session) return;
+    setError(null);
+    setSubmitting(true);
+    const { error: puzzleError } = await startPuzzle(session.id);
+    if (puzzleError) {
+      setError(formatError(puzzleError));
+      setSubmitting(false);
+      return;
+    }
+    setSession((prev) => prev ? { ...prev, puzzle_started: true, active_cutscene: null } : null);
+    setSubmitting(false);
+  };
+
+  /**
+   * Handle completion of a turn-level puzzle.
+   * Submits the turn as success, shows cutscene, resets puzzle state, advances turn.
+   */
+  const handleTurnPuzzleComplete = async () => {
+    if (!session || !currentScene || !adventure) return;
+
+    const turn = currentCharacterTurn;
+    if (!turn) return;
+
+    setError(null);
+    setSubmitting(true);
+
+    // Submit this turn as a success (threshold 1 = always succeed)
+    await submitCharacterChoice(session.id, turn.characterId, 'puzzle-complete', 1, 1);
+
+    // Show cutscene from turn.outcome if available
+    if (turn.outcome?.cutsceneImageUrl) {
+      const cutsceneData = {
+        characterId: turn.characterId,
+        imageUrl: turn.outcome.cutsceneImageUrl,
+        outcomeText: turn.outcome.text || '',
+      };
+      setSession((prev) => prev ? { ...prev, active_cutscene: cutsceneData } : null);
+      await showOutcomeCutscene(session.id, turn.characterId, turn.outcome);
+    }
+
+    // Reset puzzle state for next turn
+    await resetPuzzleState(session.id);
+    setSession((prev) => prev ? {
+      ...prev,
+      puzzle_started: null,
+      puzzle_completed: null,
+      puzzle_outcome: null,
+    } : null);
+
     setSubmitting(false);
   };
 
@@ -2498,9 +2595,140 @@ export default function DMPage() {
                   );
                 }
 
-                // Narrative-only turn (alwaysSucceed outside of climax scene)
+                // Turn-level puzzle (character turn has puzzleInstructions)
+                if (isTurnPuzzle(currentCharacterTurn)) {
+                  const puzzleType = currentCharacterTurn.puzzleInstructions!.type;
+                  const turnCharacter = adventure.characters.find(c => c.id === currentCharacterTurn.characterId);
+                  const turnKidName = players.find(p => p.characterId === currentCharacterTurn.characterId)?.kidName
+                    || turnCharacter?.name || 'Player';
+
+                  return (
+                    <>
+                      <div className="bg-yellow-50 p-4 rounded-lg">
+                        <p className="text-sm text-yellow-800 mb-1">Turn {turnIndex + 1} of {totalTurns}</p>
+                        <p className="text-base font-medium text-yellow-900 mt-2">{prompt}</p>
+                      </div>
+
+                      {/* Before puzzle started: show Start Challenge button */}
+                      {!session.puzzle_started && !session.puzzle_completed && (
+                        <div className="bg-purple-50 border-2 border-purple-300 p-4 rounded-lg">
+                          <p className="text-sm text-purple-600 mb-2">{turnKidName}'s challenge:</p>
+                          <button
+                            onClick={handleStartTurnPuzzle}
+                            disabled={submitting}
+                            className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white py-4 px-4 rounded-lg font-bold text-lg transition-colors"
+                          >
+                            {submitting ? 'Starting...' : 'Start Challenge'}
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Puzzle in progress: show DM controls for this puzzle type */}
+                      {session.puzzle_started && !session.puzzle_completed && (() => {
+                        if (puzzleType === 'simon-says-cast') {
+                          const inst = currentCharacterTurn.puzzleInstructions as import('../types/adventure').SimonSaysPuzzleInstructions;
+                          return (
+                            <div className="bg-indigo-50 border-2 border-indigo-300 p-4 rounded-lg space-y-3">
+                              <div className="flex items-center gap-2">
+                                <span className="animate-pulse text-indigo-600 text-xl">🎵</span>
+                                <p className="text-indigo-800 font-medium">{turnKidName} is playing the pattern game!</p>
+                              </div>
+                              <p className="text-sm text-indigo-600">{inst.rounds.length} round(s) - symbols: {inst.symbols.map(s => s.emoji).join(' ')}</p>
+                              <button onClick={handlePuzzleOverride} disabled={submitting}
+                                className="w-full bg-indigo-100 text-indigo-700 py-2 px-4 rounded-lg font-medium hover:bg-indigo-200 transition-colors disabled:opacity-50 text-sm">
+                                Override: Mark Complete
+                              </button>
+                            </div>
+                          );
+                        }
+                        if (puzzleType === 'draw-to-cast') {
+                          const inst = currentCharacterTurn.puzzleInstructions as import('../types/adventure').DrawCastPuzzleInstructions;
+                          return (
+                            <div className="bg-orange-50 border-2 border-orange-300 p-4 rounded-lg space-y-3">
+                              <div className="flex items-center gap-2">
+                                <span className="animate-pulse text-orange-600 text-xl">✨</span>
+                                <p className="text-orange-800 font-medium">{turnKidName} is tracing the pattern!</p>
+                              </div>
+                              <p className="text-sm text-orange-600">{inst.setupNarration}</p>
+                              <button onClick={handlePuzzleOverride} disabled={submitting}
+                                className="w-full bg-orange-100 text-orange-700 py-2 px-4 rounded-lg font-medium hover:bg-orange-200 transition-colors disabled:opacity-50 text-sm">
+                                Override: Mark Complete
+                              </button>
+                            </div>
+                          );
+                        }
+                        if (puzzleType === 'memory-match') {
+                          const inst = currentCharacterTurn.puzzleInstructions as import('../types/adventure').MemoryPuzzleInstructions;
+                          return (
+                            <div className="bg-teal-50 border-2 border-teal-300 p-4 rounded-lg space-y-3">
+                              <div className="flex items-center gap-2">
+                                <span className="animate-pulse text-teal-600 text-xl">🃏</span>
+                                <p className="text-teal-800 font-medium">{turnKidName} is matching pairs!</p>
+                              </div>
+                              <p className="text-sm text-teal-600">Find {inst.pairs.length} matching pairs: {inst.pairs.map(p => p.emoji).join(' ')}</p>
+                              <button onClick={handlePuzzleOverride} disabled={submitting}
+                                className="w-full bg-teal-100 text-teal-700 py-2 px-4 rounded-lg font-medium hover:bg-teal-200 transition-colors disabled:opacity-50 text-sm">
+                                Override: Mark Complete
+                              </button>
+                            </div>
+                          );
+                        }
+                        if (puzzleType === 'tap-to-match') {
+                          const inst = currentCharacterTurn.puzzleInstructions as import('../types/adventure').TapMatchPuzzleInstructions;
+                          return (
+                            <div className="bg-pink-50 border-2 border-pink-300 p-4 rounded-lg space-y-3">
+                              <div className="flex items-center gap-2">
+                                <span className="animate-pulse text-pink-600 text-xl">🦋</span>
+                                <p className="text-pink-800 font-medium">{turnKidName} is finding items!</p>
+                              </div>
+                              <p className="text-sm text-pink-600">Find {inst.targetItems.count} {inst.targetItems.type}s!</p>
+                              <button onClick={handlePuzzleOverride} disabled={submitting}
+                                className="w-full bg-pink-100 text-pink-700 py-2 px-4 rounded-lg font-medium hover:bg-pink-200 transition-colors disabled:opacity-50 text-sm">
+                                Override: Mark Complete
+                              </button>
+                            </div>
+                          );
+                        }
+                        // Fallback for other puzzle types
+                        return (
+                          <div className="bg-gray-50 border-2 border-gray-300 p-4 rounded-lg space-y-3">
+                            <p className="text-gray-800 font-medium">{turnKidName} is doing the challenge!</p>
+                            <button onClick={handlePuzzleOverride} disabled={submitting}
+                              className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 text-sm">
+                              Override: Mark Complete
+                            </button>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Puzzle completed: show outcome + advance */}
+                      {session.puzzle_completed && (
+                        <div className="space-y-3">
+                          <div className={`p-4 rounded-lg ${session.puzzle_outcome === 'success' ? 'bg-green-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
+                            <p className="font-semibold" style={{ color: session.puzzle_outcome === 'success' ? '#166534' : '#c2410c' }}>
+                              {session.puzzle_outcome === 'success' ? 'Challenge Complete!' : 'Nice effort!'}
+                            </p>
+                            {currentCharacterTurn.outcome?.text && (
+                              <p className="mt-2 text-sm text-gray-700">{currentCharacterTurn.outcome.text}</p>
+                            )}
+                          </div>
+                          <button
+                            onClick={handleTurnPuzzleComplete}
+                            disabled={submitting}
+                            className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50"
+                          >
+                            {submitting ? 'Continuing...' : 'Continue'}
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  );
+                }
+
+                // Narrative-only turn (alwaysSucceed outside of climax scene, NO choices)
                 // Solo adventures use this for story beats
-                if (isClimaxTurn && !currentScene.isClimax) {
+                // alwaysSucceed turns WITH choices fall through to the standard turn path below
+                if (isClimaxTurn && !currentScene.isClimax && (!currentCharacterTurn.choices || currentCharacterTurn.choices.length === 0)) {
                   return (
                     <>
                       <div className="bg-yellow-50 p-4 rounded-lg">
@@ -2536,21 +2764,55 @@ export default function DMPage() {
                           </div>
                         )
                       ) : (
-                        // Physical dice mode: keep existing GO! button
-                        <button
-                          onClick={handleSubmitClimaxAll}
-                          disabled={submitting}
-                          className="w-full bg-amber-500 text-white py-3 px-4 rounded-lg font-bold text-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {submitting ? (
-                            <span className="flex items-center justify-center gap-2">
-                              <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
-                              Going...
-                            </span>
-                          ) : (
-                            'GO!'
-                          )}
-                        </button>
+                        // Physical dice mode: show dice input so DM can enter the actual roll
+                        <>
+                          {(() => {
+                            const narrativeDiceType = session.dice_type ?? DEFAULT_DICE_TYPE;
+                            const { label: narrativeDiceLabel, rollPrompt: narrativeRollPrompt } = getDiceScaleHelpers(narrativeDiceType);
+                            return (
+                              <div className="flex flex-wrap items-end gap-4">
+                                <div className="flex-1 min-w-[140px]">
+                                  <label htmlFor="narrativeDiceRoll" className="block text-sm font-medium text-gray-700 mb-2">
+                                    {narrativeDiceLabel}
+                                  </label>
+                                  <input
+                                    id="narrativeDiceRoll"
+                                    type="number"
+                                    min="1"
+                                    max={narrativeDiceType}
+                                    value={diceRoll}
+                                    onChange={(e) => setDiceRoll(e.target.value)}
+                                    placeholder="Enter roll"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  />
+                                </div>
+                                <div className="flex flex-col items-center gap-1">
+                                  <span className="text-xs text-gray-500">{narrativeRollPrompt}</span>
+                                  <DiceRoller
+                                    onRoll={(v) => setDiceRoll(String(v))}
+                                    disabled={submitting}
+                                    min={1}
+                                    max={narrativeDiceType}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })()}
+                          <button
+                            onClick={handleSubmitNarrativeTurnPhysical}
+                            disabled={!diceRoll.trim() || submitting}
+                            className="w-full bg-amber-500 text-white py-3 px-4 rounded-lg font-bold text-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {submitting ? (
+                              <span className="flex items-center justify-center gap-2">
+                                <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                                Submitting...
+                              </span>
+                            ) : (
+                              'Submit Roll'
+                            )}
+                          </button>
+                        </>
                       )}
                     </>
                   );

@@ -739,6 +739,24 @@ export function isStoryBeat(scene: Scene): boolean {
 }
 
 // ============================================
+// Turn-Level Puzzle Support
+// ============================================
+
+/**
+ * Check if a character turn has a puzzle (turn-level puzzle).
+ */
+export function isTurnPuzzle(turn: CharacterTurn): boolean {
+  return !!turn.puzzleInstructions;
+}
+
+/**
+ * Get the puzzle type string from a turn's puzzle instructions.
+ */
+export function getTurnPuzzleType(turn: CharacterTurn): string | null {
+  return turn.puzzleInstructions?.type ?? null;
+}
+
+// ============================================
 // Random Puzzle Variant Support
 // ============================================
 

@@ -65,9 +65,23 @@
       "characterTurns": [
         {
           "characterId": "schemer-lemming",
-          "promptText": "The freezer has a tricky latch! Can Schemer figure it out?",
+          "promptText": "The freezer has a tricky latch! Figure out the pattern to unlock it!",
           "choices": null,
-          "alwaysSucceed": true,
+          "puzzleInstructions": {
+            "type": "simon-says-cast",
+            "setupNarration": "Watch the latch pattern and repeat it!",
+            "symbols": [
+              { "id": "snowflake", "emoji": "❄️", "color": "blue" },
+              { "id": "ice-cream", "emoji": "🍦", "color": "pink" },
+              { "id": "freezer", "emoji": "🧊", "color": "cyan" },
+              { "id": "cold-cloud", "emoji": "☁️", "color": "gray" }
+            ],
+            "rounds": [
+              { "roundNumber": 1, "sequence": ["snowflake", "ice-cream", "freezer"], "displaySpeed": 800 }
+            ],
+            "mistakeAllowance": 3,
+            "successNarration": "CLICK CLICK CLICK! The latch opens!"
+          },
           "outcome": {
             "text": "Schemer's tiny paws work the latch - click, click, CLICK - it's almost open! But wait... is Grizzy waking up?!",
             "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-alexander.png"
@@ -139,18 +153,22 @@
         },
         {
           "characterId": "chaos-lemming",
-          "promptText": "Quick! Drop something on Grizzy to slow him down!",
-          "choices": [
-            { "id": "scene2-pot", "label": "Push the pot off the shelf" },
-            { "id": "scene2-pillow", "label": "Throw a pillow at his face" }
-          ],
-          "successThreshold": 4,
-          "successOutcome": {
-            "text": "BONK! A pot lands RIGHT on Grizzy's head! Stars spin around him as Chaos pumps his tiny fists in victory!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-oliver.png"
+          "promptText": "Drop something on Grizzy to slow him down! Trace the path!",
+          "choices": null,
+          "puzzleInstructions": {
+            "type": "draw-to-cast",
+            "setupNarration": "Trace the falling pot's path onto Grizzy's head!",
+            "rune": {
+              "shape": "zigzag-down",
+              "glowColor": "orange",
+              "strokeWidth": 12,
+              "tolerancePercent": 40
+            },
+            "successThreshold": { "minPercentComplete": 60 },
+            "successNarration": "BONK! Direct hit on Grizzy's head!"
           },
-          "failOutcome": {
-            "text": "The pot misses Grizzy by an inch and CLANGS on the floor! Grizzy spins around confused - buying just enough time to escape!",
+          "outcome": {
+            "text": "BONK! A pot lands RIGHT on Grizzy's head! Stars spin around him as Chaos pumps his tiny fists in victory!",
             "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-oliver.png"
           }
         },
@@ -184,7 +202,18 @@
           "characterId": "schemer-lemming",
           "promptText": "Plan the route from the vent to the freezer! Can Schemer map it out?",
           "choices": null,
-          "alwaysSucceed": true,
+          "puzzleInstructions": {
+            "type": "draw-to-cast",
+            "setupNarration": "Draw the secret path through the vents to reach the freezer!",
+            "rune": {
+              "shape": "path-maze",
+              "glowColor": "blue",
+              "strokeWidth": 10,
+              "tolerancePercent": 40
+            },
+            "successThreshold": { "minPercentComplete": 60 },
+            "successNarration": "Perfect blueprint!"
+          },
           "outcome": {
             "text": "Schemer finishes the blueprint with a flourish. Every twist, every turn, mapped out PERFECTLY. Big brain energy!",
             "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-alexander.png"
@@ -193,17 +222,21 @@
         {
           "characterId": "chaos-lemming",
           "promptText": "Rig up the rope and pulley for the escape route!",
-          "choices": [
-            { "id": "scene3-knot", "label": "Tie a super strong knot" },
-            { "id": "scene3-swing", "label": "Test it with a big swing" }
-          ],
-          "successThreshold": 4,
-          "successOutcome": {
-            "text": "Chaos tests the rope - ZING! It's tight, it's ready, it's PERFECT. He grins. This contraption is a masterpiece!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-oliver.png"
+          "choices": null,
+          "puzzleInstructions": {
+            "type": "draw-to-cast",
+            "setupNarration": "Trace the rope around the pulleys to rig the escape route!",
+            "rune": {
+              "shape": "pulley-loop",
+              "glowColor": "orange",
+              "strokeWidth": 12,
+              "tolerancePercent": 40
+            },
+            "successThreshold": { "minPercentComplete": 60 },
+            "successNarration": "The rope is rigged!"
           },
-          "failOutcome": {
-            "text": "The rope slips a little... but Chaos quickly ties a double knot! It wobbles but holds. Good enough for a lemming!",
+          "outcome": {
+            "text": "Chaos tests the rope - ZING! It's tight, it's ready, it's PERFECT. He grins. This contraption is a masterpiece!",
             "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-oliver.png"
           }
         },
@@ -211,7 +244,16 @@
           "characterId": "sweet-lemming",
           "promptText": "Get everyone into position! Is Sweet Lemming ready?",
           "choices": null,
-          "alwaysSucceed": true,
+          "puzzleInstructions": {
+            "type": "memory-match",
+            "prompt": "Remember where each lemming goes!",
+            "pairs": [
+              { "id": "vent", "emoji": "🕳️" },
+              { "id": "rope", "emoji": "🪢" },
+              { "id": "freezer", "emoji": "🧊" }
+            ],
+            "successNarration": "Everyone's in position!"
+          },
           "outcome": {
             "text": "The three lemmings stand ready. Schemer nods. Chaos cracks his knuckles. Sweet tucks her cookie in her bow. IT'S GO TIME.",
             "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-isabella.png"

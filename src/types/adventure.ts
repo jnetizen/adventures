@@ -493,6 +493,8 @@ export interface CharacterTurn {
   alwaysSucceed?: boolean;
   /** Single outcome for alwaysSucceed turns (no success/fail split). */
   outcome?: TurnOutcome;
+  /** Optional puzzle instructions for this turn (turn-level puzzle). */
+  puzzleInstructions?: PuzzleInstructions;
 }
 
 export interface Reward {

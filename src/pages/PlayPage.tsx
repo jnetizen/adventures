@@ -3,7 +3,7 @@ import { findSessionByCode, selectAdventure, submitPlayerRoll } from '../lib/gam
 import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
-import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions, isAlwaysSucceedTurn } from '../lib/adventures';
+import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions, isAlwaysSucceedTurn, isTurnPuzzle } from '../lib/adventures';
 import { completePuzzle } from '../lib/gameState';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
@@ -704,6 +704,95 @@ export default function PlayPage() {
                   } : null);
                 }}
               />
+            );
+          })()}
+
+          {/* Turn-level puzzle rendering - puzzle defined on a character turn, not the scene */}
+          {!isPuzzleScene(currentScene) && session.puzzle_started && !session.puzzle_completed && (() => {
+            const activeTurns = getActiveCharacterTurns(currentScene, session.players || []);
+            const currentTurn = activeTurns[session.current_character_turn_index ?? 0] ?? activeTurns[0];
+            if (!currentTurn || !isTurnPuzzle(currentTurn)) return null;
+            const instructions = currentTurn.puzzleInstructions!;
+            const puzzleType = instructions.type;
+            const puzzleComplete = async (success: boolean) => {
+              await completePuzzle(session.id, success ? 'success' : 'fail');
+              setSession((prev) => prev ? {
+                ...prev,
+                puzzle_completed: true,
+                puzzle_outcome: success ? 'success' : 'fail',
+              } : null);
+            };
+
+            if (puzzleType === 'simon-says-cast') {
+              return (
+                <SimonSaysPuzzle
+                  instructions={instructions as import('../types/adventure').SimonSaysPuzzleInstructions}
+                  onComplete={puzzleComplete}
+                />
+              );
+            }
+            if (puzzleType === 'draw-to-cast') {
+              return (
+                <DrawCastPuzzle
+                  instructions={instructions as import('../types/adventure').DrawCastPuzzleInstructions}
+                  onComplete={puzzleComplete}
+                />
+              );
+            }
+            if (puzzleType === 'memory-match') {
+              const memInst = instructions as import('../types/adventure').MemoryPuzzleInstructions;
+              return (
+                <MemoryPuzzle
+                  pairs={memInst.pairs}
+                  prompt={memInst.prompt}
+                  onComplete={puzzleComplete}
+                />
+              );
+            }
+            if (puzzleType === 'tap-to-match') {
+              return (
+                <TapMatchPuzzle
+                  instructions={instructions as import('../types/adventure').TapMatchPuzzleInstructions}
+                  onComplete={puzzleComplete}
+                />
+              );
+            }
+            if (puzzleType === 'seeker-lens') {
+              return (
+                <SeekerLensPuzzle
+                  instructions={instructions as import('../types/adventure').SeekerLensInstructions}
+                  sceneImageUrl={currentScene.sceneImageUrl}
+                  onComplete={puzzleComplete}
+                />
+              );
+            }
+            if (puzzleType === 'ar-catch-object') {
+              return (
+                <ARCatchPuzzle
+                  instructions={instructions as import('../types/adventure').ARCatchPuzzleInstructions}
+                  onComplete={puzzleComplete}
+                />
+              );
+            }
+            return null;
+          })()}
+
+          {/* Turn-level puzzle success overlay */}
+          {!isPuzzleScene(currentScene) && session.puzzle_started && session.puzzle_completed && session.puzzle_outcome === 'success' && !session.active_cutscene && (() => {
+            const activeTurns = getActiveCharacterTurns(currentScene, session.players || []);
+            const currentTurn = activeTurns[session.current_character_turn_index ?? 0] ?? activeTurns[0];
+            if (!currentTurn || !isTurnPuzzle(currentTurn)) return null;
+            return (
+              <div className="fixed inset-0 z-50 bg-gradient-to-b from-green-600 to-emerald-700 flex flex-col items-center justify-center p-6 text-center">
+                <div className="text-8xl mb-6 animate-bounce">🎉</div>
+                <h2 className="text-4xl font-bold text-white mb-4">Amazing!</h2>
+                <p className="text-xl text-green-100">Challenge Complete!</p>
+                <div className="mt-8 flex gap-2">
+                  <div className="w-4 h-4 bg-white rounded-full animate-pulse" style={{ animationDelay: '0s' }} />
+                  <div className="w-4 h-4 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+                  <div className="w-4 h-4 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+                </div>
+              </div>
             );
           })()}
 
