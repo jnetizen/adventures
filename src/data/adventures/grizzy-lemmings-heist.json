@@ -208,8 +208,8 @@
             "grid": { "rows": 2, "columns": 3, "itemSize": 96 },
             "targetItems": { "type": "vent", "count": 4 },
             "distractorItems": [
-              { "type": "pipe", "emoji": "🔧" },
-              { "type": "mouse", "emoji": "🐭" }
+              { "type": "pipe", "count": 1 },
+              { "type": "mouse", "count": 1 }
             ],
             "successNarration": "The vent route is mapped! Every twist and turn, perfect!"
           },

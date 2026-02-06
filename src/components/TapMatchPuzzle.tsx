@@ -23,6 +23,9 @@ const ITEM_EMOJIS: Record<string, string> = {
   star: '⭐',
   flower: '🌸',
   heart: '💖',
+  vent: '🕳️',
+  pipe: '🔧',
+  mouse: '🐭',
 };
 
 /**

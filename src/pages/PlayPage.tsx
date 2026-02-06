@@ -200,18 +200,15 @@ export default function PlayPage() {
   useEffect(() => {
     const choices = session?.scene_choices ?? [];
     if (choices.length > processedRollCount) {
-      // Skip dice animation for puzzle turns (they submit roll=1 internally)
-      if (currentScene) {
-        const activeTurns = getActiveCharacterTurns(currentScene, session?.players || []);
-        const correspondingTurn = activeTurns[processedRollCount];
-        if (correspondingTurn && isTurnPuzzle(correspondingTurn)) {
-          // eslint-disable-next-line react-hooks/set-state-in-effect -- skip past puzzle turn
-          setProcessedRollCount(prev => prev + 1);
-          return;
-        }
+      const latestChoice = choices[processedRollCount];
+
+      // Skip dice animation for puzzle turns (DM submits choiceId 'puzzle-complete' with roll=1)
+      if (latestChoice.choiceId === 'puzzle-complete') {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- skip past puzzle turn
+        setProcessedRollCount(prev => prev + 1);
+        return;
       }
 
-      const latestChoice = choices[processedRollCount];
       if (latestChoice.roll !== undefined) {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- trigger dice animation on new roll
         setPendingDiceRoll({
@@ -221,7 +218,7 @@ export default function PlayPage() {
         });
       }
     }
-  }, [session?.scene_choices, processedRollCount, session?.players, currentScene]);
+  }, [session?.scene_choices, processedRollCount, session?.players]);
 
   // Track the last scene we processed to avoid re-triggering animations when switching parallel scenes
   const lastSceneRef = useRef<string | null>(null);
