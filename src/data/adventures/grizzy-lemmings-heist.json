@@ -252,8 +252,7 @@
           "choices": null,
           "alwaysSucceed": true,
           "outcome": {
-            "text": "PERFECT! Schemer slides through without touching a single yarn!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/finale-alexander.png"
+            "text": "PERFECT! Schemer slides through without touching a single yarn!"
           }
         },
         {
@@ -262,8 +261,7 @@
           "choices": null,
           "alwaysSucceed": true,
           "outcome": {
-            "text": "YOINK! Chaos grabs the handle and the freezer door SWINGS open!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/finale-oliver.png"
+            "text": "YOINK! Chaos grabs the handle and the freezer door SWINGS open!"
           }
         },
         {
@@ -272,8 +270,7 @@
           "choices": null,
           "alwaysSucceed": true,
           "outcome": {
-            "text": "GOT THEM! Sweet Lemming's arms are FULL of ice cream sandwiches!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/finale-isabella.png"
+            "text": "GOT THEM! Sweet Lemming's arms are FULL of ice cream sandwiches!"
           }
         }
       ],
