@@ -75,7 +75,10 @@ export default function DebugOverlay() {
 
   // Triple-tap detection
   useEffect(() => {
-    const handleTap = () => {
+    const handleTap = (e: MouseEvent) => {
+      // Ignore clicks on interactive elements so puzzle taps don't trigger the overlay
+      const target = e.target as HTMLElement;
+      if (target.closest('button, input, a, [role="button"]')) return;
       tapCountRef.current += 1;
 
       if (tapTimerRef.current) {
