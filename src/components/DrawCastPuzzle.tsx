@@ -212,7 +212,7 @@ export default function DrawCastPuzzle({ instructions, onComplete }: DrawCastPuz
 
     const helpTimer = setTimeout(() => {
       if (!completedRef.current && !isComplete) {
-        setFeedback("Blot helps trace the rune!");
+        setFeedback("Almost there! Let's finish together!");
         setIsComplete(true);
         setTimeout(() => {
           completedRef.current = true;
@@ -246,7 +246,7 @@ export default function DrawCastPuzzle({ instructions, onComplete }: DrawCastPuz
       {/* Header */}
       <div className="text-center mb-4">
         <h2 className="text-3xl font-bold text-white mb-2">
-          {isComplete ? 'Spell Cast!' : 'Trace the Rune!'}
+          {isComplete ? 'Challenge Complete!' : instructions.setupNarration || 'Trace the Shape!'}
         </h2>
         <p className="text-orange-200">
           {!isComplete && 'Draw boldly with your finger!'}

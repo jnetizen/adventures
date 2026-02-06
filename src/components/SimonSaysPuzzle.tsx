@@ -163,7 +163,7 @@ export default function SimonSaysPuzzle({ instructions, onComplete }: SimonSaysP
       {/* Header */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-white mb-2">
-          {phase === 'watching' ? 'Watch...' : phase === 'playing' ? 'Your Turn!' : phase === 'success' ? 'Amazing!' : 'Spell Sequence'}
+          {phase === 'watching' ? 'Watch...' : phase === 'playing' ? 'Your Turn!' : phase === 'success' ? 'Amazing!' : 'Get Ready...'}
         </h2>
         <p className="text-lg text-purple-200">
           Round {currentRound + 1} of {rounds.length}

@@ -203,16 +203,15 @@
           "promptText": "Plan the route from the vent to the freezer! Can Schemer map it out?",
           "choices": null,
           "puzzleInstructions": {
-            "type": "draw-to-cast",
-            "setupNarration": "Draw the secret path through the vents to reach the freezer!",
-            "rune": {
-              "shape": "path-maze",
-              "glowColor": "blue",
-              "strokeWidth": 10,
-              "tolerancePercent": 40
-            },
-            "successThreshold": { "minPercentComplete": 60 },
-            "successNarration": "Perfect blueprint!"
+            "type": "tap-to-match",
+            "setupNarration": "Tap each vent section in order to map the route to the freezer!",
+            "grid": { "rows": 2, "columns": 3, "itemSize": 96 },
+            "targetItems": { "type": "vent", "count": 4 },
+            "distractorItems": [
+              { "type": "pipe", "emoji": "🔧" },
+              { "type": "mouse", "emoji": "🐭" }
+            ],
+            "successNarration": "The vent route is mapped! Every twist and turn, perfect!"
           },
           "outcome": {
             "text": "Schemer finishes the blueprint with a flourish. Every twist, every turn, mapped out PERFECTLY. Big brain energy!",
@@ -222,21 +221,17 @@
         {
           "characterId": "chaos-lemming",
           "promptText": "Rig up the rope and pulley for the escape route!",
-          "choices": null,
-          "puzzleInstructions": {
-            "type": "draw-to-cast",
-            "setupNarration": "Trace the rope around the pulleys to rig the escape route!",
-            "rune": {
-              "shape": "pulley-loop",
-              "glowColor": "orange",
-              "strokeWidth": 12,
-              "tolerancePercent": 40
-            },
-            "successThreshold": { "minPercentComplete": 60 },
-            "successNarration": "The rope is rigged!"
+          "choices": [
+            { "id": "scene3-knot", "label": "Tie a super strong knot" },
+            { "id": "scene3-swing", "label": "Test it with a big swing" }
+          ],
+          "successThreshold": 4,
+          "successOutcome": {
+            "text": "Chaos tests the rope - ZING! It's tight, it's ready, it's PERFECT!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-oliver.png"
           },
-          "outcome": {
-            "text": "Chaos tests the rope - ZING! It's tight, it's ready, it's PERFECT. He grins. This contraption is a masterpiece!",
+          "failOutcome": {
+            "text": "The rope slips a little... but Chaos quickly ties a double knot! It wobbles but holds.",
             "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-oliver.png"
           }
         },

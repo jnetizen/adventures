@@ -200,7 +200,7 @@ export default function PlayPage() {
   useEffect(() => {
     const choices = session?.scene_choices ?? [];
     if (choices.length > processedRollCount) {
-      const latestChoice = choices[choices.length - 1];
+      const latestChoice = choices[processedRollCount];
       if (latestChoice.roll !== undefined) {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- trigger dice animation on new roll
         setPendingDiceRoll({
@@ -370,6 +370,14 @@ export default function PlayPage() {
   const handleEndingCelebrationClose = useCallback(() => {
     setCelebratedEnding(true);
   }, []);
+
+  // Detect whether the current turn is a puzzle turn (hide dice UI during puzzles)
+  const currentTurnIsPuzzle = (() => {
+    if (!currentScene) return false;
+    const activeTurns = getActiveCharacterTurns(currentScene, session?.players || []);
+    const turn = activeTurns[session?.current_character_turn_index ?? 0] ?? activeTurns[0];
+    return turn ? isTurnPuzzle(turn) : false;
+  })();
 
   // Reset player roll state when turn advances (scene_choices changes)
   useEffect(() => {
@@ -827,7 +835,7 @@ export default function PlayPage() {
           )}
           
           {/* Cutscene Overlay - shown when DM triggers a cutscene (after dice animation) */}
-          {!pendingDiceRoll && session.active_cutscene && !(session.puzzle_started && !session.puzzle_completed) && (
+          {!pendingDiceRoll && ((session?.scene_choices?.length ?? 0) <= processedRollCount) && session.active_cutscene && !(session.puzzle_started && !session.puzzle_completed) && (
             <CutsceneOverlay
               imageUrl={session.active_cutscene.imageUrl}
               outcomeText={session.active_cutscene.outcomeText}
@@ -839,7 +847,7 @@ export default function PlayPage() {
           )}
           
           {/* Digital dice roller - prominent when in digital mode and waiting for roll */}
-          {session.dice_mode === 'digital' && !session.pending_player_roll && !playerRollSubmitted && !allActed && !pendingDiceRoll && (
+          {session.dice_mode === 'digital' && !session.pending_player_roll && !playerRollSubmitted && !allActed && !pendingDiceRoll && !currentTurnIsPuzzle && (
             <div className="fixed inset-x-0 bottom-0 z-40 p-4 bg-gradient-to-t from-black/80 to-transparent">
               <div className="max-w-sm mx-auto text-center">
                 <p className="text-white text-lg font-bold mb-3 drop-shadow-lg">
@@ -883,7 +891,7 @@ export default function PlayPage() {
             </div>
           )}
           {/* Show waiting message after player rolls */}
-          {session.dice_mode === 'digital' && (session.pending_player_roll || playerRollSubmitted) && !allActed && !pendingDiceRoll && (
+          {session.dice_mode === 'digital' && (session.pending_player_roll || playerRollSubmitted) && !allActed && !pendingDiceRoll && !currentTurnIsPuzzle && (
             <div className="fixed inset-x-0 bottom-0 z-40 p-4 bg-gradient-to-t from-black/80 to-transparent">
               <div className="max-w-sm mx-auto text-center">
                 <p className="text-white text-lg font-bold drop-shadow-lg">
