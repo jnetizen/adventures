@@ -1,0 +1,309 @@
+{
+  "id": "grizzy-lemmings-heist",
+  "title": "Grizzy and the Lemmings: The Great Ice Cream Sandwich Heist",
+  "description": "Three mischievous lemmings vs one grumpy bear. The prize? A freezer full of ice cream sandwiches.",
+  "preview": {
+    "tagline": "The heist is ON!",
+    "themes": ["slapstick", "heist", "ice cream", "mischief", "teamwork"],
+    "estimatedMinutes": 15,
+    "previewImageUrl": "/images/scenes/grizzy-lemmings/prologue.png",
+    "ageRating": {
+      "minAge": 3,
+      "reason": "Silly cartoon slapstick, no real danger",
+      "intensity": ["mild", "action"]
+    }
+  },
+  "characters": [
+    {
+      "id": "schemer-lemming",
+      "name": "Schemer Lemming",
+      "description": "The brains of the operation - a small mischievous purple-blue lemming with big eyes, wearing a tiny dark blue bandana",
+      "imageUrl": "/images/characters/schemer-lemming.png",
+      "assignedTo": "Alexander"
+    },
+    {
+      "id": "chaos-lemming",
+      "name": "Chaos Lemming",
+      "description": "The action and distractions - a small mischievous purple-blue lemming with big eyes, wearing a tiny orange bandana",
+      "imageUrl": "/images/characters/chaos-lemming.png",
+      "assignedTo": "Oliver"
+    },
+    {
+      "id": "sweet-lemming",
+      "name": "Sweet Lemming",
+      "description": "The secret weapon - a small mischievous purple-blue lemming with big eyes, a tiny pink bow on her head, carrying a cookie",
+      "imageUrl": "/images/characters/sweet-lemming.png",
+      "assignedTo": "Isabella"
+    }
+  ],
+  "prologue": {
+    "prologueImageUrl": "/images/scenes/grizzy-lemmings/prologue.png",
+    "worldIntro": "Deep in the forest, there's a cozy cabin. Inside that cabin lives a big grumpy bear named Grizzy. He has a comfy couch, a big TV, and most importantly...\n\nA FREEZER. FULL. OF ICE CREAM SANDWICHES.\n\nGrizzy guards those ice cream sandwiches with his life. He counts them every morning. He dreams about them every night. They are HIS.\n\nBut today, three small purple-blue creatures have discovered the cabin. Three lemmings with big eyes and bigger appetites. They've spotted the freezer through the window.\n\nTheir eyes go wide. Their tummies rumble.\n\nThe heist begins NOW.",
+    "missionBrief": "Sneak into Grizzy's cabin, outsmart the grumpy bear, and steal ALL the ice cream sandwiches!",
+    "characterIntros": [
+      {
+        "characterId": "schemer-lemming",
+        "introText": "Schemer Lemming is the brains! Always planning, always plotting. That little head is full of BIG ideas."
+      },
+      {
+        "characterId": "chaos-lemming",
+        "introText": "Chaos Lemming is the action! Fast, loud, and ready to cause maximum mayhem. Distractions are the specialty."
+      },
+      {
+        "characterId": "sweet-lemming",
+        "introText": "Sweet Lemming is the secret weapon! So cute that even grumpy bears can't resist. Always carries a cookie, just in case."
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "id": "scene-1",
+      "sceneNumber": 0,
+      "title": "The Sneak Attempt",
+      "narrationText": "The lemmings creep through an open window. Grizzy is snoring on the couch, TV remote in one paw, the other paw draped protectively toward the freezer.\n\nThe freezer is RIGHT THERE. But it has a weird latch on it. And Grizzy's snores are getting lighter...\n\nTime for the first scheme!",
+      "sceneImageUrl": "/images/scenes/grizzy-lemmings/scene-1.png",
+      "characterTurns": [
+        {
+          "characterId": "schemer-lemming",
+          "promptText": "The freezer has a tricky latch! Can Schemer figure it out?",
+          "choices": null,
+          "alwaysSucceed": true,
+          "outcome": {
+            "text": "Schemer's tiny paws work the latch - click, click, CLICK - it's almost open! But wait... is Grizzy waking up?!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-alexander.png"
+          }
+        },
+        {
+          "characterId": "chaos-lemming",
+          "promptText": "Sneak past Grizzy! But watch out for that squeaky floorboard...",
+          "choices": [
+            { "id": "scene1-tiptoe", "label": "Tiptoe super slowly" },
+            { "id": "scene1-jump", "label": "Jump over the squeaky spot" }
+          ],
+          "successThreshold": 4,
+          "successOutcome": {
+            "text": "Chaos tiptoes past Grizzy with ninja precision! Not a single squeak! He's right next to the freezer now!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-oliver.png"
+          },
+          "failOutcome": {
+            "text": "SQUEAK! Chaos steps right on a squeaky toy! Grizzy's ear twitches... his eyes flutter... but he keeps snoring. PHEW!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-oliver.png"
+          }
+        },
+        {
+          "characterId": "sweet-lemming",
+          "promptText": "Peek around the corner! Is Grizzy still asleep?",
+          "choices": [
+            { "id": "scene1-peek", "label": "Peek with one eye" },
+            { "id": "scene1-listen", "label": "Listen for snoring" }
+          ],
+          "successThreshold": 4,
+          "successOutcome": {
+            "text": "Sweet Lemming peeks perfectly! Grizzy is dreaming about ice cream sandwiches - his paw twitches and he mumbles 'mmm... chocolate...'",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-isabella.png"
+          },
+          "failOutcome": {
+            "text": "Sweet Lemming accidentally bumps a cushion! Grizzy grumbles in his sleep... but doesn't wake up. Too close!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-isabella.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "SNORRRRK! Grizzy snorts and rolls over! His big bear arm SWINGS toward the freezer! The lemmings DIVE behind the couch just in time.\n\nThat was TOO close. They need a new plan!",
+        "nextSceneId": "scene-2"
+      }
+    },
+    {
+      "id": "scene-2",
+      "sceneNumber": 1,
+      "title": "Grizzy Wakes Up",
+      "narrationText": "CRASH! Chaos Lemming accidentally knocks over a lamp. Grizzy's eyes SNAP open!\n\n'LEMMINGS!' he roars, scrambling off the couch.\n\nThe chase is ON! The lemmings scatter in different directions. Grizzy can't catch all three at once... can he?",
+      "sceneImageUrl": "/images/scenes/grizzy-lemmings/scene-2.png",
+      "characterTurns": [
+        {
+          "characterId": "schemer-lemming",
+          "promptText": "Grizzy is chasing you! Quick, where do you hide?",
+          "choices": [
+            { "id": "scene2-curtains", "label": "Climb up the curtains" },
+            { "id": "scene2-books", "label": "Hide behind the bookshelf" }
+          ],
+          "successThreshold": 4,
+          "successOutcome": {
+            "text": "Schemer ZOOMS up the curtains and clings to the ceiling! Grizzy searches below... but hasn't looked UP yet. Genius!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-alexander.png"
+          },
+          "failOutcome": {
+            "text": "Schemer scrambles behind the bookshelf but his bandana is sticking out! Grizzy reaches in... but Schemer slips away just in time!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-alexander.png"
+          }
+        },
+        {
+          "characterId": "chaos-lemming",
+          "promptText": "Quick! Drop something on Grizzy to slow him down!",
+          "choices": [
+            { "id": "scene2-pot", "label": "Push the pot off the shelf" },
+            { "id": "scene2-pillow", "label": "Throw a pillow at his face" }
+          ],
+          "successThreshold": 4,
+          "successOutcome": {
+            "text": "BONK! A pot lands RIGHT on Grizzy's head! Stars spin around him as Chaos pumps his tiny fists in victory!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-oliver.png"
+          },
+          "failOutcome": {
+            "text": "The pot misses Grizzy by an inch and CLANGS on the floor! Grizzy spins around confused - buying just enough time to escape!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-oliver.png"
+          }
+        },
+        {
+          "characterId": "sweet-lemming",
+          "promptText": "Sweet Lemming has an idea... what about that cookie?",
+          "choices": [
+            { "id": "scene2-offer", "label": "Offer Grizzy the cookie" },
+            { "id": "scene2-wave", "label": "Wave and look extra cute" }
+          ],
+          "alwaysSucceed": true,
+          "outcome": {
+            "text": "Sweet Lemming holds out the cookie with the BIGGEST, SADDEST eyes ever. Grizzy's grumpy face... melts. 'Awww...' The freezer is SO close...",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-isabella.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "But then Grizzy SNAPS out of it! 'HEY! Nice try, little lemming!'\n\nHe shoos all three out the window. 'AND STAY OUT!'\n\nThe lemmings land in a heap outside. But they're not giving up. Oh no. Now it's time for THE BIG PLAN.",
+        "nextSceneId": "scene-3"
+      }
+    },
+    {
+      "id": "scene-3",
+      "sceneNumber": 2,
+      "title": "The Big Setup",
+      "narrationText": "The lemmings huddle outside the cabin. Schemer draws in the dirt with a stick. This calls for their most elaborate scheme yet.\n\nThey've spotted everything they need: a rope, a bucket, a pulley, and a very convenient air vent that leads RIGHT to the freezer.\n\nIt's Mission Impossible time.\n\nEach lemming has a job. Each job must be PERFECT.",
+      "sceneImageUrl": "/images/scenes/grizzy-lemmings/scene-3.png",
+      "characterTurns": [
+        {
+          "characterId": "schemer-lemming",
+          "promptText": "Plan the route from the vent to the freezer! Can Schemer map it out?",
+          "choices": null,
+          "alwaysSucceed": true,
+          "outcome": {
+            "text": "Schemer finishes the blueprint with a flourish. Every twist, every turn, mapped out PERFECTLY. Big brain energy!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-alexander.png"
+          }
+        },
+        {
+          "characterId": "chaos-lemming",
+          "promptText": "Rig up the rope and pulley for the escape route!",
+          "choices": [
+            { "id": "scene3-knot", "label": "Tie a super strong knot" },
+            { "id": "scene3-swing", "label": "Test it with a big swing" }
+          ],
+          "successThreshold": 4,
+          "successOutcome": {
+            "text": "Chaos tests the rope - ZING! It's tight, it's ready, it's PERFECT. He grins. This contraption is a masterpiece!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-oliver.png"
+          },
+          "failOutcome": {
+            "text": "The rope slips a little... but Chaos quickly ties a double knot! It wobbles but holds. Good enough for a lemming!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-oliver.png"
+          }
+        },
+        {
+          "characterId": "sweet-lemming",
+          "promptText": "Get everyone into position! Is Sweet Lemming ready?",
+          "choices": null,
+          "alwaysSucceed": true,
+          "outcome": {
+            "text": "The three lemmings stand ready. Schemer nods. Chaos cracks his knuckles. Sweet tucks her cookie in her bow. IT'S GO TIME.",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-isabella.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": "The plan is set. The rope is rigged. Everyone knows their position.\n\nNo more failures. No more getting caught.\n\nIt's time to execute THE PERFECT HEIST.",
+        "nextSceneId": "finale"
+      }
+    },
+    {
+      "id": "finale",
+      "sceneNumber": 3,
+      "title": "The Perfect Heist",
+      "isClimax": true,
+      "climaxMode": "roll-until-success",
+      "narrationText": "GO GO GO!\n\nThe lemmings burst into action! Schemer slides through the vent! Chaos swings on the rope! Sweet Lemming is in position by the freezer!\n\nGrizzy is watching TV, completely unaware. But one wrong move and he'll spot them!\n\nEach lemming needs to nail their move PERFECTLY!",
+      "sceneImageUrl": "/images/scenes/grizzy-lemmings/finale.png",
+      "climaxVideoUrl": "/videos/grizzy-lemmings/climax.mp4",
+      "climaxInstructions": {
+        "type": "roll-until-highest",
+        "failNarrations": [
+          "Schemer crawls through the vent... almost through the yarn lasers... BONK! Backed up, trying again!",
+          "Chaos swings on the rope... swinging... Almost grabbed the freezer handle! Missed by a whisker!",
+          "Sweet reaches for the ice cream... slippery wrappers! They slide right out of those tiny paws!",
+          "Schemer ducks and weaves through the vent! One more section to go...",
+          "Chaos winds up for another swing... the rope creaks... almost there!",
+          "Sweet Lemming stretches those little arms as far as they'll go..."
+        ],
+        "successTrigger": "roll-highest-number",
+        "successNarration": "ALL THREE LEMMINGS NAIL IT! Schemer slides through without touching a single yarn! Chaos YANKS the freezer open! Sweet scoops up armfuls of ice cream sandwiches! THE HEIST IS COMPLETE!"
+      },
+      "characterTurns": [
+        {
+          "characterId": "schemer-lemming",
+          "promptText": "Navigate the yarn lasers!",
+          "choices": null,
+          "alwaysSucceed": true,
+          "outcome": {
+            "text": "PERFECT! Schemer slides through without touching a single yarn!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/finale-alexander.png"
+          }
+        },
+        {
+          "characterId": "chaos-lemming",
+          "promptText": "Swing across and grab the freezer handle!",
+          "choices": null,
+          "alwaysSucceed": true,
+          "outcome": {
+            "text": "YOINK! Chaos grabs the handle and the freezer door SWINGS open!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/finale-oliver.png"
+          }
+        },
+        {
+          "characterId": "sweet-lemming",
+          "promptText": "Grab the ice cream sandwiches!",
+          "choices": null,
+          "alwaysSucceed": true,
+          "outcome": {
+            "text": "GOT THEM! Sweet Lemming's arms are FULL of ice cream sandwiches!",
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/finale-isabella.png"
+          }
+        }
+      ],
+      "outcome": {
+        "resultText": null,
+        "nextSceneId": null
+      }
+    }
+  ],
+  "ending": {
+    "title": "Mission Accomplished!",
+    "narrationText": "The lemmings ZOOM out the window on their rope zip-line, ice cream sandwiches clutched to their chests!\n\nGrizzy spins around. 'MY ICE CREAM SANDWICHES!'\n\nHe runs to the window just in time to see three little lemmings disappearing into the forest, leaving a trail of wrapper crumbs.\n\n'LEMMIIIIINGS!' he shakes his fist at the sky.\n\nBut somewhere in the forest, three small creatures are having the BEST. PICNIC. EVER.\n\nSchemer takes a big bite. Chaos stuffs a whole sandwich in. Sweet Lemming nibbles happily.\n\nMission accomplished.\n\nTHE END... until next time!",
+    "endingImageUrl": "/images/scenes/grizzy-lemmings/epilogue.png",
+    "lootScreen": {
+      "title": "Heist Loot!",
+      "description": "Look what the lemmings got away with!"
+    },
+    "rewards": [
+      {
+        "type": "item",
+        "id": "ice-cream-sandwich",
+        "name": "Ice Cream Sandwich",
+        "imageUrl": "/images/rewards/grizzy-lemmings/ice-cream-sandwich.png"
+      },
+      {
+        "type": "badge",
+        "id": "master-heist-badge",
+        "name": "Master Heist Badge",
+        "imageUrl": "/images/rewards/grizzy-lemmings/master-heist-badge.png"
+      }
+    ]
+  }
+}
