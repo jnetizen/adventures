@@ -54,6 +54,7 @@ export default function PlayPage() {
     kidName: string;
     roll: number;
     characterId: string;
+    localOnly?: boolean; // true for climax fail animations that don't correspond to a scene_choice
   } | null>(null);
   const [processedRollCount, setProcessedRollCount] = useState(0);
 
@@ -836,7 +837,9 @@ export default function PlayPage() {
               roll={pendingDiceRoll.roll}
               diceMax={session.dice_type ?? 20}
               onComplete={() => {
-                setProcessedRollCount(prev => prev + 1);
+                if (!pendingDiceRoll.localOnly) {
+                  setProcessedRollCount(prev => prev + 1);
+                }
                 setPendingDiceRoll(null);
               }}
             />
@@ -873,7 +876,7 @@ export default function PlayPage() {
                       const currentTurn = activeTurns[session.current_character_turn_index ?? 0] ?? activeTurns[0];
                       if (currentTurn) {
                         const kidName = getKidDisplayName(session.players, currentTurn.characterId, 'Hero');
-                        setPendingDiceRoll({ kidName, roll, characterId: currentTurn.characterId });
+                        setPendingDiceRoll({ kidName, roll, characterId: currentTurn.characterId, localOnly: true });
                       }
                       return;
                     }
