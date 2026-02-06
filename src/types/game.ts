@@ -67,6 +67,8 @@ export interface GameSession {
   updated_at: string;
   /** Which adventure is being played. Optional for backward compatibility. */
   adventure_id?: string | null;
+  /** Family identifier for personalized images. Null = use default bundled images. */
+  family_slug?: string | null;
   /** Players: kid name + character assignment. Only turns for these characters are shown. */
   players?: Player[];
   /** Which character's turn it is in the current scene. */

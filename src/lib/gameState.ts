@@ -24,9 +24,10 @@ function generateOperationId(): string {
 }
 
 /**
- * Creates a new game session with a unique room code
+ * Creates a new game session with a unique room code.
+ * Optionally associates a family_slug for personalized images.
  */
-export async function createSession(): Promise<{ data: GameSession | null; error: Error | null }> {
+export async function createSession(familySlug?: string | null): Promise<{ data: GameSession | null; error: Error | null }> {
   return retryWithBackoff(async () => {
     let attempts = 0;
     const maxAttempts = 10;
@@ -34,13 +35,18 @@ export async function createSession(): Promise<{ data: GameSession | null; error
     while (attempts < maxAttempts) {
       const roomCode = generateRoomCode();
 
+      const insertData: Record<string, unknown> = {
+        room_code: roomCode,
+        current_scene: 0,
+        phase: GAME_PHASES.SETUP,
+      };
+      if (familySlug) {
+        insertData.family_slug = familySlug;
+      }
+
       const { data, error } = await supabase
         .from('sessions')
-        .insert({
-          room_code: roomCode,
-          current_scene: 0,
-          phase: GAME_PHASES.SETUP,
-        })
+        .insert(insertData)
         .select()
         .single();
 

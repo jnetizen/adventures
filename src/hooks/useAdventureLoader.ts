@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { loadAdventure } from '../lib/adventures';
+import { resolveAdventureImages } from '../lib/imageResolver';
 import type { Adventure } from '../types/adventure';
 
 interface UseAdventureLoaderResult {
@@ -11,11 +12,14 @@ interface UseAdventureLoaderResult {
  * Loads adventure data when adventure_id changes.
  * Clears adventure when ID is null/undefined.
  *
- * Extracted from duplicate code in:
- * - DMPage.tsx:106-120
- * - PlayPage.tsx:85-99
+ * When familySlug is provided, all image/video URLs in the adventure
+ * are rewritten to point at the family's Supabase Storage folder.
+ * When familySlug is null/undefined, original paths are used unchanged.
  */
-export function useAdventureLoader(adventureId: string | null | undefined): UseAdventureLoaderResult {
+export function useAdventureLoader(
+  adventureId: string | null | undefined,
+  familySlug?: string | null
+): UseAdventureLoaderResult {
   const [adventure, setAdventure] = useState<Adventure | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -35,5 +39,12 @@ export function useAdventureLoader(adventureId: string | null | undefined): UseA
     });
   }, [adventureId]);
 
-  return { adventure, loading };
+  // Apply family image resolution as a memoized transform.
+  // This covers all 15+ image URL fields via deep JSON transform.
+  const resolvedAdventure = useMemo(() => {
+    if (!adventure) return null;
+    return resolveAdventureImages(adventure, familySlug, adventureId);
+  }, [adventure, familySlug, adventureId]);
+
+  return { adventure: resolvedAdventure, loading };
 }

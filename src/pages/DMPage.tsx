@@ -192,11 +192,13 @@ export default function DMPage() {
   const [climaxPlayMode, setClimaxPlayMode] = useState<'cutscenes' | 'video' | null>(null);
   // Track which climax cutscene we're showing (for cutscenes mode)
   const [climaxCutsceneIndex, setClimaxCutsceneIndex] = useState(0);
+  // Family slug for personalized images (empty string = no family / default images)
+  const [selectedFamilySlug, setSelectedFamilySlug] = useState('');
 
   // Custom hooks for extracted logic
   useSessionPersistence(session);
   const { isOffline, syncing, pendingOpsCount } = useOfflineSync(session);
-  const { adventure, loading: loadingAdventure } = useAdventureLoader(session?.adventure_id);
+  const { adventure, loading: loadingAdventure } = useAdventureLoader(session?.adventure_id, session?.family_slug);
 
   // Memoized callbacks for session subscription
   // Merge active_cutscene to preserve optimistic updates during race conditions
@@ -346,7 +348,7 @@ export default function DMPage() {
     // Clear any old session from storage to prevent confusion
     clearSessionFromStorage();
 
-    const { data, error: sessionError } = await createSession();
+    const { data, error: sessionError } = await createSession(selectedFamilySlug || null);
 
     if (sessionError || !data) {
       setError(formatError(sessionError) || 'Failed to create session');
@@ -1325,6 +1327,22 @@ export default function DMPage() {
                 </button>
               </div>
             )}
+            <div className="space-y-2">
+              <label htmlFor="family-slug" className="block text-sm font-medium text-gray-700">
+                Family
+              </label>
+              <select
+                id="family-slug"
+                value={selectedFamilySlug}
+                onChange={(e) => setSelectedFamilySlug(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Default (no family)</option>
+                <option value="jenny-family">Jenny Family</option>
+                <option value="test-family-1">Test Family 1</option>
+                <option value="test-family-2">Test Family 2</option>
+              </select>
+            </div>
             <button
               onClick={handleCreateSession}
               className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors"

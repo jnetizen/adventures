@@ -64,7 +64,7 @@ export default function PlayPage() {
   useSessionPersistence(session);
   useWakeLock(); // Keep screen awake during gameplay
   const { isOffline, syncing, pendingOpsCount } = useOfflineSync(session);
-  const { adventure, loading: loadingAdventure } = useAdventureLoader(session?.adventure_id);
+  const { adventure, loading: loadingAdventure } = useAdventureLoader(session?.adventure_id, session?.family_slug);
 
   // Memoized callbacks for session subscription
   // PlayPage always accepts the new session state from the database
