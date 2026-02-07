@@ -30,7 +30,7 @@ import {
   useSessionSubscription,
   useSessionRecovery,
 } from '../hooks';
-import RoomCode, { StickyRoomCode } from '../components/RoomCode';
+import { StickyRoomCode } from '../components/RoomCode';
 import DMOnboarding from '../components/DMOnboarding';
 import ConnectionStatus from '../components/ConnectionStatus';
 import PlaceholderImage from '../components/PlaceholderImage';
