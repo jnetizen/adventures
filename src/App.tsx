@@ -13,6 +13,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/dm/:familySlug" element={<DMPage />} />
           <Route path="/dm" element={<DMPage />} />
           <Route path="/play" element={<PlayPage />} />
           {/* Story Mode routes */}

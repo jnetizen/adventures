@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
 import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState, clearPlayerRoll } from '../lib/gameState';
 import { supabase } from '../lib/supabase';
@@ -29,7 +30,8 @@ import {
   useSessionSubscription,
   useSessionRecovery,
 } from '../hooks';
-import RoomCode from '../components/RoomCode';
+import RoomCode, { StickyRoomCode } from '../components/RoomCode';
+import DMOnboarding from '../components/DMOnboarding';
 import ConnectionStatus from '../components/ConnectionStatus';
 import PlaceholderImage from '../components/PlaceholderImage';
 import AnimationIndicator from '../components/AnimationIndicator';
@@ -168,6 +170,7 @@ const renderSceneOutcome = (outcome: SceneOutcome) => (
 );
 
 export default function DMPage() {
+  const { familySlug } = useParams<{ familySlug?: string }>();
   const [session, setSession] = useState<GameSession | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusType>(CONNECTION_STATUS.DISCONNECTED);
   const [error, setError] = useState<string | null>(null);
@@ -192,8 +195,13 @@ export default function DMPage() {
   const [climaxPlayMode, setClimaxPlayMode] = useState<'cutscenes' | 'video' | null>(null);
   // Track which climax cutscene we're showing (for cutscenes mode)
   const [climaxCutsceneIndex, setClimaxCutsceneIndex] = useState(0);
-  // Family slug for personalized images (empty string = no family / default images)
-  const [selectedFamilySlug, setSelectedFamilySlug] = useState('');
+  // Onboarding state for family URLs
+  const [onboardingDone, setOnboardingDone] = useState(
+    () => !!familySlug && localStorage.getItem(`quest-family-onboarded-${familySlug}`) === '1'
+  );
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [autoCreating, setAutoCreating] = useState(false);
+  const [recoveryDismissed, setRecoveryDismissed] = useState(false);
 
   // Custom hooks for extracted logic
   useSessionPersistence(session);
@@ -341,24 +349,33 @@ export default function DMPage() {
     setCelebratedEnding(true);
   }, []);
 
-  const handleCreateSession = async () => {
-    setError(null);
-    setConnectionStatus(CONNECTION_STATUS.CONNECTING);
+  const handleOnboardingComplete = useCallback(() => {
+    if (familySlug) localStorage.setItem(`quest-family-onboarded-${familySlug}`, '1');
+    setOnboardingDone(true);
+    setShowOnboarding(false);
+  }, [familySlug]);
 
-    // Clear any old session from storage to prevent confusion
-    clearSessionFromStorage();
+  // Auto-create session when family URL is visited and onboarding is done
+  useEffect(() => {
+    if (!familySlug || !onboardingDone || session || autoCreating || showOnboarding) return;
+    if (storedSession && !recoveryDismissed) return;
 
-    const { data, error: sessionError } = await createSession(selectedFamilySlug || null);
-
-    if (sessionError || !data) {
-      setError(formatError(sessionError) || 'Failed to create session');
-      setConnectionStatus(CONNECTION_STATUS.ERROR);
-      return;
-    }
-
-    setSession(data);
-    setSessionId(data.id);  // Track session for remote logging
-  };
+    const autoCreate = async () => {
+      setAutoCreating(true);
+      setConnectionStatus(CONNECTION_STATUS.CONNECTING);
+      clearSessionFromStorage();
+      const { data, error: err } = await createSession(familySlug || null);
+      setAutoCreating(false);
+      if (err || !data) {
+        setError(formatError(err) || 'Failed to create session');
+        setConnectionStatus(CONNECTION_STATUS.ERROR);
+        return;
+      }
+      setSession(data);
+      setSessionId(data.id);
+    };
+    autoCreate();
+  }, [familySlug, onboardingDone, session, storedSession, autoCreating, showOnboarding, recoveryDismissed]);
 
   const persistAdventureSelection = async (adventureId: string) => {
     if (!session) return false;
@@ -1398,15 +1415,39 @@ export default function DMPage() {
 
   // Render logic based on game state
   if (!session) {
-    return (
-      <div className="min-h-screen bg-gray-50 px-4 py-8">
-        <div className="max-w-md mx-auto space-y-6">
-          <h1 className="text-2xl font-bold text-gray-900 text-center">DM Console</h1>
-          <div className="bg-white rounded-lg shadow p-6 space-y-6">
-            <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
-            {storedSession && storedSession.room_code && (
+    // No family slug — show a "you need your family link" message
+    if (!familySlug) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+          <div className="max-w-sm text-center space-y-4">
+            <div className="text-5xl">🔗</div>
+            <h1 className="text-xl font-bold text-gray-900">You need your family's link</h1>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Ask the person who set up Quest Family for your private link. It looks like:
+            </p>
+            <p className="text-sm font-mono bg-gray-100 rounded-lg px-3 py-2 text-gray-700">
+              {typeof window !== 'undefined' ? window.location.host : ''}/dm/<span className="text-blue-600">your-family</span>
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    // Show onboarding if not completed yet
+    if (!onboardingDone || showOnboarding) {
+      return <DMOnboarding onComplete={handleOnboardingComplete} />;
+    }
+
+    // Stored session recovery
+    if (storedSession && storedSession.room_code && !recoveryDismissed) {
+      return (
+        <div className="min-h-screen bg-gray-50 px-4 py-8">
+          <div className="max-w-md mx-auto space-y-6">
+            <h1 className="text-2xl font-bold text-gray-900 text-center">DM Console</h1>
+            <div className="bg-white rounded-lg shadow p-6 space-y-6">
+              <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
-                <p className="text-sm font-medium text-amber-900">Recover session?</p>
+                <p className="text-sm font-medium text-amber-900">Resume your last session?</p>
                 <p className="text-xs text-amber-700">Room code: {storedSession.room_code}</p>
                 <button
                   onClick={handleRecoverSession}
@@ -1419,35 +1460,30 @@ export default function DMPage() {
                       Recovering...
                     </span>
                   ) : (
-                    'Recover Session'
+                    'Resume Session'
                   )}
                 </button>
+                <button
+                  onClick={() => setRecoveryDismissed(true)}
+                  className="w-full text-sm text-gray-500 hover:text-gray-700 py-1"
+                >
+                  Start a new adventure instead
+                </button>
               </div>
-            )}
-            <div className="space-y-2">
-              <label htmlFor="family-slug" className="block text-sm font-medium text-gray-700">
-                Family
-              </label>
-              <select
-                id="family-slug"
-                value={selectedFamilySlug}
-                onChange={(e) => setSelectedFamilySlug(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Default (no family)</option>
-                <option value="jenny-family">Jenny Family</option>
-                <option value="test-family-1">Test Family 1</option>
-                <option value="test-family-2">Test Family 2</option>
-              </select>
+              {error && <div className="text-red-600 text-sm text-center">{error}</div>}
             </div>
-            <button
-              onClick={handleCreateSession}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-            >
-              Create Session
-            </button>
-            {error && <div className="text-red-600 text-sm text-center">{error}</div>}
           </div>
+        </div>
+      );
+    }
+
+    // Auto-creating session — loading state
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="text-center space-y-4">
+          <span className="animate-spin inline-block rounded-full h-8 w-8 border-b-2 border-amber-500" />
+          <p className="text-gray-600">Setting up your adventure...</p>
+          {error && <div className="text-red-600 text-sm">{error}</div>}
         </div>
       </div>
     );
@@ -1456,12 +1492,12 @@ export default function DMPage() {
   // Feedback form (after adventure ends, phase complete)
   if (session.phase === GAME_PHASES.COMPLETE) {
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
-        <div className="max-w-md mx-auto space-y-6">
+    <div className="min-h-screen bg-gray-50">
+        <StickyRoomCode code={session.room_code} onShowHowToPlay={() => setShowOnboarding(true)} />
+        <div className="max-w-md mx-auto space-y-6 px-4 py-8">
           <h1 className="text-2xl font-bold text-gray-900 text-center">DM Console</h1>
           <div className="bg-white rounded-lg shadow p-6 space-y-6">
             <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
-            <RoomCode code={session.room_code} />
             <FeedbackForm
               onSubmit={handleFeedbackSubmit}
             />
@@ -1475,12 +1511,12 @@ export default function DMPage() {
   // Session exists but no adventure loaded — adventure selection screen
   if (!adventure) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-8">
-        <div className="max-w-3xl mx-auto space-y-6">
+      <div className="min-h-screen bg-gray-50">
+        <StickyRoomCode code={session.room_code} onShowHowToPlay={() => setShowOnboarding(true)} />
+        <div className="max-w-3xl mx-auto space-y-6 px-4 py-8">
           <h1 className="text-2xl font-bold text-gray-900 text-center">DM Console</h1>
           <div className="bg-white rounded-lg shadow p-6 space-y-6">
             <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
-            <RoomCode code={session.room_code} />
             <AdventureSelectPage
               adventures={availableAdventures}
               onSelect={(id) => loadAdventureById(id)}
@@ -1497,12 +1533,12 @@ export default function DMPage() {
   const players = session.players || [];
   if (players.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-8">
-        <div className="max-w-md mx-auto space-y-6">
+      <div className="min-h-screen bg-gray-50">
+        <StickyRoomCode code={session.room_code} onShowHowToPlay={() => setShowOnboarding(true)} />
+        <div className="max-w-md mx-auto space-y-6 px-4 py-8">
           <h1 className="text-2xl font-bold text-gray-900 text-center">DM Console</h1>
           <div className="bg-white rounded-lg shadow p-6 space-y-6">
             <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
-            <RoomCode code={session.room_code} />
             <h2 className="text-lg font-semibold">Setup Players</h2>
 
             {assignmentStep === 'kids' ? (
@@ -1764,12 +1800,10 @@ export default function DMPage() {
   // Prologue: phase prologue, before Scene 1
   if (session.phase === GAME_PHASES.PROLOGUE && adventure) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-8">
-        <div className="max-w-2xl mx-auto space-y-4">
-          <div className="flex justify-between items-center">
-            <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
-            <RoomCode code={session.room_code} />
-          </div>
+      <div className="min-h-screen bg-gray-50">
+        <StickyRoomCode code={session.room_code} onShowHowToPlay={() => setShowOnboarding(true)} />
+        <div className="max-w-2xl mx-auto space-y-4 px-4 py-8">
+          <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
           <ProloguePage
             adventure={adventure}
             onStart={handlePrologueStart}
@@ -1843,6 +1877,11 @@ export default function DMPage() {
 
   return (
     <>
+      {showOnboarding && (
+        <div className="fixed inset-0 z-50">
+          <DMOnboarding onComplete={() => setShowOnboarding(false)} />
+        </div>
+      )}
       {showSceneCelebration && currentScene?.outcome?.rewards && (
         <RewardCelebration
           rewards={currentScene.outcome.rewards}
@@ -1857,15 +1896,13 @@ export default function DMPage() {
           variant="ending"
         />
       )}
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
-      <div className="max-w-md mx-auto space-y-6">
+    <div className="min-h-screen bg-gray-50">
+      <StickyRoomCode code={session.room_code} onShowHowToPlay={() => setShowOnboarding(true)} />
+      <div className="max-w-md mx-auto space-y-6 px-4 py-8">
         <h1 className="text-2xl font-bold text-gray-900 text-center">DM Console</h1>
         <div className="bg-white rounded-lg shadow p-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-3">
-              <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
-              <RoomCode code={session.room_code} />
-            </div>
+            <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
             <span className="text-xs text-gray-500 tabular-nums" title="Cumulative successful rolls (parent-only)">
               Successes: {session.success_count ?? 0}
             </span>
