@@ -18,22 +18,19 @@
       "id": "schemer-lemming",
       "name": "Schemer Lemming",
       "description": "The brains of the operation - a small mischievous purple-blue lemming with big eyes, wearing a tiny dark blue bandana",
-      "imageUrl": "/images/characters/schemer-lemming.png",
-      "assignedTo": "Alexander"
+      "imageUrl": "/images/characters/schemer-lemming.png"
     },
     {
       "id": "chaos-lemming",
       "name": "Chaos Lemming",
       "description": "The action and distractions - a small mischievous purple-blue lemming with big eyes, wearing a tiny orange bandana",
-      "imageUrl": "/images/characters/chaos-lemming.png",
-      "assignedTo": "Oliver"
+      "imageUrl": "/images/characters/chaos-lemming.png"
     },
     {
       "id": "sweet-lemming",
       "name": "Sweet Lemming",
       "description": "The secret weapon - a small mischievous purple-blue lemming with big eyes, a tiny pink bow on her head, carrying a cookie",
-      "imageUrl": "/images/characters/sweet-lemming.png",
-      "assignedTo": "Isabella"
+      "imageUrl": "/images/characters/sweet-lemming.png"
     }
   ],
   "prologue": {
@@ -84,7 +81,7 @@
           },
           "outcome": {
             "text": "Schemer's tiny paws work the latch - click, click, CLICK - it's almost open! But wait... is Grizzy waking up?!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-alexander.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-schemer-lemming.png"
           }
         },
         {
@@ -97,11 +94,11 @@
           "successThreshold": 4,
           "successOutcome": {
             "text": "Chaos tiptoes past Grizzy with ninja precision! Not a single squeak! He's right next to the freezer now!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-oliver.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-chaos-lemming.png"
           },
           "failOutcome": {
             "text": "SQUEAK! Chaos steps right on a squeaky toy! Grizzy's ear twitches... his eyes flutter... but he keeps snoring. PHEW!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-oliver.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-chaos-lemming.png"
           }
         },
         {
@@ -114,11 +111,11 @@
           "successThreshold": 4,
           "successOutcome": {
             "text": "Sweet Lemming peeks perfectly! Grizzy is dreaming about ice cream sandwiches - his paw twitches and he mumbles 'mmm... chocolate...'",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-isabella.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-sweet-lemming.png"
           },
           "failOutcome": {
             "text": "Sweet Lemming accidentally bumps a cushion! Grizzy grumbles in his sleep... but doesn't wake up. Too close!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-isabella.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-1-sweet-lemming.png"
           }
         }
       ],
@@ -144,11 +141,11 @@
           "successThreshold": 4,
           "successOutcome": {
             "text": "Schemer ZOOMS up the curtains and clings to the ceiling! Grizzy searches below... but hasn't looked UP yet. Genius!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-alexander.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-schemer-lemming.png"
           },
           "failOutcome": {
             "text": "Schemer scrambles behind the bookshelf but his bandana is sticking out! Grizzy reaches in... but Schemer slips away just in time!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-alexander.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-schemer-lemming.png"
           }
         },
         {
@@ -169,7 +166,7 @@
           },
           "outcome": {
             "text": "BONK! A pot lands RIGHT on Grizzy's head! Stars spin around him as Chaos pumps his tiny fists in victory!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-oliver.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-chaos-lemming.png"
           }
         },
         {
@@ -182,7 +179,7 @@
           "alwaysSucceed": true,
           "outcome": {
             "text": "Sweet Lemming holds out the cookie with the BIGGEST, SADDEST eyes ever. Grizzy's grumpy face... melts. 'Awww...' The freezer is SO close...",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-isabella.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-2-sweet-lemming.png"
           }
         }
       ],
@@ -215,7 +212,7 @@
           },
           "outcome": {
             "text": "Schemer finishes the blueprint with a flourish. Every twist, every turn, mapped out PERFECTLY. Big brain energy!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-alexander.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-schemer-lemming.png"
           }
         },
         {
@@ -228,11 +225,11 @@
           "successThreshold": 4,
           "successOutcome": {
             "text": "Chaos tests the rope - ZING! It's tight, it's ready, it's PERFECT!",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-oliver.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-chaos-lemming.png"
           },
           "failOutcome": {
             "text": "The rope slips a little... but Chaos quickly ties a double knot! It wobbles but holds.",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-oliver.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-chaos-lemming.png"
           }
         },
         {
@@ -251,7 +248,7 @@
           },
           "outcome": {
             "text": "The three lemmings stand ready. Schemer nods. Chaos cracks his knuckles. Sweet tucks her cookie in her bow. IT'S GO TIME.",
-            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-isabella.png"
+            "cutsceneImageUrl": "/images/cutscenes/grizzy-lemmings/scene-3-sweet-lemming.png"
           }
         }
       ],
