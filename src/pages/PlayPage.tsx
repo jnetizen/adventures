@@ -36,6 +36,16 @@ import { getKidDisplayName } from '../lib/players';
 import type { GameSession } from '../types/game';
 import ConnectionStatus from '../components/ConnectionStatus';
 
+// Sparkle particle data for join screen (stable across renders)
+const JOIN_SCREEN_SPARKLES = Array.from({ length: 25 }, (_, i) => ({
+  id: i,
+  left: Math.random() * 100,
+  top: Math.random() * 100,
+  delay: Math.random() * 5,
+  duration: 2 + Math.random() * 3,
+  size: 2 + Math.random() * 4,
+}));
+
 export default function PlayPage() {
   const [roomCode, setRoomCode] = useState('');
   const [session, setSession] = useState<GameSession | null>(null);
@@ -48,6 +58,8 @@ export default function PlayPage() {
   const [prologueImageError, setPrologueImageError] = useState(false);
   const [prologueVideoError, setPrologueVideoError] = useState(false);
   const [selectingAdventure, setSelectingAdventure] = useState(false);
+  const [shake, setShake] = useState(false);
+  const codeInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Dice roll animation state
   const [pendingDiceRoll, setPendingDiceRoll] = useState<{
@@ -247,9 +259,50 @@ export default function PlayPage() {
     }
   }, [currentSceneKey, session?.scene_choices?.length, pendingDiceRoll]);
 
+  // 4-letter code input handlers
+  const handleDigitChange = (index: number, value: string) => {
+    const char = value.toUpperCase().replace(/[^A-Z]/g, '');
+    if (!char) return;
+    const newCode = roomCode.split('');
+    newCode[index] = char;
+    setRoomCode(newCode.join(''));
+    if (index < 3) {
+      codeInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleCodeKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      const newCode = roomCode.split('');
+      if (newCode[index]) {
+        newCode[index] = '';
+        setRoomCode(newCode.join(''));
+      } else if (index > 0) {
+        newCode[index - 1] = '';
+        setRoomCode(newCode.join(''));
+        codeInputRefs.current[index - 1]?.focus();
+      }
+    } else if (e.key === 'Enter' && roomCode.length === 4) {
+      handleJoin();
+    }
+  };
+
+  const handleCodePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+    setRoomCode(pasted);
+    const nextIndex = Math.min(pasted.length, 3);
+    codeInputRefs.current[nextIndex]?.focus();
+  };
+
   const handleJoin = async () => {
-    if (!roomCode.trim()) {
-      setError('Please enter a room code');
+    if (roomCode.length < 4) {
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+      if (!roomCode.trim()) {
+        setError('Please enter a room code');
+      }
       return;
     }
 
@@ -450,87 +503,278 @@ export default function PlayPage() {
             </div>
           )}
         </div>
-      ) : !session || !adventure || (!currentScene && session?.phase !== GAME_PHASES.PROLOGUE) ? (
-        <div className="px-4 py-8">
-          <div className="max-w-2xl mx-auto space-y-6">
-            <h1 className="text-2xl font-bold text-gray-900 text-center">Player Screen</h1>
-            
-            <div className="bg-white rounded-lg shadow p-6 space-y-6">
-              <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
+      ) : !session ? (
+        /* ─── Magical Join Screen ─── */
+        <div
+          className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
+          style={{
+            background: 'linear-gradient(165deg, #1a1147 0%, #2d1b69 30%, #1a1147 60%, #0f0a2e 100%)',
+            fontFamily: "'Georgia', 'Times New Roman', serif",
+            padding: 24,
+          }}
+        >
+          {/* Sparkle particles */}
+          {JOIN_SCREEN_SPARKLES.map((s) => (
+            <div
+              key={s.id}
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                left: `${s.left}%`,
+                top: `${s.top}%`,
+                width: s.size,
+                height: s.size,
+                background: 'white',
+                boxShadow: `0 0 ${s.size * 2}px ${s.size}px rgba(255,255,255,0.3)`,
+                animation: `qf-sparkle ${s.duration}s ${s.delay}s ease-in-out infinite`,
+              }}
+            />
+          ))}
 
-          {!session ? (
-            <>
-              {/* Session recovery UI disabled
-              {storedSession && storedSession.room_code && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3 mb-4">
-                  <p className="text-sm font-medium text-amber-900">Recover session?</p>
-                  <p className="text-xs text-amber-700">Room code: {storedSession.room_code}</p>
-                  <button
-                    onClick={handleRecoverSession}
-                    disabled={recovering}
-                    className="w-full bg-amber-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                  >
-                    {recovering ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                        Recovering...
-                      </span>
-                    ) : (
-                      'Recover Session'
-                    )}
-                  </button>
-                </div>
-              )}
-              */}
-              <div>
-                <label htmlFor="roomCode" className="block text-sm font-medium text-gray-700 mb-2">
-                  Enter Room Code
-                </label>
-                <input
-                  id="roomCode"
-                  type="text"
-                  value={roomCode}
-                  onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                  placeholder="ABCD"
-                  maxLength={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-2xl font-bold tracking-wider uppercase focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+          {/* Ambient glow orbs */}
+          <div
+            className="absolute pointer-events-none rounded-full"
+            style={{
+              width: 300, height: 300,
+              background: 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)',
+              top: '-5%', right: '-10%',
+            }}
+          />
+          <div
+            className="absolute pointer-events-none rounded-full"
+            style={{
+              width: 400, height: 400,
+              background: 'radial-gradient(circle, rgba(217,119,6,0.1) 0%, transparent 70%)',
+              bottom: '-10%', left: '-10%',
+            }}
+          />
+
+          {/* Main content */}
+          <div className="flex flex-col items-center gap-8 z-10 w-full" style={{ maxWidth: 400 }}>
+            {/* Logo */}
+            <div className="text-center">
+              <div
+                className="leading-none"
+                style={{
+                  fontSize: 56,
+                  animation: 'qf-float 4s ease-in-out infinite',
+                  filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.3))',
+                }}
+              >
+                ✨📖✨
               </div>
+              <h1
+                className="font-bold mt-4"
+                style={{
+                  fontSize: 40,
+                  color: '#fef3c7',
+                  textShadow: '0 2px 12px rgba(217,119,6,0.3)',
+                  letterSpacing: '0.01em',
+                }}
+              >
+                Quest Family
+              </h1>
+              <p
+                className="mt-1.5 italic"
+                style={{
+                  fontSize: 17,
+                  color: 'rgba(253,230,180,0.7)',
+                  letterSpacing: '0.02em',
+                }}
+              >
+                Your adventure is waiting!
+              </p>
+            </div>
+
+            {/* Room code card */}
+            <div
+              className="w-full"
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 24,
+                padding: '36px 28px 32px',
+              }}
+            >
+              <p
+                className="text-center font-semibold uppercase mb-5"
+                style={{
+                  fontSize: 13,
+                  letterSpacing: '0.15em',
+                  color: 'rgba(253,230,180,0.6)',
+                  fontFamily: 'system-ui, sans-serif',
+                }}
+              >
+                Enter your room code
+              </p>
+
+              {/* 4-letter code inputs */}
+              <div
+                className="flex gap-3 justify-center mb-7"
+                style={{ animation: shake ? 'qf-shake 0.4s ease-in-out' : 'none' }}
+              >
+                {[0, 1, 2, 3].map((i) => (
+                  <input
+                    key={i}
+                    ref={(el) => { codeInputRefs.current[i] = el; }}
+                    type="text"
+                    inputMode="text"
+                    autoCapitalize="characters"
+                    maxLength={1}
+                    value={roomCode[i] || ''}
+                    onChange={(e) => handleDigitChange(i, e.target.value)}
+                    onKeyDown={(e) => handleCodeKeyDown(i, e)}
+                    onPaste={i === 0 ? handleCodePaste : undefined}
+                    className="text-center outline-none"
+                    style={{
+                      width: 64,
+                      height: 72,
+                      border: roomCode[i]
+                        ? '2px solid rgba(217,168,66,0.6)'
+                        : '2px solid rgba(255,255,255,0.12)',
+                      borderRadius: 16,
+                      background: roomCode[i]
+                        ? 'rgba(217,168,66,0.08)'
+                        : 'rgba(255,255,255,0.04)',
+                      fontSize: 32,
+                      fontWeight: 700,
+                      color: '#fef3c7',
+                      caretColor: '#d9a842',
+                      fontFamily: "'Georgia', serif",
+                      letterSpacing: '0.05em',
+                      transition: 'all 0.2s ease',
+                      boxShadow: roomCode[i]
+                        ? '0 0 20px rgba(217,168,66,0.15), inset 0 1px 0 rgba(255,255,255,0.05)'
+                        : 'inset 0 1px 0 rgba(255,255,255,0.05)',
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Error message */}
+              {error && (
+                <p className="text-center text-sm mb-4" style={{ color: '#fca5a5', fontFamily: 'system-ui, sans-serif' }}>
+                  {error}
+                </p>
+              )}
+
+              {/* Join button */}
               <button
                 onClick={handleJoin}
                 disabled={joining}
-                className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full border-none cursor-pointer"
+                style={{
+                  padding: '18px 24px',
+                  borderRadius: 16,
+                  background: joining
+                    ? 'linear-gradient(135deg, #92702a, #b8860b)'
+                    : 'linear-gradient(135deg, #d4a030, #e8b84a, #d4a030)',
+                  color: '#1a1147',
+                  fontSize: 20,
+                  fontWeight: 700,
+                  fontFamily: "'Georgia', serif",
+                  letterSpacing: '0.02em',
+                  boxShadow: '0 4px 24px rgba(217,168,66,0.3), inset 0 1px 0 rgba(255,255,255,0.2)',
+                  transition: 'all 0.2s ease',
+                  opacity: roomCode.length < 4 ? 0.5 : 1,
+                }}
               >
-                {joining ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
-                    Joining...
-                  </span>
-                ) : (
-                  'Join Session'
-                )}
+                {joining ? 'Joining...' : 'Join Adventure! ⚔️'}
               </button>
-            </>
-          ) : loadingAdventure ? (
-            <div className="text-center py-8 px-6 rounded-xl bg-gray-50 border border-gray-100">
-              <div className="flex items-center justify-center gap-3">
-                <span className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent" aria-hidden />
-                <p className="text-gray-700 font-medium">Loading adventure...</p>
-              </div>
             </div>
-          ) : !adventure ? (
-            <AdventurePreviewGrid
-              adventures={availableAdventures}
-              onSelect={handleSelectAdventure}
-              loading={selectingAdventure}
-            />
-          ) : !currentScene ? (
-            <div className="text-center py-8 px-6 rounded-xl bg-amber-50/60 border border-amber-100">
-              <p className="text-gray-700 font-medium">Waiting for scene to start...</p>
-              <p className="text-sm text-gray-500 mt-1">The DM will begin when everyone is ready</p>
-            </div>
-          ) : null}
 
+            {/* Status indicator */}
+            <div className="flex items-center gap-2" style={{ opacity: 0.5 }}>
+              <div
+                className="rounded-full"
+                style={{
+                  width: 8,
+                  height: 8,
+                  background:
+                    connectionStatus === 'connected' ? '#4ade80'
+                    : connectionStatus === 'connecting' ? '#fbbf24'
+                    : '#6b7280',
+                  boxShadow:
+                    connectionStatus === 'connected' ? '0 0 8px #4ade80'
+                    : connectionStatus === 'connecting' ? '0 0 8px #fbbf24'
+                    : 'none',
+                  animation: connectionStatus === 'connecting' ? 'qf-pulse 1s ease-in-out infinite' : 'none',
+                }}
+              />
+              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', fontFamily: 'system-ui, sans-serif' }}>
+                {connectionStatus === 'connected' ? 'Connected'
+                  : connectionStatus === 'connecting' ? 'Connecting...'
+                  : 'Waiting for room code'}
+              </span>
+            </div>
+
+            {/* Helper text */}
+            <p
+              className="text-center"
+              style={{
+                fontSize: 14,
+                color: 'rgba(255,255,255,0.3)',
+                fontFamily: 'system-ui, sans-serif',
+                lineHeight: 1.5,
+                margin: 0,
+              }}
+            >
+              Ask your storyteller for the 4-letter code
+            </p>
+          </div>
+
+          {/* Keyframe animations */}
+          <style>{`
+            @keyframes qf-sparkle {
+              0%, 100% { opacity: 0; transform: scale(0.5); }
+              50% { opacity: 1; transform: scale(1); }
+            }
+            @keyframes qf-float {
+              0%, 100% { transform: translateY(0); }
+              50% { transform: translateY(-8px); }
+            }
+            @keyframes qf-shake {
+              0%, 100% { transform: translateX(0); }
+              20% { transform: translateX(-8px); }
+              40% { transform: translateX(8px); }
+              60% { transform: translateX(-6px); }
+              80% { transform: translateX(6px); }
+            }
+            @keyframes qf-pulse {
+              0%, 100% { opacity: 0.4; }
+              50% { opacity: 1; }
+            }
+            .min-h-screen input:focus {
+              outline: none;
+            }
+          `}</style>
+        </div>
+      ) : !adventure || (!currentScene && session?.phase !== GAME_PHASES.PROLOGUE) ? (
+        <div className="px-4 py-8">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <h1 className="text-2xl font-bold text-gray-900 text-center">Player Screen</h1>
+            <div className="bg-white rounded-lg shadow p-6 space-y-6">
+              <ConnectionStatus status={connectionStatus} pendingOps={pendingOpsCount} />
+              {loadingAdventure ? (
+                <div className="text-center py-8 px-6 rounded-xl bg-gray-50 border border-gray-100">
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent" aria-hidden />
+                    <p className="text-gray-700 font-medium">Loading adventure...</p>
+                  </div>
+                </div>
+              ) : !adventure ? (
+                <AdventurePreviewGrid
+                  adventures={availableAdventures}
+                  onSelect={handleSelectAdventure}
+                  loading={selectingAdventure}
+                />
+              ) : !currentScene ? (
+                <div className="text-center py-8 px-6 rounded-xl bg-amber-50/60 border border-amber-100">
+                  <p className="text-gray-700 font-medium">Waiting for scene to start...</p>
+                  <p className="text-sm text-gray-500 mt-1">The DM will begin when everyone is ready</p>
+                </div>
+              ) : null}
               {error && (
                 <div className="text-red-600 text-sm text-center">{error}</div>
               )}
