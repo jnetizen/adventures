@@ -48,7 +48,10 @@ export function resolveImageUrl(
   const storageBase = getStorageBase();
   if (!storageBase) return originalPath;
 
-  return `${storageBase}/${familySlug}/${adventureId}/${filename}`;
+  // Uploaded images are compressed to JPEG — swap .png extension
+  const remoteFilename = filename.replace(/\.png$/, '.jpg');
+
+  return `${storageBase}/${familySlug}/${adventureId}/${remoteFilename}`;
 }
 
 /**
