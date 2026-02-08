@@ -404,7 +404,7 @@ export default function DMPage() {
     setPlayerAssignments([]);
   };
 
-  const availableAdventures = getAdventureList();
+  const availableAdventures = getAdventureList(familySlug);
 
   const handleKidsNext = () => {
     const names = kidNames.filter(n => n.trim());
@@ -1975,6 +1975,13 @@ export default function DMPage() {
               <p className="text-base text-blue-800 leading-relaxed">
                 {substituteCharacterNames(currentScene.narrationText || 'No narration text', players, adventure.characters)}
               </p>
+            </div>
+          )}
+
+          {currentScene && !showingEpilogue && currentScene.educationalNote && (
+            <div className="flex items-start gap-2 px-4 py-2 rounded-lg bg-orange-50 border border-orange-100">
+              <span className="text-sm flex-shrink-0">💡</span>
+              <p className="text-xs italic text-orange-800 leading-relaxed">{currentScene.educationalNote}</p>
             </div>
           )}
 

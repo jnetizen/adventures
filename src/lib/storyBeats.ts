@@ -65,7 +65,7 @@ export function adventureToBeats(adventure: Adventure): StoryBeat[] {
   if (ending) {
     beats.push({
       type: 'ending',
-      title: ending.title,
+      title: ending.title ?? 'The End',
       text: ending.narrationText,
       image: undefined, // Tiered endings don't have images
       rewards: ending.rewards ?? [],

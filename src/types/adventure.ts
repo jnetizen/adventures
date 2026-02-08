@@ -551,6 +551,9 @@ export interface Scene {
   /** Instructions for roll-until-success climax mode. */
   climaxInstructions?: RollUntilSuccessInstructions;
 
+  /** Educational note shown to the DM only. */
+  educationalNote?: string;
+
   // Puzzle scene support
   /** Scene type determines UI and interaction model. Defaults to 'standard'. */
   sceneType?: SceneType;
@@ -586,6 +589,24 @@ export interface Character {
   assignedTo?: string;
 }
 
+export interface Companion {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl?: string;
+}
+
+export interface DMNotes {
+  voiceGuide?: string;
+  pacing?: string;
+  diceNote?: string;
+}
+
+export interface Epilogue {
+  narrationText: string;
+  sceneImageUrl?: string;
+}
+
 export interface AgeRating {
   /** Minimum recommended age */
   minAge: number;
@@ -604,6 +625,8 @@ export interface Preview {
   previewImageUrl: string;
   /** Age appropriateness rating */
   ageRating?: AgeRating;
+  /** Player count range (e.g. solo adventures) */
+  playerCount?: { min: number; max: number };
 }
 
 export interface CharacterIntro {
@@ -613,8 +636,8 @@ export interface CharacterIntro {
 
 export interface Prologue {
   worldIntro: string;
-  characterIntros: CharacterIntro[];
-  missionBrief: string;
+  characterIntros?: CharacterIntro[];
+  missionBrief?: string;
   /** Optional image showing the world/setting before characters appear */
   prologueImageUrl?: string;
   /** Optional video showing the world/setting (takes precedence over image) */
@@ -633,7 +656,7 @@ export interface Scoring {
 export interface Ending {
   id: string;
   tier: 'good' | 'great' | 'legendary';
-  title: string;
+  title?: string;
   narrationText: string;
   rewards?: Reward[];
   /** Optional video URL for ending celebration */
@@ -676,4 +699,10 @@ export interface Adventure {
   endings?: Ending[];
   /** Single ending format (alternative to tiered endings). */
   ending?: SingleEnding;
+  /** NPC companions (not playable characters). */
+  companions?: Companion[];
+  /** DM tips for voice, pacing, and dice. */
+  dmNotes?: DMNotes;
+  /** Epilogue narration shown after the last scene. */
+  epilogue?: Epilogue;
 }

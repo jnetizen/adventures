@@ -69,6 +69,7 @@ export default function ProloguePage({ adventure, onStart, disabled }: PrologueP
           <p className="text-lg text-gray-800 leading-relaxed">{prologue.worldIntro}</p>
         </section>
 
+        {prologue.characterIntros && prologue.characterIntros.length > 0 && (
         <section className="bg-white rounded-xl shadow-lg p-6 space-y-4">
           <h2 className="text-sm font-semibold text-amber-900 uppercase tracking-wide">
             The Heroes
@@ -110,13 +111,25 @@ export default function ProloguePage({ adventure, onStart, disabled }: PrologueP
             })}
           </div>
         </section>
+        )}
 
+        {prologue.missionBrief && (
         <section className="bg-white rounded-xl shadow-lg p-6 space-y-4">
           <h2 className="text-sm font-semibold text-amber-900 uppercase tracking-wide">
             Your Mission
           </h2>
           <p className="text-lg text-gray-800 leading-relaxed">{prologue.missionBrief}</p>
         </section>
+        )}
+
+        {adventure.dmNotes && (
+          <section className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-2">
+            <h2 className="text-xs font-bold text-amber-600 uppercase tracking-wider">Voice & Tips</h2>
+            {adventure.dmNotes.voiceGuide && <p className="text-sm text-amber-900">{adventure.dmNotes.voiceGuide}</p>}
+            {adventure.dmNotes.pacing && <p className="text-sm text-amber-800">{adventure.dmNotes.pacing}</p>}
+            {adventure.dmNotes.diceNote && <p className="text-sm text-amber-800">{adventure.dmNotes.diceNote}</p>}
+          </section>
+        )}
 
         <div className="flex justify-center pt-4">
           <button

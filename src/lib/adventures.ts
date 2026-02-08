@@ -26,6 +26,12 @@ import ancientShrine from '../data/adventures/ancient-shrine-adventure.json';
 import wizardsLibrary from '../data/adventures/wizards-library-adventure.json';
 import sparkleLostStar from '../data/adventures/sparkle-lost-star-adventure.json';
 import grizzyLemmings from '../data/adventures/grizzy-lemmings-heist.json';
+import ringRidersSaturn from '../data/adventures/ring-riders-saturn.json';
+
+/** Adventures that should ONLY appear for specific families. Omitted = available to all. */
+const familyExclusiveAdventures: Record<string, string[]> = {
+  'ring-riders-saturn': ['rkang-family'],
+};
 
 const adventures: Record<string, Adventure> = {
   'candy-volcano': candyVolcano as Adventure,
@@ -39,6 +45,7 @@ const adventures: Record<string, Adventure> = {
   'wizards-library': wizardsLibrary as Adventure,
   'sparkle-lost-star': sparkleLostStar as Adventure,
   'grizzy-lemmings-heist': grizzyLemmings as Adventure,
+  'ring-riders-saturn': ringRidersSaturn as Adventure,
 };
 
 /**
@@ -64,18 +71,25 @@ export interface AdventureListItem {
 }
 
 /**
- * Get adventure metadata including preview for selection screen
+ * Get adventure metadata including preview for selection screen.
+ * Pass familySlug to include family-exclusive adventures for that family.
  */
-export function getAdventureList(): AdventureListItem[] {
-  return Object.entries(adventures).map(([id, adventure]) => ({
-    id,
-    title: adventure.title,
-    tagline: adventure.preview.tagline,
-    themes: adventure.preview.themes,
-    estimatedMinutes: adventure.preview.estimatedMinutes,
-    previewImageUrl: adventure.preview.previewImageUrl,
-    ageRating: adventure.preview.ageRating,
-  }));
+export function getAdventureList(familySlug?: string | null): AdventureListItem[] {
+  return Object.entries(adventures)
+    .filter(([id]) => {
+      const exclusiveTo = familyExclusiveAdventures[id];
+      if (!exclusiveTo) return true; // available to everyone
+      return !!familySlug && exclusiveTo.includes(familySlug);
+    })
+    .map(([id, adventure]) => ({
+      id,
+      title: adventure.title,
+      tagline: adventure.preview.tagline,
+      themes: adventure.preview.themes,
+      estimatedMinutes: adventure.preview.estimatedMinutes,
+      previewImageUrl: adventure.preview.previewImageUrl,
+      ageRating: adventure.preview.ageRating,
+    }));
 }
 
 /**
