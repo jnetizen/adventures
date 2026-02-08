@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { loadAdventure } from '../lib/adventures';
-import { resolveAdventureImages } from '../lib/imageResolver';
+// import { resolveAdventureImages } from '../lib/imageResolver';
 import type { Adventure } from '../types/adventure';
 
 interface UseAdventureLoaderResult {
@@ -18,7 +18,7 @@ interface UseAdventureLoaderResult {
  */
 export function useAdventureLoader(
   adventureId: string | null | undefined,
-  familySlug?: string | null
+  _familySlug?: string | null
 ): UseAdventureLoaderResult {
   const [adventure, setAdventure] = useState<Adventure | null>(null);
   const [loading, setLoading] = useState(false);
@@ -39,12 +39,13 @@ export function useAdventureLoader(
     });
   }, [adventureId]);
 
-  // Apply family image resolution as a memoized transform.
-  // This covers all 15+ image URL fields via deep JSON transform.
-  const resolvedAdventure = useMemo(() => {
-    if (!adventure) return null;
-    return resolveAdventureImages(adventure, familySlug, adventureId);
-  }, [adventure, familySlug, adventureId]);
+  // Image resolution disabled — all images served from /public for now.
+  // Re-enable when migrating to Supabase Storage.
+  // const resolvedAdventure = useMemo(() => {
+  //   if (!adventure) return null;
+  //   return resolveAdventureImages(adventure, familySlug, adventureId);
+  // }, [adventure, familySlug, adventureId]);
+  const resolvedAdventure = adventure;
 
   return { adventure: resolvedAdventure, loading };
 }
