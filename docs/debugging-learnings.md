@@ -1638,3 +1638,93 @@ When two screens (DM and Player) can both update the same state, don't assume up
 
 ### Key Files
 - `src/pages/DMPage.tsx` - `handleSessionUpdate()` subscription handler
+
+---
+
+## 14. Digital Dice Flow — `pending_choice_id` Gating
+
+### Problem
+In digital dice mode, the player's dice roller only appears when `session.pending_choice_id` is truthy. This was designed for the standard choice flow where the DM clicks a choice button, which calls `setPendingChoice()`. But two code paths never set it:
+
+1. **Narrative turns** (`alwaysSucceed: true`, `choices: null`) — used in solo adventures like Sparkle & The Lost Star
+2. **Climax scenes** (`isClimax: true`) — dramatic finale moments
+
+Result: DM screen shows "Waiting for player to tap dice..." but the player screen shows no dice roller.
+
+### Root Cause
+The `pending_choice_id` field was added as part of the "streamline digital dice flow" plan, but only wired into the standard choice-button path (line ~2967 of DMPage.tsx). The narrative turn path and climax path were not updated.
+
+### Solution
+
+**Narrative turns:** Added two useEffects in DMPage.tsx:
+1. Auto-set `pending_choice_id` to `'narrative-roll'` when entering a narrative turn in digital mode
+2. Auto-submit via `handleSubmitNarrativeTurnDigital()` when the player's roll arrives (no manual DM action needed)
+
+Also fixed `handleSubmitNarrativeTurnDigital` to handle cutscenes (it was missing cutscene display logic that the standard choice path had).
+
+**Climax scenes:** Since `handleSubmitClimaxAll` hardcodes max roll with threshold 1 (always succeeds), there's no need for a player roll at all. Changed the climax digital UI to show the GO button directly instead of waiting for `pending_player_roll`.
+
+### Key Insight
+When adding a new gating mechanism (like `pending_choice_id`), audit ALL code paths that need to satisfy it — not just the primary one. Search for all places that show "waiting for player" or render dice-related UI.
+
+### Key Files
+- `src/pages/DMPage.tsx` — narrative turn useEffects, climax digital UI
+- `src/pages/PlayPage.tsx` — dice visibility condition at line ~874
+- `src/lib/gameState.ts` — `setPendingChoice()`, `submitCharacterChoice()`
+
+---
+
+## 15. RewardCelebration Hidden Behind CutsceneOverlay
+
+### Problem
+The ending reward celebration (treasure chest animation) never appeared on the player screen after the final scene.
+
+### Root Cause
+Both `RewardCelebration` (z-50) and `CutsceneOverlay` (z-50) rendered simultaneously. CutsceneOverlay, being later in the DOM, visually covered RewardCelebration. RewardCelebration has a 6-second auto-dismiss timer (`AUTO_DISMISS_MS`), so it would start, count down hidden behind the cutscene, and dismiss before the player ever saw it.
+
+### Solution
+Gate both `showSceneCelebration` and `showEndingCelebration` conditions on `!session?.active_cutscene`. The celebration waits until the DM dismisses the cutscene, then appears.
+
+```tsx
+const showEndingCelebration = !!(
+  allActed && isLastScene &&
+  !pendingDiceRoll &&
+  !session?.active_cutscene && // Wait for cutscene to be dismissed
+  endingRewards && endingRewards.length > 0 &&
+  !celebratedEnding && !showSceneCelebration
+);
+```
+
+### Key Insight
+When two fixed-position overlays share the same z-index, DOM order determines which is visible. If one has an auto-dismiss timer, it can expire while hidden. Always gate timed UI on the absence of blocking overlays.
+
+### Key Files
+- `src/pages/PlayPage.tsx` — celebration conditions
+- `src/components/RewardCelebration.tsx` — z-50, auto-dismiss at 6s
+- `src/components/CutsceneOverlay.tsx` — z-50
+
+---
+
+## 16. Family-Exclusive Adventures Not Showing on Player Screen
+
+### Problem
+After the player entered a room code and joined a session, the adventure preview grid was empty — no adventures appeared.
+
+### Root Cause
+`PlayPage.tsx` called `getAdventureList()` without passing `familySlug`. The function filters out family-exclusive adventures when no slug is provided. Since all adventures for `rkang-family` were exclusive, the list was empty.
+
+### Solution
+Pass `session?.family_slug` to `getAdventureList()`:
+```tsx
+const availableAdventures = useMemo(
+  () => getAdventureList(session?.family_slug),
+  [session?.family_slug]
+);
+```
+
+### Key Insight
+Family-exclusive filtering is a feature, not a bug — but every consumer of `getAdventureList()` must pass the family slug when available. When adding new call sites, check whether the session context provides a slug.
+
+### Key Files
+- `src/pages/PlayPage.tsx` — adventure list call
+- `src/lib/adventures.ts` — `getAdventureList()` filtering logic

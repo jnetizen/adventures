@@ -71,6 +71,52 @@ Bugs from playtest feedback and other sources. Track status and cross off as fix
 
 ---
 
+---
+
+### BUG-9: Digital dice not showing for narrative turns (alwaysSucceed, no choices)
+- **Description:** In digital dice mode, the player's dice roller doesn't appear for `alwaysSucceed` turns with `choices: null` (used in solo adventures like Sparkle & The Lost Star). DM shows "Waiting for player to tap dice..." but player screen has no dice. The `pending_choice_id` gating mechanism was only wired into the standard choice-button path.
+- **Severity:** Critical (blocks solo adventure gameplay in digital mode)
+- **Status:** Fixed
+- **Affects:** DMPage.tsx (narrative turn path), PlayPage.tsx (dice visibility)
+- **Fix:** Added useEffects to auto-set `pending_choice_id = 'narrative-roll'` for narrative turns, auto-submit when player roll arrives, and added cutscene handling to `handleSubmitNarrativeTurnDigital`.
+
+- [x] **Fixed**
+
+---
+
+### BUG-10: Digital dice not showing for climax scenes
+- **Description:** In digital dice mode, climax scenes (`isClimax: true`) show "Waiting for player to roll a 6..." but the player dice never appears. Since climax `alwaysSucceed` turns hardcode max roll and threshold 1, waiting for a player roll is unnecessary.
+- **Severity:** Critical (blocks climax progression in digital mode)
+- **Status:** Fixed
+- **Affects:** DMPage.tsx (climax render path)
+- **Fix:** Changed climax digital UI to show the GO button directly instead of waiting for `pending_player_roll`. DM reads the prompt, presses GO, auto-submits with max roll.
+
+- [x] **Fixed**
+
+---
+
+### BUG-8: Reward celebration hidden behind cutscene overlay
+- **Description:** The ending reward celebration (treasure chest animation) never appears on the player screen. Both RewardCelebration and CutsceneOverlay render at z-50; the cutscene covers the celebration while its 6-second auto-dismiss timer expires.
+- **Severity:** High
+- **Status:** Fixed
+- **Affects:** PlayPage.tsx, RewardCelebration.tsx, CutsceneOverlay.tsx
+- **Fix:** Gate `showSceneCelebration` and `showEndingCelebration` on `!session?.active_cutscene` so celebration waits until cutscene is dismissed.
+
+- [x] **Fixed**
+
+---
+
+### BUG-7: Player screen shows no adventure previews after joining
+- **Description:** After entering room code, player screen shows "Pick an adventure!" but the grid is empty. Family-exclusive adventures filtered out because `getAdventureList()` was called without `familySlug`.
+- **Severity:** High
+- **Status:** Fixed
+- **Affects:** PlayPage.tsx
+- **Fix:** Pass `session?.family_slug` to `getAdventureList()`.
+
+- [x] **Fixed**
+
+---
+
 ## Fixed Bugs
 
 ### BUG-1 (fixed)
