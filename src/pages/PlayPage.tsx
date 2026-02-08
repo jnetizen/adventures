@@ -12,7 +12,7 @@ import {
   useOfflineSync,
   useAdventureLoader,
   useSessionSubscription,
-  useSessionRecovery,
+  // useSessionRecovery,
   useWakeLock,
 } from '../hooks';
 import EndingPage from './EndingPage';
@@ -126,10 +126,11 @@ export default function PlayPage() {
     onStatusChange: handleStatusChange,
   });
 
-  const { recovering, storedSession, recoverSession } = useSessionRecovery({
-    currentSession: session,
-    onStatusChange: handleStatusChange,
-  });
+  // Session recovery disabled
+  // const { recovering, storedSession, recoverSession } = useSessionRecovery({
+  //   currentSession: session,
+  //   onStatusChange: handleStatusChange,
+  // });
 
   // Direct polling fallback - bypasses subscription entirely
   // This ensures we always get the latest session state from the database
@@ -265,20 +266,21 @@ export default function PlayPage() {
     setSessionId(data.id);  // Track session for remote logging
   };
 
-  const handleRecoverSession = async () => {
-    setError(null);
-    const { session: recoveredSession, error: recoverError } = await recoverSession();
-    if (recoverError) {
-      setError(recoverError === 'No saved session found'
-        ? recoverError
-        : 'Could not recover session. Please join with a room code.');
-      return;
-    }
-    if (recoveredSession) {
-      setSession(recoveredSession);
-      setSessionId(recoveredSession.id);  // Track session for remote logging
-    }
-  };
+  // Session recovery disabled
+  // const handleRecoverSession = async () => {
+  //   setError(null);
+  //   const { session: recoveredSession, error: recoverError } = await recoverSession();
+  //   if (recoverError) {
+  //     setError(recoverError === 'No saved session found'
+  //       ? recoverError
+  //       : 'Could not recover session. Please join with a room code.');
+  //     return;
+  //   }
+  //   if (recoveredSession) {
+  //     setSession(recoveredSession);
+  //     setSessionId(recoveredSession.id);  // Track session for remote logging
+  //   }
+  // };
 
   const handleSelectAdventure = async (adventureId: string) => {
     if (!session) return;
@@ -449,6 +451,7 @@ export default function PlayPage() {
 
           {!session ? (
             <>
+              {/* Session recovery UI disabled
               {storedSession && storedSession.room_code && (
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3 mb-4">
                   <p className="text-sm font-medium text-amber-900">Recover session?</p>
@@ -469,6 +472,7 @@ export default function PlayPage() {
                   </button>
                 </div>
               )}
+              */}
               <div>
                 <label htmlFor="roomCode" className="block text-sm font-medium text-gray-700 mb-2">
                   Enter Room Code
