@@ -233,7 +233,7 @@ We tested multiple projects, keys, models, and SDKs - all return `limit: 0` on f
 | Auth | `GOOGLE_API_KEY` (free tier available) |
 | Result | **SUCCESS** |
 | Quality | Good |
-| Cost | ~$0.001/image |
+| Cost | ~$0.039/image |
 
 **Notes:**
 - Successfully generates children characters
@@ -775,7 +775,93 @@ Free tier allows ~15 requests/minute. With 3-second delay:
 
 ---
 
-*Last updated: January 31, 2026*
+## Solo Character Consistency (Gemini 2.5 Flash — Single Recurring Character)
+
+This section covers learnings from generating images for **The Storm Chasers of Jupiter** (22 images) and **Sparkle and the Lost Star** (11 images) — both solo adventures featuring a single recurring child character across multiple scenes. Generated via `gemini-2.5-flash-image` API at ~$0.039/image.
+
+### 13. "Slightly spiky cropped" Hair Drifts Heavily Across Scenes
+
+**The prompt said:** "slightly spiky cropped black hair (forehead visible)"
+
+**What happened:** Hair was the biggest consistency offender across 6+ scenes:
+- Scene 1: messy spiky hair
+- Scene 2: flatter and shorter
+- Scene 3: almost a side-swept bang
+- Scene 4: short and neat
+- Ending: tucked under a helmet
+
+**Takeaway:** Vague texture words like "slightly spiky" give Gemini too much room to interpret. The model re-rolls hair from scratch each generation. Need to anchor with more rigid structural language — e.g., "short cropped black hair standing straight up 1cm from scalp, forehead fully visible, no bangs, no side-sweep."
+
+---
+
+### 14. Face Shape and Age Drift Between Generations
+
+**The prompt said:** "A 3-year-old East Asian boy with a slightly oval face and chubby cheeks"
+
+**What happened:**
+- Scene 4: boy looks noticeably older (5-6), thicker eyebrows, more angular face
+- Scene 3: looks youngest
+- Chubby cheeks come and go across scenes
+
+**Takeaway:** Gemini has no cross-image memory. Each generation interprets "3-year-old" independently. Age cues like "chubby cheeks" are soft suggestions, not constraints. May need stronger anchoring: "toddler proportions, very round face, baby-fat cheeks, tiny nose, large head-to-body ratio."
+
+---
+
+### 15. Color Balance of Outfit Drifts (RED and SILVER)
+
+**The prompt said:** "wearing a space explorer suit with RED and SILVER accents"
+
+**What happened:**
+- Scene 1 and 4: primarily red suit
+- Scene 2: red with heavy silver armor plating
+- Ending: mostly white/silver with red trim
+
+**Takeaway:** "RED and SILVER accents" is ambiguous about which color dominates. Gemini interprets the balance differently each time. Be explicit about the ratio: "suit is 70% RED with SILVER shoulder pads and SILVER boots" or "primarily RED suit, small SILVER accents on shoulders and belt only."
+
+---
+
+### 16. Gemini Ignores "16:9 landscape" Aspect Ratio in Prompts
+
+**The prompt said:** "Pixar-style 3D illustration, 16:9 landscape."
+
+**What happened:** Several images came out square instead of 16:9 landscape. Gemini text-to-image does not reliably honor aspect ratio instructions embedded in the prompt text.
+
+**Takeaway:** Aspect ratio must be controlled via API parameters, not prompt text. If the API/model doesn't support an aspect ratio parameter, the prompt instruction alone is unreliable. Consider:
+- Post-processing (crop/pad to 16:9)
+- Using a model that supports explicit aspect ratio params
+- Generating larger and cropping to desired ratio
+
+---
+
+### 17. Single-Character Adventures Still Need Consistency Strategy
+
+**Context:** Multi-character adventures (3 kids) naturally get some consistency because each character has a unique distinguishing feature (RED cape vs BLUE cape vs GREEN cape). Solo adventures with one recurring character have no such anchor — every detail must be reproduced exactly.
+
+**What works for multi-character:** Color-coded outfits, different hair lengths, different ages — easy for the model to keep distinct.
+
+**What fails for single-character:** Subtle features like "slightly spiky" hair, "slightly oval face", "chubby cheeks" — these are all soft and the model interprets them differently each generation.
+
+**Possible strategies to explore:**
+1. **Reference image injection** — Upload a reference image with each generation (Gemini supports image+text input)
+2. **Hyper-specific descriptions** — Replace vague terms with precise structural language
+3. **Character sheet first** — Generate a character reference sheet, then describe scenes using that sheet's exact output as anchor text
+4. **Post-generation curation** — Generate 3-4 variants per scene, pick the most consistent ones
+
+---
+
+### Pricing Correction
+
+**Gemini 2.5 Flash Image** costs **~$0.039/image** (1,290 output tokens at $30/million), NOT ~$0.001 as previously noted in some sections. The generation scripts correctly estimate $0.04/image.
+
+| Adventure | Images | Estimated Cost |
+|-----------|--------|---------------|
+| Storm Chasers of Jupiter | 22 | ~$0.86 |
+| Sparkle and the Lost Star (M) | 11 | ~$0.43 |
+
+---
+
+*Last updated: February 7, 2026*
 *Based on manual testing with Dragon Knight Rescue and Fire Gem Quest stories*
 *API testing with Shadow Knight adventure*
 *Reward icon generation for all adventures*
+*Solo character consistency testing with Storm Chasers of Jupiter and Sparkle Lost Star*
