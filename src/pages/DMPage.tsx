@@ -406,7 +406,7 @@ export default function DMPage() {
 
   const availableAdventures = getAdventureList(familySlug);
 
-  const handleKidsNext = () => {
+  const handleKidsNext = async () => {
     const names = kidNames.filter(n => n.trim());
     if (names.length === 0) {
       setError('Enter at least one kid name');
@@ -417,7 +417,22 @@ export default function DMPage() {
       return;
     }
     setError(null);
-    // Auto-assign if single character adventure
+    // Single player + single character: auto-assign and skip to prologue
+    if (adventure && adventure.characters.length === 1 && names.length === 1) {
+      const charId = adventure.characters[0].id;
+      const players: Player[] = [{ kidName: names[0], characterId: charId }];
+      setPlayerAssignments(players);
+      const { error: startError } = await startAdventure(session!.id, adventure.id, players, selectedDiceType, selectedDiceMode);
+      if (startError) {
+        setError(formatError(startError));
+        return;
+      }
+      setSession((prev) =>
+        prev ? { ...prev, players, adventure_id: adventure.id, phase: GAME_PHASES.PROLOGUE, dice_type: selectedDiceType, dice_mode: selectedDiceMode } : null
+      );
+      return;
+    }
+    // Auto-assign if single character adventure (multiple players)
     if (adventure && adventure.characters.length === 1) {
       const charId = adventure.characters[0].id;
       setPlayerAssignments(names.map(kidName => ({ kidName, characterId: charId })));
