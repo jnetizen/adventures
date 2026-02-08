@@ -66,7 +66,7 @@
             {
               "id": "scene1-turbo",
               "label": "Hit the turbo button!",
-              "successThreshold": 3,
+              "successThreshold": 10,
               "successOutcome": {
                 "text": "ZOOM! The spaceship blasts through the clouds and the stars whiz past like streaks of light!",
                 "cutsceneImageUrl": "/images/cutscenes/ring-riders-saturn/scene-1-outcome.png"
@@ -79,7 +79,7 @@
             {
               "id": "scene1-countdown",
               "label": "Yell BLAST OFF!",
-              "successThreshold": 3,
+              "successThreshold": 10,
               "successOutcome": {
                 "text": "ZOOM! The spaceship blasts through the clouds and the stars whiz past like streaks of light!",
                 "cutsceneImageUrl": "/images/cutscenes/ring-riders-saturn/scene-1-outcome.png"
@@ -112,7 +112,7 @@
             {
               "id": "scene2-fly",
               "label": "Fly straight through!",
-              "successThreshold": 3,
+              "successThreshold": 10,
               "successOutcome": {
                 "text": "You fly straight through the sparkly ice rings — Bubblegum catches a piece and licks it: 'It's a POPSICLE!'",
                 "cutsceneImageUrl": "/images/cutscenes/ring-riders-saturn/scene-2-outcome.png"
@@ -125,7 +125,7 @@
             {
               "id": "scene2-surf",
               "label": "Surf on a ring chunk!",
-              "successThreshold": 3,
+              "successThreshold": 10,
               "successOutcome": {
                 "text": "You fly straight through the sparkly ice rings — Bubblegum catches a piece and licks it: 'It's a POPSICLE!'",
                 "cutsceneImageUrl": "/images/cutscenes/ring-riders-saturn/scene-2-outcome.png"
@@ -158,7 +158,7 @@
             {
               "id": "scene3-boots",
               "label": "Rocket boot blast!",
-              "successThreshold": 3,
+              "successThreshold": 10,
               "successOutcome": {
                 "text": "BLAST — your rocket boots shatter the ice and the golden ring piece flies into the air!",
                 "cutsceneImageUrl": "/images/cutscenes/ring-riders-saturn/scene-3-outcome.png"
@@ -171,7 +171,7 @@
             {
               "id": "scene3-punch",
               "label": "Super space punch!",
-              "successThreshold": 3,
+              "successThreshold": 10,
               "successOutcome": {
                 "text": "BLAST — your rocket boots shatter the ice and the golden ring piece flies into the air!",
                 "cutsceneImageUrl": "/images/cutscenes/ring-riders-saturn/scene-3-outcome.png"
@@ -204,7 +204,7 @@
             {
               "id": "scene4-big",
               "label": "One HUGE bounce!",
-              "successThreshold": 3,
+              "successThreshold": 10,
               "successOutcome": {
                 "text": "BOING BOING BOING — you bounce up through the colorful clouds all the way to the rings!",
                 "cutsceneImageUrl": "/images/cutscenes/ring-riders-saturn/scene-4-outcome.png"
@@ -217,7 +217,7 @@
             {
               "id": "scene4-lots",
               "label": "Lots of little bounces!",
-              "successThreshold": 3,
+              "successThreshold": 10,
               "successOutcome": {
                 "text": "BOING BOING BOING — you bounce up through the colorful clouds all the way to the rings!",
                 "cutsceneImageUrl": "/images/cutscenes/ring-riders-saturn/scene-4-outcome.png"
@@ -250,7 +250,7 @@
             {
               "id": "scene5-push",
               "label": "Push it into place!",
-              "successThreshold": 3,
+              "successThreshold": 10,
               "successOutcome": {
                 "text": "Click — you place the piece and ALL of Saturn's rings light up RAINBOW!",
                 "cutsceneImageUrl": "/images/cutscenes/ring-riders-saturn/scene-5-outcome.png"
@@ -263,7 +263,7 @@
             {
               "id": "scene5-magic",
               "label": "Use star pilot magic!",
-              "successThreshold": 3,
+              "successThreshold": 10,
               "successOutcome": {
                 "text": "Click — you place the piece and ALL of Saturn's rings light up RAINBOW!",
                 "cutsceneImageUrl": "/images/cutscenes/ring-riders-saturn/scene-5-outcome.png"

@@ -1,6 +1,8 @@
 export interface ChoiceOutcome {
   text: string;
   animationKey?: string;
+  /** Cutscene image URL shown on kids' screen after roll. */
+  cutsceneImageUrl?: string;
 }
 
 // ============================================

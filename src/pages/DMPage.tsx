@@ -695,8 +695,26 @@ export default function DMPage() {
       } else {
         console.log('%c[CUTSCENE] No cutsceneImageUrl in outcome', 'color: red', turnOutcome);
       }
-    } else {
-      console.log('%c[CUTSCENE] Turn does not have per-turn outcomes', 'color: red');
+    } else if (choice) {
+      // Choice-level outcomes (e.g. ring-riders-saturn): cutsceneImageUrl on the choice outcome
+      const choiceOutcome = calculateChoiceOutcome(choice, roll, maxRoll);
+      console.log('%c[CUTSCENE] Choice-level outcome', 'color: blue', {
+        choiceId: choice.id,
+        outcomeText: choiceOutcome?.text,
+        cutsceneImageUrl: choiceOutcome?.cutsceneImageUrl,
+      });
+      if (choiceOutcome?.cutsceneImageUrl) {
+        const cutsceneData = {
+          characterId: turn.characterId,
+          imageUrl: choiceOutcome.cutsceneImageUrl,
+          outcomeText: choiceOutcome.text || '',
+        };
+        setSession((prev) => prev ? { ...prev, active_cutscene: cutsceneData } : null);
+        await showOutcomeCutscene(session.id, turn.characterId, {
+          text: choiceOutcome.text,
+          cutsceneImageUrl: choiceOutcome.cutsceneImageUrl,
+        });
+      }
     }
 
     setSubmitting(false);
