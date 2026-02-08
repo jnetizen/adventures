@@ -332,7 +332,6 @@ export default function PlayPage() {
 
   const sceneRewards = allActed && currentScene?.outcome?.rewards;
   const showSceneCelebration = !!(
-    !adventureEnded &&
     !pendingDiceRoll && // Wait for dice roll animation to finish
     sceneRewards &&
     sceneRewards.length > 0 &&

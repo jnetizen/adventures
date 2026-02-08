@@ -14,6 +14,7 @@ export default function FeedbackForm({ onSubmit, disabled }: FeedbackFormProps) 
   const [negative, setNegative] = useState('');
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,12 +27,23 @@ export default function FeedbackForm({ onSubmit, disabled }: FeedbackFormProps) 
     setSubmitting(true);
     try {
       await onSubmit({ rating, positive: positive.trim() || undefined, negative: negative.trim() || undefined, notes: notes.trim() || undefined });
+      setSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setSubmitting(false);
     }
   };
+
+  if (submitted) {
+    return (
+      <div className="text-center space-y-3 py-4">
+        <p className="text-3xl">🎉</p>
+        <h2 className="text-lg font-semibold text-gray-900">Thanks for the feedback!</h2>
+        <p className="text-sm text-gray-600">Great adventuring today.</p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
