@@ -179,7 +179,7 @@ export default function PlayPage() {
   })();
 
   // Get available adventures for preview while waiting
-  const availableAdventures = useMemo(() => getAdventureList(), []);
+  const availableAdventures = useMemo(() => getAdventureList(session?.family_slug), [session?.family_slug]);
 
   // Reset celebration state when session resets (e.g. new adventure)
   useEffect(() => {
