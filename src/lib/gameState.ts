@@ -261,6 +261,27 @@ export async function submitPlayerRoll(
 }
 
 /**
+ * Sets the DM's pending choice (for digital dice mode).
+ * This enables the player's dice roller on their screen.
+ */
+export async function setPendingChoice(
+  sessionId: string,
+  choiceId: string
+): Promise<{ error: Error | null }> {
+  return retryWithBackoff(async () => {
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        pending_choice_id: choiceId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId);
+
+    return { error: error || null };
+  });
+}
+
+/**
  * Clears the pending player roll (after DM uses it).
  */
 export async function clearPlayerRoll(
@@ -334,6 +355,8 @@ export async function submitCharacterChoice(
         current_character_turn_index: nextTurnIndex,
         scene_choices: updatedChoices,
         success_count: nextSuccessCount,
+        pending_choice_id: null,
+        pending_player_roll: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);

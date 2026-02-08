@@ -3,7 +3,7 @@ import { findSessionByCode, selectAdventure, submitPlayerRoll } from '../lib/gam
 import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
-import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions, isAlwaysSucceedTurn, isTurnPuzzle } from '../lib/adventures';
+import { getCurrentSceneWithBranching, allCharactersActed, calculateEnding, getAdventureList, getSceneActiveCharacters, getActiveCharacterTurns, getSceneById, isPuzzleScene, isPhysicalPuzzle, isDragPuzzle, isSeekerLensPuzzle, isMemoryPuzzle, isSimonPuzzle, isTapMatchPuzzle, isDrawPuzzle, isARPortalPuzzle, isARCatchPuzzle, getPhysicalPuzzleInstructions, getDragPuzzleInstructions, getSeekerLensInstructions, getMemoryPuzzleInstructions, getSimonPuzzleInstructions, getTapMatchPuzzleInstructions, getDrawPuzzleInstructions, getARPortalPuzzleInstructions, getARCatchPuzzleInstructions, isTurnPuzzle } from '../lib/adventures';
 import { completePuzzle } from '../lib/gameState';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
@@ -211,6 +211,14 @@ export default function PlayPage() {
         return;
       }
 
+      // In digital mode, if playerRollSubmitted is true the animation was already triggered
+      // locally when the player tapped dice — just sync the count, don't re-trigger animation
+      if (session?.dice_mode === 'digital' && playerRollSubmitted) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- sync count without duplicate animation
+        setProcessedRollCount(prev => prev + 1);
+        return;
+      }
+
       if (latestChoice.roll !== undefined) {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- trigger dice animation on new roll
         setPendingDiceRoll({
@@ -220,7 +228,7 @@ export default function PlayPage() {
         });
       }
     }
-  }, [session?.scene_choices, processedRollCount, session?.players]);
+  }, [session?.scene_choices, processedRollCount, session?.players, session?.dice_mode, playerRollSubmitted]);
 
   // Track the last scene we processed to avoid re-triggering animations when switching parallel scenes
   const lastSceneRef = useRef<string | null>(null);
@@ -390,10 +398,12 @@ export default function PlayPage() {
     return turn ? isTurnPuzzle(turn) : false;
   })();
 
-  // Reset player roll state when turn advances (scene_choices changes)
+  // Reset player roll state when turn advances (pending_choice_id cleared by submitCharacterChoice)
   useEffect(() => {
-    setPlayerRollSubmitted(false);
-  }, [session?.scene_choices?.length, session?.current_character_turn_index]);
+    if (!session?.pending_choice_id) {
+      setPlayerRollSubmitted(false);
+    }
+  }, [session?.pending_choice_id]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -861,8 +871,8 @@ export default function PlayPage() {
             />
           )}
           
-          {/* Digital dice roller - prominent when in digital mode and waiting for roll */}
-          {session.dice_mode === 'digital' && !session.pending_player_roll && !playerRollSubmitted && !allActed && !pendingDiceRoll && !currentTurnIsPuzzle && (
+          {/* Digital dice roller - prominent when DM has picked an action (pending_choice_id set) */}
+          {session.dice_mode === 'digital' && session.pending_choice_id && !playerRollSubmitted && !allActed && !pendingDiceRoll && !currentTurnIsPuzzle && (
             <div className="fixed inset-x-0 bottom-0 z-40 p-4 bg-gradient-to-t from-black/80 to-transparent">
               <div className="max-w-sm mx-auto text-center">
                 <p className="text-white text-lg font-bold mb-3 drop-shadow-lg">
@@ -885,36 +895,23 @@ export default function PlayPage() {
                       return;
                     }
 
-                    // Max roll on climax or any other turn: submit to DM
-                    setPlayerRollSubmitted(true);
-                    await submitPlayerRoll(session.id, roll);
-
-                    // Show dice animation immediately for alwaysSucceed turns
+                    // Immediately show dice animation for ALL turns
                     if (currentScene) {
                       const activeTurns = getActiveCharacterTurns(currentScene, session.players || []);
                       const currentTurn = activeTurns[session.current_character_turn_index ?? 0] ?? activeTurns[0];
-                      if (currentTurn && isAlwaysSucceedTurn(currentTurn)) {
+                      if (currentTurn) {
                         const kidName = getKidDisplayName(session.players, currentTurn.characterId, 'Hero');
                         setPendingDiceRoll({ kidName, roll, characterId: currentTurn.characterId });
                       }
                     }
+
+                    // Send roll to backend (DM will auto-submit)
+                    setPlayerRollSubmitted(true);
+                    await submitPlayerRoll(session.id, roll);
                   }}
                   min={1}
                   max={session.dice_type ?? 20}
                 />
-              </div>
-            </div>
-          )}
-          {/* Show waiting message after player rolls */}
-          {session.dice_mode === 'digital' && (session.pending_player_roll || playerRollSubmitted) && !allActed && !pendingDiceRoll && !currentTurnIsPuzzle && (
-            <div className="fixed inset-x-0 bottom-0 z-40 p-4 bg-gradient-to-t from-black/80 to-transparent">
-              <div className="max-w-sm mx-auto text-center">
-                <p className="text-white text-lg font-bold drop-shadow-lg">
-                  You rolled: {session.pending_player_roll ?? '...'}
-                </p>
-                <p className="text-white/70 text-sm mt-1">
-                  Waiting for DM...
-                </p>
               </div>
             </div>
           )}

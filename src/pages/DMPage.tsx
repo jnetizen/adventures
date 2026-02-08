@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
-import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, /* resetSessionForNewAdventure, */ showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState, clearPlayerRoll } from '../lib/gameState';
+import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, /* resetSessionForNewAdventure, */ showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState, clearPlayerRoll, setPendingChoice } from '../lib/gameState';
 import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
@@ -724,12 +724,24 @@ export default function DMPage() {
     setSelectedChoice(null);
     setDiceRoll('');
 
-    // Clear the player's pending roll if in digital mode
-    if (isDigitalMode && playerRoll) {
-      await clearPlayerRoll(session.id);
-      setSession((prev) => prev ? { ...prev, pending_player_roll: null } : null);
+    // pending_player_roll and pending_choice_id are now cleared inside submitCharacterChoice
+    if (isDigitalMode) {
+      setSession((prev) => prev ? { ...prev, pending_player_roll: null, pending_choice_id: null } : null);
     }
   };
+
+  // Auto-submit in digital mode: when DM has selected a choice and player's roll arrives
+  useEffect(() => {
+    if (
+      session?.dice_mode === 'digital' &&
+      session?.pending_player_roll &&
+      selectedChoice &&
+      !submittingRef.current
+    ) {
+      handleSubmitChoice();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.pending_player_roll]);
 
   /**
    * Handle the entire climax sequence at once.
@@ -1459,7 +1471,7 @@ export default function DMPage() {
     }
 
     // Show onboarding if not completed yet
-    if (!onboardingDone || showOnboarding) {
+    if (!onboardingDone) {
       return <DMOnboarding onComplete={handleOnboardingComplete} />;
     }
 
@@ -1518,6 +1530,11 @@ export default function DMPage() {
   if (session.phase === GAME_PHASES.COMPLETE) {
   return (
     <div className="min-h-screen bg-gray-50">
+        {showOnboarding && (
+          <div className="fixed inset-0 z-50">
+            <DMOnboarding onComplete={() => setShowOnboarding(false)} />
+          </div>
+        )}
         <StickyRoomCode code={session.room_code} onShowHowToPlay={() => setShowOnboarding(true)} />
         <div className="max-w-md mx-auto space-y-6 px-4 py-8">
           <h1 className="text-2xl font-bold text-gray-900 text-center">DM Console</h1>
@@ -1549,6 +1566,11 @@ export default function DMPage() {
   if (!adventure) {
     return (
       <div className="min-h-screen bg-gray-50">
+        {showOnboarding && (
+          <div className="fixed inset-0 z-50">
+            <DMOnboarding onComplete={() => setShowOnboarding(false)} />
+          </div>
+        )}
         <StickyRoomCode code={session.room_code} onShowHowToPlay={() => setShowOnboarding(true)} />
         <div className="max-w-3xl mx-auto space-y-6 px-4 py-8">
           <h1 className="text-2xl font-bold text-gray-900 text-center">DM Console</h1>
@@ -2915,11 +2937,21 @@ export default function DMPage() {
                           return (
                             <button
                               key={choice.id}
-                              onClick={() => setSelectedChoice(choice)}
+                              onClick={() => {
+                                setSelectedChoice(choice);
+                                // In digital mode, write pending_choice_id to DB so player's dice enables
+                                if (session.dice_mode === 'digital') {
+                                  setPendingChoice(session.id, choice.id);
+                                  setSession((prev) => prev ? { ...prev, pending_choice_id: choice.id } : null);
+                                }
+                              }}
+                              disabled={session.dice_mode === 'digital' && !!selectedChoice}
                               className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-colors ${
                                 selectedChoice?.id === choice.id
                                   ? 'border-blue-500 bg-blue-50'
-                                  : 'border-gray-200 hover:border-gray-300'
+                                  : session.dice_mode === 'digital' && selectedChoice
+                                    ? 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
+                                    : 'border-gray-200 hover:border-gray-300'
                               }`}
                             >
                               <p className="font-medium">{choice.label}</p>
@@ -2934,22 +2966,19 @@ export default function DMPage() {
 
                     {/* Dice Roll Section - different for physical vs digital mode */}
                     {session.dice_mode === 'digital' ? (
-                      <div className="flex flex-wrap items-end gap-4">
-                        <div className="flex-1 min-w-[140px]">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Player's Roll
-                          </label>
-                          {session.pending_player_roll ? (
-                            <div className="w-full px-4 py-3 bg-green-50 border-2 border-green-500 rounded-lg text-center text-xl font-bold text-green-700">
-                              {session.pending_player_roll}
-                            </div>
+                      /* Digital mode: show status instead of manual dice input */
+                      selectedChoice ? (
+                        <div className="w-full px-4 py-3 bg-amber-50 border-2 border-amber-300 rounded-lg text-center text-sm text-amber-700">
+                          {submitting ? (
+                            <span className="flex items-center justify-center gap-2">
+                              <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-amber-600"></span>
+                              Processing...
+                            </span>
                           ) : (
-                            <div className="w-full px-4 py-3 bg-amber-50 border-2 border-amber-300 rounded-lg text-center text-sm text-amber-700">
-                              Waiting for player to tap dice...
-                            </div>
+                            'Waiting for player to roll...'
                           )}
                         </div>
-                      </div>
+                      ) : null
                     ) : (
                       <div className="flex flex-wrap items-end gap-4">
                         <div className="flex-1 min-w-[140px]">
@@ -2979,9 +3008,11 @@ export default function DMPage() {
                       </div>
                     )}
 
+                    {/* Submit button - only in physical dice mode (digital auto-submits) */}
+                    {session.dice_mode !== 'digital' && (
                     <button
                       onClick={handleSubmitChoice}
-                      disabled={!selectedChoice || (session.dice_mode === 'digital' ? !session.pending_player_roll : !diceRoll.trim()) || submitting}
+                      disabled={!selectedChoice || !diceRoll.trim() || submitting}
                       className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                     >
                       {submitting ? (
@@ -2993,6 +3024,7 @@ export default function DMPage() {
                         'Submit Choice'
                       )}
                     </button>
+                    )}
                   </>
                 );
               })()}

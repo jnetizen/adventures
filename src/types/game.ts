@@ -83,6 +83,8 @@ export interface GameSession {
   dice_mode?: DiceMode;
   /** Player's pending roll (for digital dice mode). */
   pending_player_roll?: number | null;
+  /** DM's pending choice (for digital dice mode — enables player dice). */
+  pending_choice_id?: string | null;
   /** Post-session feedback */
   feedback_rating?: number | null;
   feedback_positive?: string | null;
