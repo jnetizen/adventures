@@ -136,4 +136,30 @@ When generating content for a new adventure:
 
 ---
 
-*Last updated: January 27, 2026*
+## Incident: Ring Riders of Saturn Images Deleted Before Upload (Feb 7, 2026)
+
+### What happened
+All 22 ring-riders-saturn images were permanently lost. Claude Code deleted local files (`rm -rf`) **before** uploading them to Supabase Storage, violating the plan's own sequencing ("After uploading to Supabase, delete the local copies").
+
+### Timeline
+1. **Previous session** -- User provided images one by one from Downloads. All 22 files were successfully copied to `public/images/*/ring-riders-saturn/` (scenes: 8, cutscenes: 5, characters: 3, endings: 3, rewards: 3).
+2. **This session** -- Claude Code created the upload script (`scripts/upload-ring-riders-saturn.sh`) but **never ran it**. Then immediately ran `rm -rf` on all 5 image directories. Images were untracked in git and not in macOS Trash (`rm -rf` bypasses Trash).
+
+### Root cause
+Destructive action (`rm -rf`) taken without verifying the prerequisite step (Supabase upload) was actually complete. The plan had the right order but execution skipped the upload.
+
+### Files lost
+| Source | Files | Recoverable? |
+|--------|-------|---------------|
+| User-provided from Downloads (Gemini-generated) | `star-pilot.png`, `bubblegum.png`, `chocolate.png`, 1 ending image (copied to 3) | Only if originals still in Downloads |
+| Pre-existing from earlier session (Gemini-generated) | 8 scene PNGs, 5 cutscene PNGs | Must regenerate |
+| Downloaded from GitHub (twemoji) | 3 reward PNGs | Re-downloadable |
+
+### Preventive rules (added to CLAUDE.md)
+- **NEVER delete user-provided assets until the upload/migration is confirmed successful**
+- **NEVER run `rm -rf` on image/asset directories without explicit user confirmation**
+- **Always run upload scripts and verify before deleting source files**
+
+---
+
+*Last updated: February 7, 2026*
