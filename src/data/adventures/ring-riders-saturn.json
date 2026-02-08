@@ -53,7 +53,7 @@
   "scenes": [
     {
       "id": "scene-1",
-      "sceneNumber": 1,
+      "sceneNumber": 0,
       "title": "Blast Off!",
       "narrationText": "You climb into the captain's seat. Bubblegum squishes into the co-pilot chair and presses a button. 'Ooh, what does this one do?' Chocolate moves her hand away. 'That's the windshield wipers.' He turns to you. 'Saturn is REALLY far away — it takes regular spaceships YEARS to get there! But our ship has the Candy Turbo Engine!' Ready, Star Pilot? Let's count down! 5... 4... 3... 2... 1... BLAST OFF! Roll your dice!",
       "sceneImageUrl": "/images/scenes/ring-riders-saturn/scene-1-blastoff.png",
@@ -99,7 +99,7 @@
     },
     {
       "id": "scene-2",
-      "sceneNumber": 2,
+      "sceneNumber": 1,
       "title": "Saturn's Rings",
       "narrationText": "Saturn fills the whole sky — giant, golden, BEAUTIFUL! And those RINGS! They sparkle and shimmer, spinning slowly. Bubblegum licks the window. Chocolate bounces in his seat. 'Did you KNOW that Saturn's rings are made of ICE and ROCKS? Millions of sparkly ice chunks all spinning together!' Bubblegum gasps. 'ICE? Like a giant space popsicle?!' But then Chocolate spots a dark gap where a piece broke off. 'We have to fly THROUGH the rings to get closer!' Roll your dice!",
       "sceneImageUrl": "/images/scenes/ring-riders-saturn/scene-2-rings.png",
@@ -145,7 +145,7 @@
     },
     {
       "id": "scene-3",
-      "sceneNumber": 3,
+      "sceneNumber": 2,
       "title": "The Ice Moon",
       "narrationText": "The ship lands on a tiny moon called Enceladus. Everything is covered in sparkly ice! And all around, FOUNTAINS of ice shoot up into space — WHOOOOSH! — like the biggest snow fountains EVER! Chocolate is SO excited. 'Did you KNOW this little moon has REAL ICE GEYSERS? They shoot water and ice INTO SPACE! Real scientists took pictures of them!' Bubblegum runs through the sparkly spray. 'SNOW PARTY!' Then Chocolate spots something glowing in the biggest geyser. 'THERE! The missing ring piece! It's stuck in the ice!' Roll your dice!",
       "sceneImageUrl": "/images/scenes/ring-riders-saturn/scene-3-enceladus.png",
@@ -191,7 +191,7 @@
     },
     {
       "id": "scene-4",
-      "sceneNumber": 4,
+      "sceneNumber": 3,
       "title": "Bouncing on the Clouds",
       "narrationText": "The ship flies back toward Saturn. The rings are way up high! Chocolate has an idea. 'Did you KNOW Saturn is a GAS GIANT? That means there's no ground — it's ALL made of clouds!' Bubblegum gasps. 'BOUNCY?!' Chocolate grins. 'BOUNCY!' The ship lands on Saturn's cloud tops and — BOING! — the clouds are soft and bouncy like the biggest trampoline EVER! 'We can BOUNCE our way up to the rings!' Roll your dice!",
       "sceneImageUrl": "/images/scenes/ring-riders-saturn/scene-4-clouds.png",
@@ -237,7 +237,7 @@
     },
     {
       "id": "scene-5",
-      "sceneNumber": 5,
+      "sceneNumber": 4,
       "title": "Fixing the Ring",
       "narrationText": "The sparkling ice rings stretch out in every direction! There's the gap — the dark spot where the piece belongs. You hold the golden ring piece. It's warm and humming. Chocolate is getting emotional. 'Did you KNOW Saturn has SEVEN main rings? Seven! And right now... one of them needs YOU, Star Pilot.' Bubblegum wipes her eyes. 'I'm not crying. I'm just... leaking a little.' Can you count the rings with me? One... two... three... four... five... six... and the broken one makes seven! Roll your dice!",
       "sceneImageUrl": "/images/scenes/ring-riders-saturn/scene-5-fix.png",
