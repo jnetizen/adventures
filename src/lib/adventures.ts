@@ -27,6 +27,8 @@ import wizardsLibrary from '../data/adventures/wizards-library-adventure.json';
 import sparkleLostStar from '../data/adventures/sparkle-lost-star-adventure.json';
 import grizzyLemmings from '../data/adventures/grizzy-lemmings-heist.json';
 import ringRidersSaturn from '../data/adventures/ring-riders-saturn.json';
+import sparkleLostStarM from '../data/adventures/sparkle-lost-star-m-adventure.json';
+import stormChasersJupiter from '../data/adventures/storm-chasers-jupiter.json';
 
 /** Which families can see each adventure. Every adventure must be listed. */
 const familyExclusiveAdventures: Record<string, string[]> = {
@@ -42,6 +44,8 @@ const familyExclusiveAdventures: Record<string, string[]> = {
   'sparkle-lost-star': ['jd'],
   'grizzy-lemmings-heist': ['jd'],
   'ring-riders-saturn': ['rkang-family'],
+  'sparkle-lost-star-m': ['rkang-family'],
+  'storm-chasers-jupiter': ['rkang-family'],
 };
 
 const adventures: Record<string, Adventure> = {
@@ -57,6 +61,8 @@ const adventures: Record<string, Adventure> = {
   'sparkle-lost-star': sparkleLostStar as Adventure,
   'grizzy-lemmings-heist': grizzyLemmings as Adventure,
   'ring-riders-saturn': ringRidersSaturn as Adventure,
+  'sparkle-lost-star-m': sparkleLostStarM as Adventure,
+  'storm-chasers-jupiter': stormChasersJupiter as Adventure,
 };
 
 /**

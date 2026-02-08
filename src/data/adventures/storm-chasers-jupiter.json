@@ -1,0 +1,344 @@
+{
+  "id": "storm-chasers-jupiter",
+  "title": "The Storm Chasers of Jupiter",
+  "description": "Bubblegum and Chocolate need a Star Pilot to calm Jupiter's wildest storm!",
+  "preview": {
+    "tagline": "Chase the biggest storm in the solar system!",
+    "themes": ["space", "planets", "friendship", "adventure"],
+    "estimatedMinutes": 12,
+    "previewImageUrl": "/images/scenes/storm-chasers-jupiter/preview.png",
+    "playerCount": {
+      "min": 1,
+      "max": 1
+    }
+  },
+  "characters": [
+    {
+      "id": "star-pilot",
+      "name": "Star Pilot",
+      "description": "The bravest space explorer in the galaxy!",
+      "imageUrl": "/images/characters/storm-chasers-jupiter/star-pilot.png",
+      "color": "RED"
+    }
+  ],
+  "companions": [
+    {
+      "id": "bubblegum",
+      "name": "Bubblegum",
+      "description": "A small round bubblegum character, bright PINK and squishy, with big cheerful eyes and a wide bouncy smile. Silly, bouncy, physical comedy. Touches everything, tastes everything, bounces on everything.",
+      "imageUrl": "/images/characters/storm-chasers-jupiter/bubblegum.png"
+    },
+    {
+      "id": "chocolate",
+      "name": "Chocolate",
+      "description": "A small rectangular chocolate bar character, rich dark BROWN with a shiny GOLD foil wrapper half-peeled. Excited explorer who can't stop sharing fun facts. Nerdy comedy, thinks space is THE COOLEST THING EVER.",
+      "imageUrl": "/images/characters/storm-chasers-jupiter/chocolate.png"
+    }
+  ],
+  "dmNotes": {
+    "voiceGuide": "Bubblegum = high silly bouncy voice. Chocolate = excited fast-talking nerdy voice. Let the child make storm sounds, count moons, and roar like a volcano!",
+    "pacing": "Go at the child's pace. If they want to talk about Jupiter or ask questions, let them! Chocolate would be thrilled. This is a sequel — reference Saturn if the child remembers!",
+    "diceNote": "Every roll succeeds at 3+. On a 1-2, the outcome is silly/slapstick but still moves forward. Same image either way."
+  },
+  "prologue": {
+    "worldIntro": "You're looking at your star map when — WHOOOOSH! The candy wrapper spaceship swoops down again! Bubblegum tumbles out spinning. 'STAR PILOT! Jupiter's storm is going CRAZY and it's blowing all the colors off the planet!' Chocolate waves his map. 'Jupiter is the BIGGEST planet — a THOUSAND Earths could fit inside it! And right now it needs YOU.'",
+    "characterIntros": [
+      {
+        "characterId": "star-pilot",
+        "introText": "The bravest space explorer in the galaxy!"
+      }
+    ],
+    "missionBrief": "Help Bubblegum and Chocolate calm Jupiter's wildest storm!",
+    "prologueImageUrl": "/images/scenes/storm-chasers-jupiter/prologue.png"
+  },
+  "scenes": [
+    {
+      "id": "scene-1",
+      "sceneNumber": 0,
+      "title": "Blast Off to Jupiter!",
+      "narrationText": "Back in the captain's seat! Bubblegum immediately presses three buttons. Chocolate slaps her hand. 'Those are the cup holders!' Ready, Star Pilot? 5... 4... 3... 2... 1... BLAST OFF!",
+      "sceneImageUrl": "/images/scenes/storm-chasers-jupiter/scene-1-blastoff.png",
+      "educationalNote": "Jupiter is the biggest planet in our solar system — over 1,000 Earths could fit inside it!",
+      "characterTurns": [
+        {
+          "characterId": "star-pilot",
+          "promptText": "How should we blast off?",
+          "choices": [
+            {
+              "id": "scene1-turbo",
+              "label": "Double turbo boost!",
+              "successThreshold": 3,
+              "successOutcome": {
+                "text": "ZOOM! The ship rockets forward — the stars blur into rainbow streaks!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-1-outcome.png"
+              },
+              "failOutcome": {
+                "text": "The engine hiccups — POP POP — but Bubblegum blows a giant bubble that pushes the ship forward! WHOOSH!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-1-outcome.png"
+              }
+            },
+            {
+              "id": "scene1-shout",
+              "label": "Shout JUPITER HERE WE COME!",
+              "successThreshold": 3,
+              "successOutcome": {
+                "text": "ZOOM! The ship rockets forward — the stars blur into rainbow streaks!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-1-outcome.png"
+              },
+              "failOutcome": {
+                "text": "The engine hiccups — POP POP — but Bubblegum blows a giant bubble that pushes the ship forward! WHOOSH!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-1-outcome.png"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "You're zooming through space toward Jupiter!",
+        "nextSceneId": "scene-2"
+      }
+    },
+    {
+      "id": "scene-2",
+      "sceneNumber": 1,
+      "title": "Jupiter's Stripes",
+      "narrationText": "Jupiter fills the WHOLE sky — giant swirling stripes of orange, white, and brown! But some are fading to grey. Chocolate grabs your arm. 'Those stripes are giant bands of CLOUDS!' Bubblegum points. 'One is flying away! CATCH IT!'",
+      "sceneImageUrl": "/images/scenes/storm-chasers-jupiter/scene-2-stripes.png",
+      "educationalNote": "Jupiter's colorful stripes are bands of clouds moving in different directions!",
+      "characterTurns": [
+        {
+          "characterId": "star-pilot",
+          "promptText": "How do we catch the stripe?",
+          "choices": [
+            {
+              "id": "scene2-chase",
+              "label": "Chase it with the ship!",
+              "successThreshold": 3,
+              "successOutcome": {
+                "text": "You swoop under the orange cloud ribbon and scoop it up — it wraps around the ship like a scarf!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-2-outcome.png"
+              },
+              "failOutcome": {
+                "text": "You chase it but it wraps around Bubblegum's face — 'MMMPH! It tastes like butterscotch!' — and you reel it in!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-2-outcome.png"
+              }
+            },
+            {
+              "id": "scene2-lasso",
+              "label": "Lasso it with a space rope!",
+              "successThreshold": 3,
+              "successOutcome": {
+                "text": "You swoop under the orange cloud ribbon and scoop it up — it wraps around the ship like a scarf!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-2-outcome.png"
+              },
+              "failOutcome": {
+                "text": "You chase it but it wraps around Bubblegum's face — 'MMMPH! It tastes like butterscotch!' — and you reel it in!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-2-outcome.png"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "You caught the stripe! But the storm is still blowing more colors away!",
+        "nextSceneId": "scene-3"
+      }
+    },
+    {
+      "id": "scene-3",
+      "sceneNumber": 2,
+      "title": "The Volcano Moon",
+      "narrationText": "You land on Io — one of Jupiter's moons — and WHOA! VOLCANOES everywhere, shooting sparkly lava into the sky! Bubblegum pokes one. It burps. 'RUDE!' Then a volcano blocks the path back to the ship with gooey lava!",
+      "sceneImageUrl": "/images/scenes/storm-chasers-jupiter/scene-3-io.png",
+      "educationalNote": "Jupiter's moon Io has more volcanoes than anywhere else in the solar system!",
+      "characterTurns": [
+        {
+          "characterId": "star-pilot",
+          "promptText": "How do we get past the lava?",
+          "choices": [
+            {
+              "id": "scene3-jump",
+              "label": "Hop across the rocks!",
+              "successThreshold": 3,
+              "successOutcome": {
+                "text": "You hop rock to rock — boing boing boing — right over the lava and back to the ship!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-3-outcome.png"
+              },
+              "failOutcome": {
+                "text": "You slip and Bubblegum stretches into a bridge — you walk across her! 'That TICKLES!'",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-3-outcome.png"
+              }
+            },
+            {
+              "id": "scene3-cool",
+              "label": "Blow on it to cool it down!",
+              "successThreshold": 3,
+              "successOutcome": {
+                "text": "You hop rock to rock — boing boing boing — right over the lava and back to the ship!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-3-outcome.png"
+              },
+              "failOutcome": {
+                "text": "You slip and Bubblegum stretches into a bridge — you walk across her! 'That TICKLES!'",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-3-outcome.png"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "You made it past the volcanoes! Back to Jupiter to stop that storm!",
+        "nextSceneId": "scene-4"
+      }
+    },
+    {
+      "id": "scene-4",
+      "sceneNumber": 3,
+      "title": "The Great Red Spot",
+      "narrationText": "There it is — the Great Red Spot! A MASSIVE swirling red circle, bigger than the whole Earth! Chocolate whispers. 'That storm has been spinning for HUNDREDS of years.' Bubblegum hides behind the seat. 'It looks... spinny.' You have to fly INTO it!",
+      "sceneImageUrl": "/images/scenes/storm-chasers-jupiter/scene-4-red-spot.png",
+      "educationalNote": "Jupiter's Great Red Spot is a giant storm bigger than Earth — and it's been going for hundreds of years!",
+      "characterTurns": [
+        {
+          "characterId": "star-pilot",
+          "promptText": "How do we fly into the storm?",
+          "choices": [
+            {
+              "id": "scene4-spin",
+              "label": "Spin with the storm!",
+              "successThreshold": 3,
+              "successOutcome": {
+                "text": "You spin the ship with the wind — WHEEE — riding the storm like a roller coaster to the center!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-4-outcome.png"
+              },
+              "failOutcome": {
+                "text": "The wind flips the ship upside down — Bubblegum sticks to the ceiling — but you barrel-roll to the center!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-4-outcome.png"
+              }
+            },
+            {
+              "id": "scene4-straight",
+              "label": "Full speed straight in!",
+              "successThreshold": 3,
+              "successOutcome": {
+                "text": "You spin the ship with the wind — WHEEE — riding the storm like a roller coaster to the center!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-4-outcome.png"
+              },
+              "failOutcome": {
+                "text": "The wind flips the ship upside down — Bubblegum sticks to the ceiling — but you barrel-roll to the center!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-4-outcome.png"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "You made it to the eye of the storm!",
+        "nextSceneId": "scene-5"
+      }
+    },
+    {
+      "id": "scene-5",
+      "sceneNumber": 4,
+      "title": "Calming the Storm",
+      "narrationText": "Inside the eye of the storm, everything is quiet. A glowing orange crystal spins too fast in the center — THAT'S what's making the storm go wild! Bubblegum holds your hand. 'You calmed Saturn. You can calm Jupiter too.'",
+      "sceneImageUrl": "/images/scenes/storm-chasers-jupiter/scene-5-eye.png",
+      "educationalNote": "Jupiter has 95 known moons — the most of any planet in our solar system!",
+      "characterTurns": [
+        {
+          "characterId": "star-pilot",
+          "promptText": "How should we calm the storm?",
+          "choices": [
+            {
+              "id": "scene5-sing",
+              "label": "Sing a calm song to it!",
+              "successThreshold": 3,
+              "successOutcome": {
+                "text": "The crystal slows... slows... stops. Jupiter's colors come flooding back — orange, red, white, beautiful!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-5-outcome.png"
+              },
+              "failOutcome": {
+                "text": "Bubblegum hums louder and pops — POP — the crystal wobbles, giggles, and calms down. Colors rush back!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-5-outcome.png"
+              }
+            },
+            {
+              "id": "scene5-touch",
+              "label": "Gently touch the crystal!",
+              "successThreshold": 3,
+              "successOutcome": {
+                "text": "The crystal slows... slows... stops. Jupiter's colors come flooding back — orange, red, white, beautiful!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-5-outcome.png"
+              },
+              "failOutcome": {
+                "text": "Bubblegum hums louder and pops — POP — the crystal wobbles, giggles, and calms down. Colors rush back!",
+                "cutsceneImageUrl": "/images/cutscenes/storm-chasers-jupiter/scene-5-outcome.png"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": {
+        "resultText": "Jupiter's storm is calm and its colors are back!",
+        "nextSceneId": null
+      }
+    }
+  ],
+  "epilogue": {
+    "narrationText": "The ship glides home. Bubblegum is asleep, snoring little bubbles. Chocolate hands you a glowing Jupiter badge for your star map. 'Two planets saved. Saturn AND Jupiter.' He points to a small red dot. 'Mars. But that's an adventure for another day.'",
+    "sceneImageUrl": "/images/scenes/storm-chasers-jupiter/epilogue.png"
+  },
+  "endings": [
+    {
+      "id": "ending-legendary",
+      "tier": "legendary",
+      "narrationText": "Jupiter's 95 moons all flash at once — a thank-you light show just for you, the greatest Star Pilot!",
+      "imageUrl": "/images/endings/storm-chasers-jupiter/ending-legendary.png",
+      "rewards": [
+        {
+          "id": "storm-crystal",
+          "type": "item",
+          "name": "The Storm Crystal",
+          "description": "The crystal from Jupiter's Great Red Spot — it glows warm in your hand!",
+          "imageUrl": "/images/rewards/storm-chasers-jupiter/storm-crystal.png"
+        }
+      ]
+    },
+    {
+      "id": "ending-great",
+      "tier": "great",
+      "narrationText": "A tiny red storm cloud follows you home — it rains warm sparkles on your pillow every night!",
+      "imageUrl": "/images/endings/storm-chasers-jupiter/ending-great.png",
+      "rewards": [
+        {
+          "id": "mini-storm",
+          "type": "item",
+          "name": "Friendly Little Storm",
+          "description": "A tiny Jupiter storm that only rains sparkles!",
+          "imageUrl": "/images/rewards/storm-chasers-jupiter/mini-storm.png"
+        }
+      ]
+    },
+    {
+      "id": "ending-good",
+      "tier": "good",
+      "narrationText": "That night, you look up and see Jupiter's Great Red Spot winking at you — just for you!",
+      "imageUrl": "/images/endings/storm-chasers-jupiter/ending-good.png",
+      "rewards": [
+        {
+          "id": "jupiter-wink",
+          "type": "item",
+          "name": "Jupiter's Wink",
+          "description": "Jupiter always winks when it sees you now!",
+          "imageUrl": "/images/rewards/storm-chasers-jupiter/jupiter-wink.png"
+        }
+      ]
+    }
+  ],
+  "scoring": {
+    "thresholds": [
+      { "minSuccesses": 5, "endingId": "ending-legendary" },
+      { "minSuccesses": 3, "endingId": "ending-great" },
+      { "minSuccesses": 0, "endingId": "ending-good" }
+    ]
+  }
+}
