@@ -21,7 +21,7 @@ import { getKidDisplayName, substituteCharacterNames } from '../lib/players';
 import { debugLog } from '../lib/debugLog';
 import { GAME_PHASES, CONNECTION_STATUS, type ConnectionStatusType } from '../constants/game';
 import type { GameSession, Player, DiceType } from '../types/game';
-import { DICE_TYPES, DEFAULT_DICE_TYPE } from '../types/game';
+import { DEFAULT_DICE_TYPE } from '../types/game';
 import type { Choice, Character, CharacterTurn, SceneOutcome, TurnOutcome } from '../types/adventure';
 import {
   useSessionPersistence,
@@ -179,8 +179,8 @@ export default function DMPage() {
   const [assignmentStep, setAssignmentStep] = useState<'kids' | 'characters'>('kids');
   const [kidNames, setKidNames] = useState<string[]>(['', '']);
   const [playerAssignments, setPlayerAssignments] = useState<Array<{ kidName: string; characterId: string }>>([]);
-  const [selectedDiceType, setSelectedDiceType] = useState<DiceType>(DEFAULT_DICE_TYPE);
-  const [selectedDiceMode, setSelectedDiceMode] = useState<'physical' | 'digital'>('physical');
+  const [selectedDiceType] = useState<DiceType>(6);
+  const [selectedDiceMode, setSelectedDiceMode] = useState<'physical' | 'digital'>('digital');
   const [submitting, setSubmitting] = useState(false);
   const submittingRef = useRef(false); // Ref-based guard for immediate double-click prevention
   const [advancing, setAdvancing] = useState(false);
@@ -1617,32 +1617,6 @@ export default function DMPage() {
                     )}
                   </>
                 )}
-
-                {/* Dice type selector */}
-                <div className="pt-4 border-t border-gray-200">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Dice Type
-                  </label>
-                  <div className="flex gap-2">
-                    {DICE_TYPES.map((dt) => (
-                      <button
-                        key={dt}
-                        type="button"
-                        onClick={() => setSelectedDiceType(dt)}
-                        className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-colors ${
-                          selectedDiceType === dt
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                      >
-                        d{dt}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Choose the dice your family will use for rolls.
-                  </p>
-                </div>
 
                 {/* Dice mode selector */}
                 <div className="pt-4 border-t border-gray-200">
