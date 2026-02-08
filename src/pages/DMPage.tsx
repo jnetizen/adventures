@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
-import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState, clearPlayerRoll, setPendingChoice } from '../lib/gameState';
+import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState, setPendingChoice } from '../lib/gameState';
 import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
@@ -758,6 +758,43 @@ export default function DMPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.pending_player_roll]);
 
+  // Auto-set pending_choice_id for narrative turns (alwaysSucceed, no choices) in digital mode
+  // so the player's dice roller appears without DM needing to select a choice
+  useEffect(() => {
+    if (
+      session?.dice_mode === 'digital' &&
+      currentCharacterTurn &&
+      isAlwaysSucceedTurn(currentCharacterTurn) &&
+      currentScene &&
+      !currentScene.isClimax &&
+      (!currentCharacterTurn.choices || currentCharacterTurn.choices.length === 0) &&
+      !session.pending_choice_id &&
+      !session.pending_player_roll &&
+      !submittingRef.current
+    ) {
+      setPendingChoice(session.id, 'narrative-roll');
+      setSession(prev => prev ? { ...prev, pending_choice_id: 'narrative-roll' } : null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.dice_mode, currentScene?.id, currentCharacterTurn?.characterId, session?.pending_choice_id, session?.pending_player_roll]);
+
+  // Auto-submit narrative turns in digital mode when player roll arrives
+  useEffect(() => {
+    if (
+      session?.dice_mode === 'digital' &&
+      session?.pending_player_roll &&
+      currentCharacterTurn &&
+      isAlwaysSucceedTurn(currentCharacterTurn) &&
+      currentScene &&
+      !currentScene.isClimax &&
+      (!currentCharacterTurn.choices || currentCharacterTurn.choices.length === 0) &&
+      !submittingRef.current
+    ) {
+      handleSubmitNarrativeTurnDigital();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.pending_player_roll]);
+
   /**
    * Handle the entire climax sequence at once.
    * Shows either the video OR all cutscenes in sequence.
@@ -841,12 +878,37 @@ export default function DMPage() {
     if (turns.length === 0) return;
 
     setSubmitting(true);
+    submittingRef.current = true;
+    const maxRoll = session.dice_type ?? DEFAULT_DICE_TYPE;
+
     for (const turn of turns) {
       await submitCharacterChoice(session.id, turn.characterId, 'climax-action', playerRoll, 1);
+
+      // Handle cutscene for this turn (matching handleSubmitChoice behavior)
+      if (hasPerTurnOutcomes(turn)) {
+        const turnOutcome = getTurnOutcome(turn, playerRoll, maxRoll);
+        if (turnOutcome?.cutsceneImageUrl) {
+          const cutsceneData = {
+            characterId: turn.characterId,
+            imageUrl: turnOutcome.cutsceneImageUrl,
+            outcomeText: turnOutcome.text || '',
+            reward: turnOutcome.reward ? {
+              id: turnOutcome.reward.id,
+              name: turnOutcome.reward.name,
+              imageUrl: turnOutcome.reward.imageUrl,
+              type: turnOutcome.reward.type,
+            } : undefined,
+          };
+          setSession((prev) => prev ? { ...prev, active_cutscene: cutsceneData } : null);
+          await showOutcomeCutscene(session.id, turn.characterId, turnOutcome);
+        }
+      }
     }
-    await clearPlayerRoll(session.id);
-    setSession(prev => prev ? { ...prev, pending_player_roll: null } : null);
+
+    // submitCharacterChoice already clears pending_choice_id and pending_player_roll in DB
+    setSession(prev => prev ? { ...prev, pending_player_roll: null, pending_choice_id: null } : null);
     setSubmitting(false);
+    submittingRef.current = false;
   };
 
   /**
@@ -2841,28 +2903,14 @@ export default function DMPage() {
                         <p className="text-base font-medium text-yellow-900 mt-2">{prompt}</p>
                       </div>
                       {session.dice_mode === 'digital' ? (
-                        // Digital dice mode: wait for player roll, then show "See Outcome"
-                        session.pending_player_roll ? (
-                          <>
-                            <div className="bg-green-50 border border-green-200 p-3 rounded-lg text-center">
-                              <p className="text-sm text-green-700 mb-1">Player rolled:</p>
-                              <p className="text-3xl font-bold text-green-800">{session.pending_player_roll}</p>
-                            </div>
-                            <button
-                              onClick={handleSubmitNarrativeTurnDigital}
-                              disabled={submitting}
-                              className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium text-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {submitting ? (
-                                <span className="flex items-center justify-center gap-2">
-                                  <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
-                                  Resolving...
-                                </span>
-                              ) : (
-                                'See Outcome'
-                              )}
-                            </button>
-                          </>
+                        // Digital dice mode: auto-submits when player roll arrives
+                        submitting ? (
+                          <div className="bg-green-50 border border-green-200 p-4 rounded-lg text-center">
+                            <span className="flex items-center justify-center gap-2 text-green-700">
+                              <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></span>
+                              Resolving...
+                            </span>
+                          </div>
                         ) : (
                           <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg text-center">
                             <p className="text-sm text-amber-700">Waiting for player to tap dice...</p>
