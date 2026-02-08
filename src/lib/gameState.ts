@@ -227,6 +227,9 @@ export async function startScene(sessionId: string, sceneNumber: number): Promis
         puzzle_outcome: null,
         // Clear any active cutscene to prevent stale overlays on scene transitions.
         active_cutscene: null,
+        // Clear digital dice state for fresh turn.
+        pending_choice_id: null,
+        pending_player_roll: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);
@@ -649,6 +652,9 @@ export async function startSceneById(
         puzzle_outcome: null,
         // Clear any active cutscene to prevent race conditions on scene transitions
         active_cutscene: null,
+        // Clear digital dice state for fresh turn.
+        pending_choice_id: null,
+        pending_player_roll: null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId);

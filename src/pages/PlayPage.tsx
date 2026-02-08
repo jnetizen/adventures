@@ -212,10 +212,8 @@ export default function PlayPage() {
       }
 
       // In digital mode, if playerRollSubmitted is true the animation was already triggered
-      // locally when the player tapped dice — just sync the count, don't re-trigger animation
+      // locally when the player tapped dice — skip entirely (onComplete will increment count)
       if (session?.dice_mode === 'digital' && playerRollSubmitted) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- sync count without duplicate animation
-        setProcessedRollCount(prev => prev + 1);
         return;
       }
 
