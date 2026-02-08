@@ -28,8 +28,19 @@ import sparkleLostStar from '../data/adventures/sparkle-lost-star-adventure.json
 import grizzyLemmings from '../data/adventures/grizzy-lemmings-heist.json';
 import ringRidersSaturn from '../data/adventures/ring-riders-saturn.json';
 
-/** Adventures that should ONLY appear for specific families. Omitted = available to all. */
+/** Which families can see each adventure. Every adventure must be listed. */
 const familyExclusiveAdventures: Record<string, string[]> = {
+  'candy-volcano': ['jd'],
+  'dragon-knight-rescue': ['jd'],
+  'fire-gem-quest': ['jd'],
+  'race-to-rainbow-reef': ['jd'],
+  'frozen-volcano': ['jd'],
+  'shadow-knight-lost-grove': ['jd'],
+  'rainbow-bridge': ['jd'],
+  'ancient-shrine': ['jd'],
+  'wizards-library': ['jd'],
+  'sparkle-lost-star': ['jd'],
+  'grizzy-lemmings-heist': ['jd'],
   'ring-riders-saturn': ['rkang-family'],
 };
 
