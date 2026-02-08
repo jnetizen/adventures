@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Shield, Zap, Heart, User, CheckCircle2, Sparkles, Snowflake, Leaf } from 'lucide-react';
-import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, resetSessionForNewAdventure, showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState, clearPlayerRoll } from '../lib/gameState';
+import { createSession, startAdventure, startScene, submitCharacterChoice, advanceToNextScene, submitSessionFeedback, /* resetSessionForNewAdventure, */ showCutscene, dismissCutscene, collectReward, startSceneById, splitParty, reuniteParty, setActiveParallelScene, updateCharacterSceneState, selectAdventure, completePuzzle, recordClimaxRoll, startPuzzle, resetPuzzleState, clearPlayerRoll } from '../lib/gameState';
 import { supabase } from '../lib/supabase';
 import { formatError, clearSessionFromStorage } from '../lib/errorRecovery';
 import { setSessionId } from '../lib/remoteLogger';
@@ -1385,18 +1385,19 @@ export default function DMPage() {
       setError(formatError(feedbackError));
       throw feedbackError;
     }
-    const { error: resetError } = await resetSessionForNewAdventure(session.id);
-    if (resetError) {
-      setError(formatError(resetError));
-      throw resetError;
-    }
-    setSession((prev) => prev ? { ...prev, phase: GAME_PHASES.SETUP, adventure_id: null, players: [] } : null);
-    setAssignmentStep('kids');
-    setKidNames(['', '']);
-    setPlayerAssignments([]);
-    setCelebratedSceneIds([]);
-    setCelebratedEnding(false);
-    setClimaxPlayMode(null);
+    // Session restart disabled — keep session on completion screen after feedback
+    // const { error: resetError } = await resetSessionForNewAdventure(session.id);
+    // if (resetError) {
+    //   setError(formatError(resetError));
+    //   throw resetError;
+    // }
+    // setSession((prev) => prev ? { ...prev, phase: GAME_PHASES.SETUP, adventure_id: null, players: [] } : null);
+    // setAssignmentStep('kids');
+    // setKidNames(['', '']);
+    // setPlayerAssignments([]);
+    // setCelebratedSceneIds([]);
+    // setCelebratedEnding(false);
+    // setClimaxPlayMode(null);
   };
 
   const handleRecoverSession = async () => {
