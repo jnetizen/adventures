@@ -2699,35 +2699,21 @@ export default function DMPage() {
                       </div>
 
                       {session.dice_mode === 'digital' ? (
-                        // Digital dice: wait for player to roll max, then show GO
-                        session.pending_player_roll ? (
-                          <>
-                            <div className="bg-green-50 border border-green-200 p-3 rounded-lg text-center">
-                              <p className="text-sm text-green-700 mb-1">Player rolled:</p>
-                              <p className="text-3xl font-bold text-green-800">{session.pending_player_roll}</p>
-                            </div>
-                            <button
-                              onClick={handleSubmitClimaxAll}
-                              disabled={submitting}
-                              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 px-4 rounded-lg font-bold text-xl hover:from-amber-600 hover:to-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-                            >
-                              {submitting ? (
-                                <span className="flex items-center justify-center gap-2">
-                                  <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-                                  GO!
-                                </span>
-                              ) : (
-                                '⚡ GO! ⚡'
-                              )}
-                            </button>
-                          </>
-                        ) : (
-                          <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg text-center">
-                            <p className="text-sm text-amber-700">
-                              Waiting for player to roll a {session.dice_type ?? DEFAULT_DICE_TYPE}...
-                            </p>
-                          </div>
-                        )
+                        // Digital dice: climax always succeeds, so auto-submit with GO button (no player roll needed)
+                        <button
+                          onClick={handleSubmitClimaxAll}
+                          disabled={submitting}
+                          className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 px-4 rounded-lg font-bold text-xl hover:from-amber-600 hover:to-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                        >
+                          {submitting ? (
+                            <span className="flex items-center justify-center gap-2">
+                              <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+                              GO!
+                            </span>
+                          ) : (
+                            '⚡ GO! ⚡'
+                          )}
+                        </button>
                       ) : (
                         <>
                           {/* Physical dice: instructions + GO button */}
