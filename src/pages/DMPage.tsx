@@ -1509,6 +1509,18 @@ export default function DMPage() {
     );
   }
 
+  // Adventure still loading — show a simple spinner instead of flashing the selection screen
+  if (!adventure && loadingAdventure) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto" />
+          <p className="text-sm text-gray-500">Loading adventure…</p>
+        </div>
+      </div>
+    );
+  }
+
   // Session exists but no adventure loaded — adventure selection screen
   if (!adventure) {
     return (
