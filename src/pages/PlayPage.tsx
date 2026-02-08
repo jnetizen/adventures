@@ -333,6 +333,7 @@ export default function PlayPage() {
   const sceneRewards = allActed && currentScene?.outcome?.rewards;
   const showSceneCelebration = !!(
     !pendingDiceRoll && // Wait for dice roll animation to finish
+    !session?.active_cutscene && // Wait for cutscene to be dismissed (same z-index conflict)
     sceneRewards &&
     sceneRewards.length > 0 &&
     currentScene &&
@@ -346,6 +347,7 @@ export default function PlayPage() {
     allActed &&
     isLastScene &&
     !pendingDiceRoll && // Wait for dice roll animation to finish
+    !session?.active_cutscene && // Wait for cutscene to be dismissed (same z-index conflict)
     endingRewards &&
     endingRewards.length > 0 &&
     !celebratedEnding &&

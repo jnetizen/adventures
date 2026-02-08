@@ -2071,11 +2071,19 @@ export default function DMPage() {
                 return (
                   <div key={index} className={`p-3 rounded-lg ${isClimaxTurn ? 'bg-amber-50 border border-amber-200' : 'bg-gray-50'}`}>
                     <div className="flex items-center gap-3 mb-2">
-                      <PlaceholderImage
-                        variant="character"
-                        label={character.name}
-                        className="w-10 h-10 flex-shrink-0"
-                      />
+                      {character.imageUrl ? (
+                        <img
+                          src={character.imageUrl}
+                          alt={character.name}
+                          className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <PlaceholderImage
+                          variant="character"
+                          label={character.name}
+                          className="w-10 h-10 flex-shrink-0"
+                        />
+                      )}
                       <p className="font-semibold">{kidName} ({character.name})</p>
                       {isClimaxTurn && currentScene.isClimax && (
                         <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold">CLIMAX</span>
