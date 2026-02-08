@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import type { Adventure } from '../types/adventure';
+import type { Player } from '../types/game';
 import PlaceholderImage from '../components/PlaceholderImage';
 
 interface ProloguePageProps {
   adventure: Adventure;
   onStart: () => void;
   disabled?: boolean;
+  players?: Player[];
 }
 
-export default function ProloguePage({ adventure, onStart, disabled }: ProloguePageProps) {
+export default function ProloguePage({ adventure, onStart, disabled, players }: ProloguePageProps) {
   const prologue = adventure.prologue;
   const [imageError, setImageError] = useState(false);
   const [videoError, setVideoError] = useState(false);
@@ -103,7 +105,11 @@ export default function ProloguePage({ adventure, onStart, disabled }: PrologueP
                     />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">{char.name}</p>
+                    <p className="font-semibold text-gray-900">
+                      {players?.find(p => p.characterId === intro.characterId)?.kidName
+                        ? `${players.find(p => p.characterId === intro.characterId)!.kidName} as ${char.name}`
+                        : char.name}
+                    </p>
                     <p className="text-gray-700 leading-relaxed mt-1">{intro.introText}</p>
                   </div>
                 </div>

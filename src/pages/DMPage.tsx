@@ -1846,6 +1846,7 @@ export default function DMPage() {
             adventure={adventure}
             onStart={handlePrologueStart}
             disabled={advancing}
+            players={session.players || []}
           />
           {advancing && (
             <div className="text-center text-gray-600 flex items-center justify-center gap-2">
