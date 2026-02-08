@@ -417,7 +417,13 @@ export default function DMPage() {
       return;
     }
     setError(null);
-    setPlayerAssignments(names.map(kidName => ({ kidName, characterId: '' })));
+    // Auto-assign if single character adventure
+    if (adventure && adventure.characters.length === 1) {
+      const charId = adventure.characters[0].id;
+      setPlayerAssignments(names.map(kidName => ({ kidName, characterId: charId })));
+    } else {
+      setPlayerAssignments(names.map(kidName => ({ kidName, characterId: '' })));
+    }
     setAssignmentStep('characters');
   };
 
@@ -1547,6 +1553,11 @@ export default function DMPage() {
   if (players.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
+        {showOnboarding && (
+          <div className="fixed inset-0 z-50">
+            <DMOnboarding onComplete={() => setShowOnboarding(false)} />
+          </div>
+        )}
         <StickyRoomCode code={session.room_code} onShowHowToPlay={() => setShowOnboarding(true)} />
         <div className="max-w-md mx-auto space-y-6 px-4 py-8">
           <h1 className="text-2xl font-bold text-gray-900 text-center">DM Console</h1>
@@ -1683,7 +1694,7 @@ export default function DMPage() {
                   <p className="text-sm text-gray-600">Assign each player to a unique character role.</p>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className={`grid gap-6 ${adventure.characters.length === 1 ? 'grid-cols-1' : 'md:grid-cols-3'}`}>
                   {adventure.characters.map((char) => {
                     const getIntro = () =>
                       adventure.prologue?.characterIntros?.find(c => c.characterId === char.id)?.introText
