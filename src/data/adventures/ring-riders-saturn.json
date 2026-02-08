@@ -6,7 +6,7 @@
     "tagline": "Blast off to Saturn with your candy friends!",
     "themes": ["space", "planets", "friendship", "adventure"],
     "estimatedMinutes": 12,
-    "previewImageUrl": "https://jspswxtsudjbhgfjpfgo.supabase.co/storage/v1/object/public/family-images/rkang-family/ring-riders-saturn/prologue.jpg",
+    "previewImageUrl": "/images/scenes/ring-riders-saturn/preview.png",
     "playerCount": {
       "min": 1,
       "max": 1
