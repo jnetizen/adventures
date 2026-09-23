@@ -6,7 +6,7 @@
     "tagline": "Can you rescue the lost baby dragon before the big storm arrives?",
     "themes": ["dragons", "knights", "rescue", "friendship", "storm"],
     "estimatedMinutes": 15,
-    "previewImageUrl": "/images/adventures/dragon-knight-preview.png",
+    "previewImageUrl": "/images/adventures/dragon-knight-preview.webp",
     "ageRating": {
       "minAge": 3,
       "reason": "Gentle adventure with friendly dragons and mild weather drama",
@@ -14,7 +14,7 @@
     }
   },
   "prologue": {
-    "prologueImageUrl": "/images/prologues/dragon-knight-prologue.png",
+    "prologueImageUrl": "/images/prologues/dragon-knight-prologue.webp",
     "worldIntro": "Welcome to the Kingdom of Brightshield, where brave knights protect everyone — including the friendly dragons who live in the mountains! Dragons and knights are best friends here.",
     "characterIntros": [
       {
@@ -37,19 +37,19 @@
       "id": "shield-knight",
       "name": "Shield Knight",
       "description": "A brave knight with a magical golden shield that blocks anything",
-      "imageUrl": "/images/characters/shield-knight.png"
+      "imageUrl": "/images/characters/shield-knight.webp"
     },
     {
       "id": "swift-knight",
       "name": "Swift Knight",
       "description": "A fast knight who runs like the wind and finds the quickest paths",
-      "imageUrl": "/images/characters/swift-knight.png"
+      "imageUrl": "/images/characters/swift-knight.webp"
     },
     {
       "id": "kind-knight",
       "name": "Kind Knight",
       "description": "A gentle knight who calms scared creatures and makes friends easily",
-      "imageUrl": "/images/characters/kind-knight.png"
+      "imageUrl": "/images/characters/kind-knight.webp"
     }
   ],
   "scoring": {
@@ -64,7 +64,7 @@
       "id": "scene-1",
       "sceneNumber": 0,
       "narrationText": "Dark clouds gather over the Stormy Peaks. You hear a tiny 'SQUEAK!' echo from the mountains. That's Ember!",
-      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-0-stormy-peaks.png",
+      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-0-stormy-peaks.webp",
       "leadCharacterId": "swift-knight",
       "characterTurns": [
         {
@@ -173,7 +173,7 @@
       "id": "scene-2",
       "sceneNumber": 1,
       "narrationText": "A wobbly rope bridge crosses a deep canyon. The wind is getting stronger! SQUEAK! Ember sounds closer!",
-      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-1-rope-bridge.png",
+      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-1-rope-bridge.webp",
       "leadCharacterId": "shield-knight",
       "characterTurns": [
         {
@@ -281,7 +281,7 @@
             "type": "item",
             "id": "phoenix-feather",
             "name": "Phoenix Feather of Courage",
-            "imageUrl": "/images/rewards/phoenix-feather.png"
+            "imageUrl": "/images/rewards/phoenix-feather.webp"
           }
         ]
       }
@@ -290,7 +290,7 @@
       "id": "scene-3",
       "sceneNumber": 2,
       "narrationText": "A grumpy Mountain Troll sits on the only path! 'NO PASS! Me napping!' But Ember's squeaks are just beyond!",
-      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-2-grumpy-troll.png",
+      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-2-grumpy-troll.webp",
       "leadCharacterId": "kind-knight",
       "characterTurns": [
         {
@@ -399,7 +399,7 @@
       "id": "scene-4",
       "sceneNumber": 3,
       "narrationText": "Inside the cave, baby Ember shivers on a ledge! She's scared of the thunder. Lightning flashes outside!",
-      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-3-cave-ledge.png",
+      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-3-cave-ledge.webp",
       "leadCharacterId": "kind-knight",
       "characterTurns": [
         {
@@ -507,7 +507,7 @@
             "type": "item",
             "id": "ember-scale",
             "name": "Ember's Friendship Scale",
-            "imageUrl": "/images/rewards/ember-scale.png"
+            "imageUrl": "/images/rewards/ember-scale.webp"
           }
         ]
       }
@@ -516,7 +516,7 @@
       "id": "scene-5",
       "sceneNumber": 4,
       "narrationText": "The storm clears and a beautiful rainbow stretches across the sky! Mama dragon swoops down with happy tears streaming from her eyes. She wraps her wings around Ember in the biggest dragon hug. 'My baby! You found her!' She turns to the knights with grateful eyes. 'Thank you, brave ones. You will always be friends of the dragons!'",
-      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-4-rainbow-reunion.png",
+      "sceneImageUrl": "/images/scenes/dragon-knight-rescue/scene-4-rainbow-reunion.webp",
       "leadCharacterId": null,
       "characterTurns": [],
       "outcome": {
@@ -536,25 +536,25 @@
           "type": "badge",
           "id": "dragon-knight-badge",
           "name": "Legendary Dragon Knight Badge",
-          "imageUrl": "/images/rewards/dragon-knight-badge.png"
+          "imageUrl": "/images/rewards/dragon-knight-badge.webp"
         },
         {
           "type": "item",
           "id": "golden-sword",
           "name": "Golden Sword of Friendship",
-          "imageUrl": "/images/rewards/golden-sword.png"
+          "imageUrl": "/images/rewards/golden-sword.webp"
         },
         {
           "type": "item",
           "id": "swift-boots",
           "name": "Boots of Super Speed",
-          "imageUrl": "/images/rewards/swift-boots.png"
+          "imageUrl": "/images/rewards/swift-boots.webp"
         },
         {
           "type": "item",
           "id": "kind-cape",
           "name": "Cape of Kindness",
-          "imageUrl": "/images/rewards/kind-cape.png"
+          "imageUrl": "/images/rewards/kind-cape.webp"
         }
       ]
     },
@@ -568,13 +568,13 @@
           "type": "badge",
           "id": "brave-knight-badge",
           "name": "Brave Knights Badge",
-          "imageUrl": "/images/rewards/brave-badge.png"
+          "imageUrl": "/images/rewards/brave-badge.webp"
         },
         {
           "type": "item",
           "id": "dragon-friend-medal",
           "name": "Dragon Friend Medal",
-          "imageUrl": "/images/rewards/dragon-medal.png"
+          "imageUrl": "/images/rewards/dragon-medal.webp"
         }
       ]
     },
@@ -588,7 +588,7 @@
           "type": "badge",
           "id": "rescue-badge",
           "name": "Dragon Rescue Badge",
-          "imageUrl": "/images/rewards/rescue-badge.png"
+          "imageUrl": "/images/rewards/rescue-badge.webp"
         }
       ]
     }

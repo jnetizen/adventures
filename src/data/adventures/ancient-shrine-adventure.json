@@ -6,7 +6,7 @@
     "tagline": "Can you conquer the ancient shrine and free the spirit trapped inside?",
     "themes": ["dungeon", "puzzles", "ancient", "robot", "adventure"],
     "estimatedMinutes": 20,
-    "previewImageUrl": "/images/scenes/ancient-shrine/prologue.png",
+    "previewImageUrl": "/images/scenes/ancient-shrine/prologue.webp",
     "ageRating": {
       "minAge": 6,
       "reason": "Dungeon crawler with puzzles and ancient robot boss battle",
@@ -14,7 +14,7 @@
     }
   },
   "prologue": {
-    "prologueImageUrl": "/images/scenes/ancient-shrine/prologue.png",
+    "prologueImageUrl": "/images/scenes/ancient-shrine/prologue.webp",
     "prologueVideoUrl": "/videos/ancient-shrine/prologue.mp4",
     "worldIntro": "Deep in the mountains, hidden behind a waterfall, there is a door that hasn't opened in a thousand years. The Ancient Shrine.\n\nLegends say a powerful Guardian sleeps inside, protecting a treasure beyond imagination. Many have tried to enter. All have failed.\n\nBut today, the door has opened. Just a crack. Just enough for one brave hero to slip through.",
     "characterIntros": [
@@ -30,7 +30,7 @@
       "id": "shrine-seeker",
       "name": "Shrine Seeker",
       "description": "A brave and clever hero who solves ancient puzzles, wearing adventure gear with DARK BLUE and GOLD accents",
-      "imageUrl": "/images/characters/shrine-seeker.png"
+      "imageUrl": "/images/characters/shrine-seeker.webp"
     }
   ],
   "scenes": [
@@ -39,7 +39,7 @@
       "sceneNumber": 0,
       "title": "The Entrance Hall",
       "narrationText": "You slip through the ancient door into darkness. Then - WHOOSH - torches burst to life along the walls, revealing a massive stone hallway.\n\nThe floor ahead is cracked and crumbling. Far below, you can hear water rushing. One wrong step and you'll fall into the underground river.\n\nBut on the other side... another door. The path forward.",
-      "sceneImageUrl": "/images/scenes/ancient-shrine/scene-1.png",
+      "sceneImageUrl": "/images/scenes/ancient-shrine/scene-1.webp",
       "characterTurns": [
         {
           "characterId": "shrine-seeker",
@@ -51,11 +51,11 @@
           "successThreshold": 15,
           "successOutcome": {
             "text": "PERFECT! You sprint across the stones - crack, crack, CRACK - each one crumbling just after your foot leaves it. You dive and roll onto solid ground on the other side. The last stone tumbles into the darkness below. That was CLOSE!",
-            "cutsceneImageUrl": "/images/cutscenes/ancient-shrine/scene1-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/ancient-shrine/scene1-success.webp"
           },
           "failOutcome": {
             "text": "The stones crumble faster than expected! You stumble - but grab a hanging vine just in time. Swinging through the air - WHOOSH - you land safely on the other side, heart pounding. Phew!",
-            "cutsceneImageUrl": "/images/cutscenes/ancient-shrine/scene1-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/ancient-shrine/scene1-fail.webp"
           }
         }
       ],
@@ -70,14 +70,14 @@
       "title": "The Hidden Spirit Stone",
       "sceneType": "puzzle-seeker-lens",
       "narrationText": "You enter a round chamber filled with ancient symbols. In the center sits an empty pedestal, covered in dust.\n\nAbove the pedestal, words glow in the ancient language:\n\n'FIND THE SPIRIT STONE TO AWAKEN THE PATH FORWARD'\n\nThe stone is hidden somewhere in this chamber. You'll need to use your special Seeker's Lens to find where the ancient magic is strongest!",
-      "sceneImageUrl": "/images/scenes/ancient-shrine/scene-2.png",
+      "sceneImageUrl": "/images/scenes/ancient-shrine/scene-2.webp",
       "puzzleInstructions": {
         "type": "seeker-lens",
         "setupNarration": "Hold up your iPad and look around the room. The Seeker's Lens will glow warmer when you're getting close to the hidden Spirit Stone!",
         "hiddenObject": {
           "id": "spirit-stone",
           "name": "The Spirit Stone",
-          "imageUrl": "/images/rewards/rainbow-sparkle.png",
+          "imageUrl": "/images/rewards/rainbow-sparkle.webp",
           "width": 150,
           "height": 150,
           "animation": "pulse"
@@ -103,7 +103,7 @@
       "sceneNumber": 2,
       "title": "The Spirit Chamber",
       "narrationText": "The passage opens into a small chamber filled with soft blue light. And there, floating in the center, trapped inside a crystal cage... a tiny glowing orb with a friendly face!\n\n'A hero! A real hero!' the orb bounces excitedly. 'I'm Lumen! I've been trapped here for a thousand years! Please - free me!'\n\nBut the crystal cage is guarded. Two ancient stone statues stand on either side, their eyes starting to glow red. They're waking up!",
-      "sceneImageUrl": "/images/scenes/ancient-shrine/scene-3.png",
+      "sceneImageUrl": "/images/scenes/ancient-shrine/scene-3.webp",
       "characterTurns": [
         {
           "characterId": "shrine-seeker",
@@ -115,20 +115,20 @@
           "successThreshold": 12,
           "successOutcome": {
             "text": "You move like a shadow, slipping right between the statues while their eyes flicker. Your hand touches the crystal cage and - CRACK - it shatters! Lumen zooms out and spirals around you joyfully! The statues freeze, their purpose complete.",
-            "cutsceneImageUrl": "/images/cutscenes/ancient-shrine/scene3-success.png",
+            "cutsceneImageUrl": "/images/cutscenes/ancient-shrine/scene3-success.webp",
             "reward": {
               "id": "lumen-spirit",
               "name": "Lumen the Shrine Spirit",
-              "imageUrl": "/images/rewards/lumen-spirit.png"
+              "imageUrl": "/images/rewards/lumen-spirit.webp"
             }
           },
           "failOutcome": {
             "text": "A statue grabs your arm! But Lumen glows BRIGHT from inside the cage - blinding the statues! You break free and smash the crystal with your elbow. CRACK! Lumen zooms out and the statues crumble to dust, their ancient magic finally spent.",
-            "cutsceneImageUrl": "/images/cutscenes/ancient-shrine/scene3-fail.png",
+            "cutsceneImageUrl": "/images/cutscenes/ancient-shrine/scene3-fail.webp",
             "reward": {
               "id": "lumen-spirit",
               "name": "Lumen the Shrine Spirit",
-              "imageUrl": "/images/rewards/lumen-spirit.png"
+              "imageUrl": "/images/rewards/lumen-spirit.webp"
             }
           }
         }
@@ -144,7 +144,7 @@
       "title": "The Memory Stones",
       "sceneType": "puzzle-memory",
       "narrationText": "The path to the Guardian is blocked by a massive door. Six glowing stones float in front of it, each hiding a symbol.\n\nLumen gasps. 'The Memory Stones! Ancient magic hides matching symbols beneath them. You must find all the pairs to unlock the door!'\n\nThe stones pulse with soft light, waiting for your touch.",
-      "sceneImageUrl": "/images/scenes/ancient-shrine/scene-4.png",
+      "sceneImageUrl": "/images/scenes/ancient-shrine/scene-4.webp",
       "puzzleInstructions": {
         "type": "memory-match",
         "prompt": "Find all the matching pairs!",
@@ -168,7 +168,7 @@
       "isClimax": true,
       "climaxMode": "roll-until-success",
       "narrationText": "The Ancient Guardian rises. Twice as tall as a house. Stone and metal and glowing blue energy. Its eyes lock onto you.\n\n'INTRUDER,' it booms. 'NONE MAY LEAVE THE SHRINE.'\n\nLumen trembles but stays by your side. 'We can do this! We have to find the weak spot - the core in its chest! But its shields are too strong!'\n\nThe Guardian raises its massive arm. You'll have to dodge its attacks and wait for the perfect moment to strike!\n\n'Keep trying!' Lumen shouts. 'When the moment is RIGHT, you'll know!'",
-      "sceneImageUrl": "/images/scenes/ancient-shrine/scene-5.png",
+      "sceneImageUrl": "/images/scenes/ancient-shrine/scene-5.webp",
       "climaxVideoUrl": "/videos/ancient-shrine/guardian-defeat.mp4",
       "climaxInstructions": {
         "type": "roll-until-highest",
@@ -190,7 +190,7 @@
           "alwaysSucceed": true,
           "outcome": {
             "text": "THIS IS IT! You LEAP toward the Guardian's chest, Lumen blazing beside you like a comet! Your fist connects with the glowing core - and EVERYTHING EXPLODES IN LIGHT!",
-            "cutsceneImageUrl": "/images/cutscenes/ancient-shrine/scene5-victory.png"
+            "cutsceneImageUrl": "/images/cutscenes/ancient-shrine/scene5-victory.webp"
           }
         }
       ],
@@ -203,7 +203,7 @@
   "ending": {
     "title": "The Shrine Restored",
     "narrationText": "The light fades. The Guardian is gone - and in its place, the shrine is TRANSFORMED. Flowers bloom from the ancient stone. Sunlight streams through cracks in the ceiling. The whole place feels... alive again.\n\nLumen floats before you, glowing warm and happy.\n\n'You did it. You actually did it! The shrine is free. I'M free!'\n\nThe little spirit nuzzles against your cheek.\n\n'I've been alone for a thousand years. But now... can I come with you? On your next adventure?'\n\nYou smile and nod. You have a feeling this is just the beginning.",
-    "endingImageUrl": "/images/scenes/ancient-shrine/ending.png",
+    "endingImageUrl": "/images/scenes/ancient-shrine/ending.webp",
     "characterRewards": [
       {
         "characterId": "shrine-seeker",

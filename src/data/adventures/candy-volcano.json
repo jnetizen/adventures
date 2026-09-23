@@ -6,7 +6,7 @@
     "tagline": "Can you save Sweet-Top Valley before everything gets covered in candy goo?",
     "themes": ["candy", "teamwork", "dragons", "silly"],
     "estimatedMinutes": 15,
-    "previewImageUrl": "/images/adventures/candy-volcano-preview.png",
+    "previewImageUrl": "/images/adventures/candy-volcano-preview.webp",
     "ageRating": {
       "minAge": 4,
       "reason": "Silly candy adventure with teamwork and mild magical action",
@@ -14,7 +14,7 @@
     }
   },
   "prologue": {
-    "prologueImageUrl": "/images/prologues/candy-volcano-prologue.png",
+    "prologueImageUrl": "/images/prologues/candy-volcano-prologue.webp",
     "worldIntro": "Welcome to Sweet-Top Valley, a magical land where rivers flow with chocolate and mountains are made of rock candy. Everything here is delicious — and a little bit sticky!",
     "characterIntros": [
       {
@@ -37,19 +37,19 @@
       "id": "spark-wizard",
       "name": "Spark Wizard",
       "description": "A brave wizard who casts Sparkle Shield and Marshmallow Blast",
-      "imageUrl": "/images/characters/spark-wizard.png"
+      "imageUrl": "/images/characters/spark-wizard.webp"
     },
     {
       "id": "frost-wizard",
       "name": "Frost Wizard",
       "description": "A cool wizard who can freeze things and make snow bridges",
-      "imageUrl": "/images/characters/frost-wizard.png"
+      "imageUrl": "/images/characters/frost-wizard.webp"
     },
     {
       "id": "bloom-wizard",
       "name": "Bloom Wizard",
       "description": "A nature wizard who grows rainbow vines and talks to animals",
-      "imageUrl": "/images/characters/bloom-wizard.png"
+      "imageUrl": "/images/characters/bloom-wizard.webp"
     }
   ],
   "scoring": {
@@ -64,7 +64,7 @@
       "id": "scene-1",
       "sceneNumber": 0,
       "narrationText": "Jellybeans rain from the sky! The Candy Volcano glows pink in the distance. BOOM! Lightning strikes the mountain!",
-      "sceneImageUrl": "/images/scenes/candy-volcano/scene-0-sugary-storm.png",
+      "sceneImageUrl": "/images/scenes/candy-volcano/scene-0-sugary-storm.webp",
       "leadCharacterId": "spark-wizard",
       "characterTurns": [
         {
@@ -173,7 +173,7 @@
       "id": "scene-2",
       "sceneNumber": 1,
       "narrationText": "A wiggly bridge made of giant gummy worms stretches over hot fudge! It jiggles with every step.",
-      "sceneImageUrl": "/images/scenes/candy-volcano/scene-1-gummy-bridge.png",
+      "sceneImageUrl": "/images/scenes/candy-volcano/scene-1-gummy-bridge.webp",
       "leadCharacterId": "frost-wizard",
       "characterTurns": [
         {
@@ -281,7 +281,7 @@
             "type": "item",
             "id": "golden-lollipop",
             "name": "Golden Lollipop of Bravery",
-            "imageUrl": "/images/rewards/golden-lollipop.png"
+            "imageUrl": "/images/rewards/golden-lollipop.webp"
           }
         ]
       }
@@ -290,7 +290,7 @@
       "id": "scene-3",
       "sceneNumber": 2,
       "narrationText": "Two tall Peppermint Knights guard the volcano gate! 'HALT! Solve our riddle to enter!'",
-      "sceneImageUrl": "/images/scenes/candy-volcano/scene-2-peppermint-guards.png",
+      "sceneImageUrl": "/images/scenes/candy-volcano/scene-2-peppermint-guards.webp",
       "leadCharacterId": "bloom-wizard",
       "characterTurns": [
         {
@@ -399,7 +399,7 @@
       "id": "scene-4",
       "sceneNumber": 3,
       "narrationText": "A sad Marzipan Dragon sits by the cracked Candy Core Crystal. 'I didn't mean to break it!'",
-      "sceneImageUrl": "/images/scenes/candy-volcano/scene-3-candy-core.png",
+      "sceneImageUrl": "/images/scenes/candy-volcano/scene-3-candy-core.webp",
       "leadCharacterId": "spark-wizard",
       "characterTurns": [
         {
@@ -507,7 +507,7 @@
             "type": "item",
             "id": "dragon-scale",
             "name": "Dragon's Thank-You Scale",
-            "imageUrl": "/images/rewards/dragon-scale.png"
+            "imageUrl": "/images/rewards/dragon-scale.webp"
           }
         ]
       }
@@ -516,7 +516,7 @@
       "id": "scene-5",
       "sceneNumber": 4,
       "narrationText": "The volcano rumbles one last time — and instead of goo, it bursts with CONFETTI! Rainbow sprinkles, chocolate fountains, and cotton candy clouds fill the sky! Every candy creature in Sweet-Top Valley rushes out to celebrate. The Marzipan Dragon soars overhead, breathing sparkly fireworks. 'You did it!' the dragon roars happily. 'You saved us all!'",
-      "sceneImageUrl": "/images/scenes/candy-volcano/scene-4-candy-festival.png",
+      "sceneImageUrl": "/images/scenes/candy-volcano/scene-4-candy-festival.webp",
       "leadCharacterId": null,
       "characterTurns": [],
       "outcome": {
@@ -536,25 +536,25 @@
           "type": "badge",
           "id": "legendary-heroes-badge",
           "name": "Legendary Heroes Badge",
-          "imageUrl": "/images/rewards/legendary-badge.png"
+          "imageUrl": "/images/rewards/legendary-badge.webp"
         },
         {
           "type": "item",
           "id": "wand-of-sprinkles",
           "name": "Wand of Endless Sprinkles",
-          "imageUrl": "/images/rewards/wand-sprinkles.png"
+          "imageUrl": "/images/rewards/wand-sprinkles.webp"
         },
         {
           "type": "item",
           "id": "frosty-medal",
           "name": "Frosty Medal of Coolness",
-          "imageUrl": "/images/rewards/frosty-medal.png"
+          "imageUrl": "/images/rewards/frosty-medal.webp"
         },
         {
           "type": "item",
           "id": "bloom-crown",
           "name": "Bloom's Flower Crown",
-          "imageUrl": "/images/rewards/bloom-crown.png"
+          "imageUrl": "/images/rewards/bloom-crown.webp"
         }
       ]
     },
@@ -568,13 +568,13 @@
           "type": "badge",
           "id": "great-wizards-badge",
           "name": "Great Wizards Badge",
-          "imageUrl": "/images/rewards/great-badge.png"
+          "imageUrl": "/images/rewards/great-badge.webp"
         },
         {
           "type": "item",
           "id": "candy-medal",
           "name": "Candy Medal of Teamwork",
-          "imageUrl": "/images/rewards/candy-medal.png"
+          "imageUrl": "/images/rewards/candy-medal.webp"
         }
       ]
     },
@@ -588,7 +588,7 @@
           "type": "badge",
           "id": "volcano-savers-badge",
           "name": "Volcano Savers Badge",
-          "imageUrl": "/images/rewards/savers-badge.png"
+          "imageUrl": "/images/rewards/savers-badge.webp"
         }
       ]
     }

@@ -6,7 +6,7 @@
     "tagline": "Can you find the legendary Fire Gem and restore the King's crown?",
     "themes": ["volcano", "lava", "fire", "quest", "treasure", "magic"],
     "estimatedMinutes": 15,
-    "previewImageUrl": "/images/adventures/fire-gem-preview.png",
+    "previewImageUrl": "/images/adventures/fire-gem-preview.webp",
     "ageRating": {
       "minAge": 5,
       "reason": "Lava and fire imagery may be intense for younger children",
@@ -14,7 +14,7 @@
     }
   },
   "prologue": {
-    "prologueImageUrl": "/images/prologues/fire-gem-prologue.png",
+    "prologueImageUrl": "/images/prologues/fire-gem-prologue.webp",
     "worldIntro": "Welcome to the Kingdom of Brightshield! Long ago, the King's magical crown fell into Lava Mountain during a great earthquake. Without it, the King has been sad for years. Legend says a Fire Gem deep in the volcano can grant one wish!",
     "characterIntros": [
       {
@@ -37,19 +37,19 @@
       "id": "brave-climber",
       "name": "Brave Climber",
       "description": "A fearless mountain climber with rope and climbing gear who tackles any terrain",
-      "imageUrl": "/images/characters/brave-climber.png"
+      "imageUrl": "/images/characters/brave-climber.webp"
     },
     {
       "id": "clever-scientist",
       "name": "Clever Scientist",
       "description": "A junior scientist with goggles and a notebook who studies volcanoes and gems",
-      "imageUrl": "/images/characters/clever-scientist.png"
+      "imageUrl": "/images/characters/clever-scientist.webp"
     },
     {
       "id": "kind-whisperer",
       "name": "Kind Whisperer",
       "description": "A gentle creature whisperer who can talk to animals and fire spirits",
-      "imageUrl": "/images/characters/kind-whisperer.png"
+      "imageUrl": "/images/characters/kind-whisperer.webp"
     }
   ],
   "scoring": {
@@ -64,7 +64,7 @@
       "id": "scene-1",
       "sceneNumber": 0,
       "narrationText": "The knights arrive at the base of Lava Mountain. Steam hisses from cracks in the ground. Glowing embers drift through the air like fireflies. The path ahead leads into the smoking volcano!",
-      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-0-ashen-path.png",
+      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-0-ashen-path.webp",
       "leadCharacterId": "clever-scientist",
       "characterTurns": [
         {
@@ -173,7 +173,7 @@
       "id": "scene-2",
       "sceneNumber": 1,
       "narrationText": "A wide river of bubbling orange lava stretches across the path! Dark rocks float slowly on the surface like stepping stones. On the other side, the cave entrance glows invitingly.",
-      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-1-lava-river.png",
+      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-1-lava-river.webp",
       "leadCharacterId": "brave-climber",
       "characterTurns": [
         {
@@ -281,7 +281,7 @@
             "type": "item",
             "id": "lava-petal",
             "name": "Lava Flower Petal",
-            "imageUrl": "/images/rewards/lava-petal.png"
+            "imageUrl": "/images/rewards/lava-petal.webp"
           }
         ]
       }
@@ -290,7 +290,7 @@
       "id": "scene-3",
       "sceneNumber": 2,
       "narrationText": "Inside the volcano! The Ember Caves glow with orange and red crystals. Paths twist in every direction. Somewhere deep inside, the Fire Gem is waiting!",
-      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-2-ember-caves.png",
+      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-2-ember-caves.webp",
       "leadCharacterId": "kind-whisperer",
       "characterTurns": [
         {
@@ -399,7 +399,7 @@
       "id": "scene-4",
       "sceneNumber": 3,
       "narrationText": "A magnificent Fire Guardian — a great phoenix made of living flame — perches on a high pedestal! Below her sits the legendary Fire Gem, glowing like a tiny sun. 'Who seeks my gem?' she asks kindly.",
-      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-3-fire-guardian.png",
+      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-3-fire-guardian.webp",
       "leadCharacterId": "kind-whisperer",
       "characterTurns": [
         {
@@ -507,7 +507,7 @@
             "type": "item",
             "id": "guardian-feather",
             "name": "Phoenix Guardian's Feather",
-            "imageUrl": "/images/rewards/guardian-feather.png"
+            "imageUrl": "/images/rewards/guardian-feather.webp"
           }
         ]
       }
@@ -516,7 +516,7 @@
       "id": "scene-5",
       "sceneNumber": 4,
       "narrationText": "The Fire Gem floats gently into your hands, warm and glowing! Together, all three knights hold the gem and close their eyes. 'We wish for the King's crown to return!' The gem bursts with golden light — POOF! The magical crown sparkles into existence, floating before you! You carry it out of the volcano to where the King waits hopefully. When he sees his crown, tears of joy stream down his face. 'My crown! You found it!'",
-      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-4-wish-granted.png",
+      "sceneImageUrl": "/images/scenes/fire-gem-quest/scene-4-wish-granted.webp",
       "leadCharacterId": null,
       "characterTurns": [],
       "outcome": {
@@ -536,25 +536,25 @@
           "type": "badge",
           "id": "fire-knight-badge",
           "name": "Legendary Fire Knight Badge",
-          "imageUrl": "/images/rewards/fire-knight-badge.png"
+          "imageUrl": "/images/rewards/fire-knight-badge.webp"
         },
         {
           "type": "item",
           "id": "flame-sword",
           "name": "Sword of Eternal Flame",
-          "imageUrl": "/images/rewards/flame-sword.png"
+          "imageUrl": "/images/rewards/flame-sword.webp"
         },
         {
           "type": "item",
           "id": "ember-boots",
           "name": "Boots of Lava Walking",
-          "imageUrl": "/images/rewards/ember-boots.png"
+          "imageUrl": "/images/rewards/ember-boots.webp"
         },
         {
           "type": "item",
           "id": "phoenix-cape",
           "name": "Cape of the Phoenix",
-          "imageUrl": "/images/rewards/phoenix-cape.png"
+          "imageUrl": "/images/rewards/phoenix-cape.webp"
         }
       ]
     },
@@ -568,13 +568,13 @@
           "type": "badge",
           "id": "fire-seeker-badge",
           "name": "Brave Fire Seekers Badge",
-          "imageUrl": "/images/rewards/fire-seeker-badge.png"
+          "imageUrl": "/images/rewards/fire-seeker-badge.webp"
         },
         {
           "type": "item",
           "id": "volcano-medal",
           "name": "Medal of the Volcano",
-          "imageUrl": "/images/rewards/volcano-medal.png"
+          "imageUrl": "/images/rewards/volcano-medal.webp"
         }
       ]
     },
@@ -588,7 +588,7 @@
           "type": "badge",
           "id": "crown-badge",
           "name": "Crown Returner Badge",
-          "imageUrl": "/images/rewards/crown-badge.png"
+          "imageUrl": "/images/rewards/crown-badge.webp"
         }
       ]
     }

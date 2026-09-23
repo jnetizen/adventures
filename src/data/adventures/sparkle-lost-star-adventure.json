@@ -6,7 +6,7 @@
     "tagline": "Can you help a little lost star find its way back to the sky?",
     "themes": ["stars", "friendship", "sparkles", "gentle adventure"],
     "estimatedMinutes": 8,
-    "previewImageUrl": "/images/scenes/sparkle-lost-star/prologue.png",
+    "previewImageUrl": "/images/scenes/sparkle-lost-star/prologue.webp",
     "ageRating": {
       "minAge": 3,
       "maxAge": 5,
@@ -15,7 +15,7 @@
     }
   },
   "prologue": {
-    "prologueImageUrl": "/images/scenes/sparkle-lost-star/prologue.png",
+    "prologueImageUrl": "/images/scenes/sparkle-lost-star/prologue.webp",
     "worldIntro": "It is nighttime in the Moonflower Meadow. The flowers glow softly in the dark. Fireflies dance in the air. Everything is peaceful and pretty.\n\nBut look! Up in the sky, a tiny star wobbles... and wobbles... and - oh no! - it falls!\n\nThe little star tumbles down, down, down through the clouds and lands with a soft POOF in the meadow.",
     "characterIntros": [
       {
@@ -30,7 +30,7 @@
       "id": "star-friend",
       "name": "Star Friend",
       "description": "A kind and gentle hero who can talk to magical creatures, wearing a PINK dress with SILVER sparkles",
-      "imageUrl": "/images/characters/sparkle-lost-star/star-friend.png"
+      "imageUrl": "/images/characters/sparkle-lost-star/star-friend.webp"
     }
   ],
   "scenes": [
@@ -39,7 +39,7 @@
       "sceneNumber": 0,
       "title": "Finding Twinkle",
       "narrationText": "You walk through the glowing meadow, looking for where the star landed. You hear a tiny sound... like someone crying very softly.\n\nBehind a big moonflower, you see a glow. You peek behind the flower and see a tiny, sad star with big sparkly eyes. It looks scared.\n\nThe little star needs a friend! Can you show it you're nice?",
-      "sceneImageUrl": "/images/scenes/sparkle-lost-star/scene-1.png",
+      "sceneImageUrl": "/images/scenes/sparkle-lost-star/scene-1.webp",
       "characterTurns": [
         {
           "characterId": "star-friend",
@@ -48,12 +48,12 @@
           "alwaysSucceed": true,
           "outcome": {
             "text": "You smile your biggest, kindest smile. You whisper softly, 'Hello little star. Don't be scared!'\n\nThe tiny star peeks at you... its sparkles get brighter... and then it floats right up and snuggles against your cheek!\n\nIt feels warm and tingly! The little star LOVES you!",
-            "cutsceneImageUrl": "/images/cutscenes/sparkle-lost-star/scene1-twinkle.png",
+            "cutsceneImageUrl": "/images/cutscenes/sparkle-lost-star/scene1-twinkle.webp",
             "reward": {
               "id": "twinkle-friend",
               "name": "Twinkle the Star",
               "type": "friend",
-              "imageUrl": "/images/rewards/sparkle-lost-star/twinkle-star.png"
+              "imageUrl": "/images/rewards/sparkle-lost-star/twinkle-star.webp"
             }
           }
         }
@@ -68,7 +68,7 @@
       "sceneNumber": 1,
       "title": "The Cloud Staircase",
       "narrationText": "To get back to the sky, you need to climb the Cloud Staircase - fluffy cloud steps that go up, up, up!\n\nBut the first cloud is too high to reach. Twinkle is too little to fly that high.\n\nLook! Friendly fireflies are flying nearby. Maybe they can help!",
-      "sceneImageUrl": "/images/scenes/sparkle-lost-star/scene-2.png",
+      "sceneImageUrl": "/images/scenes/sparkle-lost-star/scene-2.webp",
       "characterTurns": [
         {
           "characterId": "star-friend",
@@ -77,7 +77,7 @@
           "alwaysSucceed": true,
           "outcome": {
             "text": "You call out sweetly to the fireflies: 'Please help us reach the clouds!'\n\nThe fireflies gather together - ten, twenty, a HUNDRED of them! They swirl under your feet and lift you gently up, up, up!\n\nYou float through the soft fluffy clouds, higher and higher! Twinkle bounces with joy beside you!",
-            "cutsceneImageUrl": "/images/cutscenes/sparkle-lost-star/scene2-fireflies.png"
+            "cutsceneImageUrl": "/images/cutscenes/sparkle-lost-star/scene2-fireflies.webp"
           }
         }
       ],
@@ -91,7 +91,7 @@
       "sceneNumber": 2,
       "title": "The Moon Gate",
       "narrationText": "At the top of the Cloud Staircase is the Moon Gate - a beautiful archway made of moonbeams. This is the door to the sky where stars live!\n\nBut the gate is closed, and a gentle Moon Guardian sleeps in front of it. She looks very kind, with a dress made of moonlight.",
-      "sceneImageUrl": "/images/scenes/sparkle-lost-star/scene-3.png",
+      "sceneImageUrl": "/images/scenes/sparkle-lost-star/scene-3.webp",
       "characterTurns": [
         {
           "characterId": "star-friend",
@@ -100,7 +100,7 @@
           "alwaysSucceed": true,
           "outcome": {
             "text": "You tap the Moon Guardian's shoulder very softly.\n\nShe opens her silver eyes and smiles the warmest smile. 'Oh! A Star Friend! And you found little Twinkle!'\n\nShe looks so happy! 'Thank you for bringing our lost star home. You have the kindest heart.'",
-            "cutsceneImageUrl": "/images/cutscenes/sparkle-lost-star/scene3-guardian.png"
+            "cutsceneImageUrl": "/images/cutscenes/sparkle-lost-star/scene3-guardian.webp"
           }
         }
       ],
@@ -116,7 +116,7 @@
       "isClimax": true,
       "climaxMode": "solo-moment",
       "narrationText": "The Moon Guardian opens the Moon Gate. Beyond it, you can see the beautiful sky full of stars! They're all twinkling, waiting for Twinkle to come home.\n\nTwinkle looks at you with big sparkly eyes. It doesn't want to say goodbye!\n\nThe Moon Guardian smiles. 'Would you like to fly Twinkle home yourself?'\n\nTwinkle grows bigger - big enough to ride on!",
-      "sceneImageUrl": "/images/scenes/sparkle-lost-star/scene-4.png",
+      "sceneImageUrl": "/images/scenes/sparkle-lost-star/scene-4.webp",
       "characterTurns": [
         {
           "characterId": "star-friend",
@@ -125,7 +125,7 @@
           "alwaysSucceed": true,
           "outcome": {
             "text": "You climb onto Twinkle's back. The little star is warm and glowy.\n\nYou hold on tight and - WHOOOOOOSH! - you're FLYING!\n\nThrough the Moon Gate, up through the clouds, higher and higher! The wind feels like giggles and all the stars are cheering for you!\n\nTwinkle spins and swirls, leaving a beautiful sparkle trail across the whole sky! WHEEEEE!",
-            "cutsceneImageUrl": "/images/cutscenes/sparkle-lost-star/scene4-flying.png"
+            "cutsceneImageUrl": "/images/cutscenes/sparkle-lost-star/scene4-flying.webp"
           }
         }
       ],
@@ -137,7 +137,7 @@
   "ending": {
     "title": "Friends Forever",
     "narrationText": "Twinkle flies you gently back down to the Moonflower Meadow. The Moon Guardian is waiting with a smile.\n\n'You have the kindest heart,' she says. 'Twinkle will never forget you.'\n\nShe touches your chest and a tiny glow appears over your heart - a little star mark that sparkles!\n\n'Now whenever you look up at night, Twinkle will twinkle extra bright just for you. And if you ever need a friend...'\n\nYou look up at the sky. One little star is blinking and waving! Twinkle will always be your friend, even way up in the sky.\n\nYou wave goodbye and blow a kiss to your star friend. Twinkle catches it and glows even brighter!",
-    "endingImageUrl": "/images/scenes/sparkle-lost-star/ending.png",
+    "endingImageUrl": "/images/scenes/sparkle-lost-star/ending.webp",
     "lootScreen": {
       "title": "You Did It!",
       "description": "You helped Twinkle get home! Look what you found!"
@@ -147,7 +147,7 @@
         "id": "star-heart",
         "name": "Star Heart Mark",
         "type": "magic",
-        "imageUrl": "/images/rewards/sparkle-lost-star/star-heart.png"
+        "imageUrl": "/images/rewards/sparkle-lost-star/star-heart.webp"
       }
     ],
     "characterRewards": [
@@ -155,7 +155,7 @@
         "characterId": "star-friend",
         "item": "Star Heart Mark",
         "description": "A magical mark that lets you talk to stars. Whenever you look up at night, Twinkle will twinkle extra bright just for you!",
-        "imageUrl": "/images/rewards/sparkle-lost-star/star-heart.png"
+        "imageUrl": "/images/rewards/sparkle-lost-star/star-heart.webp"
       }
     ]
   }

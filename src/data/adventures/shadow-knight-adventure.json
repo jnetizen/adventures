@@ -6,7 +6,7 @@
     "tagline": "Save the magical forest from the Shadow Knight's dark curse!",
     "themes": ["forest", "magic", "shadow", "adventure", "teamwork"],
     "estimatedMinutes": 20,
-    "previewImageUrl": "/images/scenes/shadow-knight/prologue.png",
+    "previewImageUrl": "/images/scenes/shadow-knight/prologue.webp",
     "ageRating": {
       "minAge": 4,
       "reason": "Fantasy adventure with a shadowy villain and magical forest setting",
@@ -14,7 +14,7 @@
     }
   },
   "prologue": {
-    "prologueImageUrl": "/images/scenes/shadow-knight/prologue.png",
+    "prologueImageUrl": "/images/scenes/shadow-knight/prologue.webp",
     "worldIntro": "Deep in the heart of the kingdom lies the Ancient Grove - a magical forest where the trees sing and tiny spirits dance among the flowers. But something is wrong. A Shadow Knight has stolen the Heart of the Grove - the glowing crystal that keeps the forest alive. Without it, the leaves are turning gray. The flowers are wilting. The forest spirits are hiding.",
     "characterIntros": [
       {
@@ -37,19 +37,19 @@
       "id": "flame-striker",
       "name": "Flame Striker",
       "description": "A brave hero with fists of fire, wearing an adventurer outfit with ORANGE accents",
-      "imageUrl": "/images/characters/flame-striker.png"
+      "imageUrl": "/images/characters/flame-striker.webp"
     },
     {
       "id": "sparkle-rider",
       "name": "Sparkle Rider",
       "description": "A kind hero who befriends magical creatures, wearing a PINK dress with SPARKLES",
-      "imageUrl": "/images/characters/sparkle-rider.png"
+      "imageUrl": "/images/characters/sparkle-rider.webp"
     },
     {
       "id": "shadow-ranger",
       "name": "Shadow Ranger",
       "description": "A stealthy hero who can walk unseen, wearing a forest ranger outfit with DARK GREEN hood and cloak",
-      "imageUrl": "/images/characters/shadow-ranger.png"
+      "imageUrl": "/images/characters/shadow-ranger.webp"
     }
   ],
   "scenes": [
@@ -58,7 +58,7 @@
       "sceneNumber": 0,
       "title": "The Forest Entrance",
       "narrationText": "You stand at the edge of the Ancient Grove. The trees here are still green, but you can see the gray creeping in deeper ahead.\n\nA tiny forest spirit peeks out from behind a mushroom. It looks scared - but when it sees you, it chirps hopefully.\n\n'Heroes! You came!' it squeaks. 'The Shadow Knight went THAT way. But the path is tricky. You'll need to prove you're brave enough to enter!'",
-      "sceneImageUrl": "/images/scenes/shadow-knight/scene-1-forest-entrance.png",
+      "sceneImageUrl": "/images/scenes/shadow-knight/scene-1-forest-entrance.webp",
       "characterTurns": [
         {
           "characterId": "flame-striker",
@@ -70,11 +70,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "Flames burst from those fists - WHOOSH! The leaves burn away and the path is clear! The spirit cheers.",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-flame-striker-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-flame-striker-success.webp"
           },
           "failOutcome": {
             "text": "The flames sputter in the damp air - but with extra concentration, the fire grows stronger and slowly burns through!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-flame-striker-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-flame-striker-fail.webp"
           }
         },
         {
@@ -87,11 +87,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "A beautiful twirl sends sparkles everywhere! The vines shiver... then curl back like they're dancing! A path opens up.",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-sparkle-rider-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-sparkle-rider-success.webp"
           },
           "failOutcome": {
             "text": "The vines only wiggle a little at first. But with the biggest smile and another twirl, they slowly curl away.",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-sparkle-rider-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-sparkle-rider-fail.webp"
           }
         },
         {
@@ -104,11 +104,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "Those ranger eyes lock onto the path. 'I'll take the Misty Way and find something to help us.' The spirit nods with wide eyes. 'The Grove Blade is hidden there...'",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-shadow-ranger-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-shadow-ranger-success.webp"
           },
           "failOutcome": {
             "text": "The mist swirls and the path disappears for a moment - but a deep breath and focus brings it back. 'I'm going.' The spirit nods. 'Good luck, ranger.'",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-shadow-ranger-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene1-shadow-ranger-fail.webp"
           }
         }
       ],
@@ -129,7 +129,7 @@
       "parallelWith": "scene-2b",
       "activeCharacters": ["shadow-ranger"],
       "narrationText": "Shadow Ranger moves alone through the Misty Woods. The fog is thick. The trees look the same in every direction. Most people would be lost instantly.\n\nBut not a Shadow Ranger.\n\nMoving like a ghost, watching for signs - a broken twig here, a mossy stone there. And then... a stone shrine, covered in vines. Inside, something glows faintly. A sword, waiting for a worthy hero.\n\nBut the shrine has a guardian. A stone wolf, eyes glowing, blocking the way.",
-      "sceneImageUrl": "/images/scenes/shadow-knight/scene-2a-misty-woods.png",
+      "sceneImageUrl": "/images/scenes/shadow-knight/scene-2a-misty-woods.webp",
       "characterTurns": [
         {
           "characterId": "shadow-ranger",
@@ -141,20 +141,20 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "Standing tall and walking forward without hesitation. The stone wolf watches... then bows its head and steps aside. The GROVE BLADE is claimed! It hums with ancient power.",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2a-shadow-ranger-success.png",
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2a-shadow-ranger-success.webp",
             "reward": {
               "id": "grove-blade",
               "name": "Grove Blade",
-              "imageUrl": "/images/rewards/grove-blade.png"
+              "imageUrl": "/images/rewards/grove-blade.webp"
             }
           },
           "failOutcome": {
             "text": "The wolf growls louder at first. But kneeling down slowly shows no harm is meant. The wolf sniffs the air... and steps aside. The GROVE BLADE is carefully claimed.",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2a-shadow-ranger-fail.png",
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2a-shadow-ranger-fail.webp",
             "reward": {
               "id": "grove-blade",
               "name": "Grove Blade",
-              "imageUrl": "/images/rewards/grove-blade.png"
+              "imageUrl": "/images/rewards/grove-blade.webp"
             }
           }
         }
@@ -172,7 +172,7 @@
       "parallelWith": "scene-2a",
       "activeCharacters": ["flame-striker", "sparkle-rider"],
       "narrationText": "Flame Striker and Sparkle Rider follow the little spirit into a beautiful sunny clearing. The light sparkles through the leaves. Tiny spirits peek out everywhere - from flowers, from mushrooms, from hollow logs.\n\n'Welcome, heroes!' they chirp. 'Welcome to the heart of the happy forest!'\n\nBut then - near a fallen log, caught in a tangle of shadowy thorns... a UNICORN. Its white coat is dirty. Its horn flickers weakly. It's trapped.\n\n'The Shadow Knight's magic,' a spirit whispers sadly. 'We couldn't free her.'",
-      "sceneImageUrl": "/images/scenes/shadow-knight/scene-2b-sunny-grove.png",
+      "sceneImageUrl": "/images/scenes/shadow-knight/scene-2b-sunny-grove.webp",
       "characterTurns": [
         {
           "characterId": "flame-striker",
@@ -184,11 +184,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "FLAMES blast from those fists and the thorns HISS and shrink back from the heat! The unicorn lifts its head hopefully.",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2b-flame-striker-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2b-flame-striker-success.webp"
           },
           "failOutcome": {
             "text": "The thorns resist the flames at first, but persistent fire makes them wilt and loosen. Progress!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2b-flame-striker-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2b-flame-striker-fail.webp"
           }
         },
         {
@@ -201,20 +201,20 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "Walking up slowly, sparkling softly, hand held out. The unicorn's eyes meet those kind eyes. It trusts this hero. A new friendship is born!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2b-sparkle-rider-success.png",
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2b-sparkle-rider-success.webp",
             "reward": {
               "id": "unicorn-companion",
               "name": "Unicorn Companion",
-              "imageUrl": "/images/rewards/unicorn.png"
+              "imageUrl": "/images/rewards/unicorn.webp"
             }
           },
           "failOutcome": {
             "text": "A little nervous at first - but keeping calm and walking closer. The unicorn relaxes. Friends now!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2b-sparkle-rider-fail.png",
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene2b-sparkle-rider-fail.webp",
             "reward": {
               "id": "unicorn-companion",
               "name": "Unicorn Companion",
-              "imageUrl": "/images/rewards/unicorn.png"
+              "imageUrl": "/images/rewards/unicorn.webp"
             }
           }
         }
@@ -232,7 +232,7 @@
       "parallelWith": "scene-3b",
       "activeCharacters": ["shadow-ranger"],
       "narrationText": "Deeper into the forest. The mist is darker here. The trees look twisted and wrong.\n\nAnd then - a wall of pure shadow, blocking the path forward. Dark magic swirls and crackles. No ordinary weapon could cut through this.\n\nBut the Grove Blade isn't ordinary.\n\nHolding up the sword, it glows brighter, pushing back the darkness. Time to strike true and break through!",
-      "sceneImageUrl": "/images/scenes/shadow-knight/scene-3a-shadow-barrier.png",
+      "sceneImageUrl": "/images/scenes/shadow-knight/scene-3a-shadow-barrier.webp",
       "characterTurns": [
         {
           "characterId": "shadow-ranger",
@@ -244,11 +244,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "There! A crack in the darkness, just for a second. A LUNGE forward and a slash with the Grove Blade. The wall SHATTERS into wisps of smoke!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3a-shadow-ranger-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3a-shadow-ranger-success.webp"
           },
           "failOutcome": {
             "text": "The first swing misses as the shadows shift. But watching the pattern and trying again finds the rhythm - the wall crumbles!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3a-shadow-ranger-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3a-shadow-ranger-fail.webp"
           }
         }
       ],
@@ -265,7 +265,7 @@
       "parallelWith": "scene-3a",
       "activeCharacters": ["flame-striker", "sparkle-rider"],
       "narrationText": "The unicorn leads the way through a secret path - between two waterfalls, under a rainbow arch, into a hidden glade that sparkles with golden light.\n\n'Ooooh!' the forest spirits gasp. 'The old place! We forgot about the old place!'\n\nIn the center of the glade, buried under soft moss and glowing flowers, is an ancient treasure chest. It's covered in symbols of flame.\n\n'This was left here long ago,' a spirit whispers. 'For a Flame Striker. We could never open it.'",
-      "sceneImageUrl": "/images/scenes/shadow-knight/scene-3b-hidden-glade.png",
+      "sceneImageUrl": "/images/scenes/shadow-knight/scene-3b-hidden-glade.webp",
       "characterTurns": [
         {
           "characterId": "flame-striker",
@@ -277,20 +277,20 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "A palm pressed against the lock, concentrating hard. The hand glows warm, then HOT - CLICK! The chest opens with golden light. Inside: the FLAME GAUNTLETS!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3b-flame-striker-success.png",
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3b-flame-striker-success.webp",
             "reward": {
               "id": "flame-gauntlets",
               "name": "Flame Gauntlets",
-              "imageUrl": "/images/rewards/flame-gauntlets.png"
+              "imageUrl": "/images/rewards/flame-gauntlets.webp"
             }
           },
           "failOutcome": {
             "text": "The lock doesn't budge at first. But thinking about being brave sends warmth spreading - the lock clicks open. The FLAME GAUNTLETS are claimed!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3b-flame-striker-fail.png",
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3b-flame-striker-fail.webp",
             "reward": {
               "id": "flame-gauntlets",
               "name": "Flame Gauntlets",
-              "imageUrl": "/images/rewards/flame-gauntlets.png"
+              "imageUrl": "/images/rewards/flame-gauntlets.webp"
             }
           }
         },
@@ -304,11 +304,11 @@
           "successThreshold": 10,
           "successOutcome": {
             "text": "Climbing onto the unicorn's back like it's been done a hundred times! Holding the sparkly mane tight. The unicorn stands tall, ready for battle!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3b-sparkle-rider-success.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3b-sparkle-rider-success.webp"
           },
           "failOutcome": {
             "text": "A little slip at first, but the unicorn is patient. Trying again with a good grip on the soft mane - steady now. A true team!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3b-sparkle-rider-fail.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene3b-sparkle-rider-fail.webp"
           }
         }
       ],
@@ -325,7 +325,7 @@
       "climaxMode": "rapid-fire",
       "climaxVideoUrl": "/images/cutscenes/shadow-knight/scene4-climax-video.mp4",
       "narrationText": "The Shadow Knight towers before you. His armor is dark as midnight. In his chest, trapped in a cage of shadow, the Heart of the Grove flickers weakly.\n\n'So,' the Knight's voice echoes. 'Three little heroes think they can defeat me?'\n\nGrove Blade ready. Flame Gauntlets burning bright. Unicorn stamping and snorting.\n\n'We don't THINK,' Shadow Ranger says. 'We KNOW.'\n\nThe Shadow Knight raises his sword.\n\n'THEN COME AND PROVE IT!'",
-      "sceneImageUrl": "/images/scenes/shadow-knight/scene-4-shadow-knight.png",
+      "sceneImageUrl": "/images/scenes/shadow-knight/scene-4-shadow-knight.webp",
       "characterTurns": [
         {
           "characterId": "flame-striker",
@@ -334,7 +334,7 @@
           "alwaysSucceed": true,
           "outcome": {
             "text": "CHARGING forward! The Flame Gauntlets blaze with fire as a massive punch hits the Shadow Knight's shield - BOOM! The knight staggers back!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene4-flame-striker.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene4-flame-striker.webp"
           }
         },
         {
@@ -344,7 +344,7 @@
           "alwaysSucceed": true,
           "outcome": {
             "text": "The unicorn RACES forward! Its horn glows with sparkly magic as they slam into the Shadow Knight - CRASH! He drops to one knee!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene4-sparkle-rider.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene4-sparkle-rider.webp"
           }
         },
         {
@@ -354,7 +354,7 @@
           "alwaysSucceed": true,
           "outcome": {
             "text": "Leaping into the air, Grove Blade shining like a star - bringing it down with all that strength! The Shadow Knight's armor CRACKS and SHATTERS!",
-            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene4-shadow-ranger.png"
+            "cutsceneImageUrl": "/images/cutscenes/shadow-knight/scene4-shadow-ranger.webp"
           }
         }
       ],
@@ -367,7 +367,7 @@
   "ending": {
     "title": "The Grove Restored",
     "narrationText": "The moment the Heart returns to the forest, everything changes.\n\nThe gray leaves burst into green. Flowers bloom in every color. The twisted trees straighten and stretch toward the sun. Tiny spirits pour out of hiding, dancing and cheering.\n\n'HEROES! HEROES! HEROES!'\n\nThe unicorn nuzzles proudly. The spirits swarm around, admiring the gauntlets. And the biggest spirit of all - an old one with a long mossy beard - approaches.\n\n'Flame Striker. Sparkle Rider. Shadow Ranger. You saved us all. These gifts are yours to keep - forever.'\n\nThe three heroes stand together in the restored grove as the sun sets through the golden leaves.\n\nThe forest is safe. The Heart is home. And somewhere out there... another adventure is waiting.",
-    "endingImageUrl": "/images/scenes/shadow-knight/scene-5-grove-restored.png",
+    "endingImageUrl": "/images/scenes/shadow-knight/scene-5-grove-restored.webp",
     "characterRewards": [
       {
         "characterId": "flame-striker",
