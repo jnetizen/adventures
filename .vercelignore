@@ -1,0 +1,9 @@
+# Vercel builds from source; these are local build artifacts or archives and
+# must never be uploaded. .vercel/output in particular still holds the old
+# uncompressed PNGs (~800MB) from before the WebP conversion.
+dist
+.vercel/output
+quest-family-illustrations
+*.local.html
+.playwright-mcp
+node_modules
